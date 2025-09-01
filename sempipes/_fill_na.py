@@ -44,12 +44,12 @@ def _impute_with_model(df, target_column, feature_columns):
 
     # Train on rows where target is known
     known_mask = y.notna()
-    print(f"    Training imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")
+    print(f"\tTraining imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")
     model.fit(X[known_mask], y[known_mask])
 
     # Predict missing target values
     missing_mask = y.isna()
-    print(f"    Imputing {missing_mask.sum()} values...")
+    print(f"\tImputing {missing_mask.sum()} values...")
     df.loc[missing_mask, target_column] = model.predict(X[missing_mask])
 
 def _build_prompt(target_column, target_column_type, candidate_columns, nl_prompt):
