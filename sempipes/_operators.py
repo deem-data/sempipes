@@ -1,0 +1,19 @@
+from abc import ABC, abstractmethod
+
+class SemChooseOperator(ABC):
+    @abstractmethod
+    def set_params_on_estimator(self, data_op, estimator, choices, y=None):
+        """Set parameters on the given estimator based on choices provided."""
+        pass
+
+class WithSemFeaturesOperator(ABC):
+    @abstractmethod
+    def generate_features_estimator(self, data_op, nl_prompt, how_many):
+        """Return an estimator that computes features on a pandas df."""
+        pass
+
+class SemFillNAOperator(ABC):
+    @abstractmethod
+    def generate_imputation_estimator(self, data_op, target_column, nl_prompt):
+        """Return an estimator that imputes missing values for the target column on a pandas df."""
+        pass

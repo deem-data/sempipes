@@ -1,6 +1,6 @@
 import builtins
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub"]
+_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
 
 import warnings
 import pandas as pd
@@ -39,6 +39,7 @@ def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
          "tuple": tuple,
          "len": len,
          "range": range,
+         "isinstance": isinstance,
     }
     safe_globals = {"__builtins__": safe_builtins, "skrub": skrub, "sklearn": sklearn, "numpy": numpy}
     safe_locals = safe_locals_to_add
