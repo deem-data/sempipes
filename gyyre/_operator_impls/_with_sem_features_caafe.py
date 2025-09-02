@@ -9,7 +9,7 @@ from skrub import DataOp
 
 from gyyre._operators import WithSemFeaturesOperator
 from gyyre._operators import GyyreContextAwareMixin, GyyrePrefittableMixin, GyyreOptimisableMixin
-from gyyre._code_gen._llm import _generate_python_code_from_messages
+from gyyre._code_gen._llm import _generate_result_from_messages
 from gyyre._code_gen._exec import _safe_exec
 from gyyre.optimisers._dag_summary import DagSummary
 
@@ -217,7 +217,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyreContextAwareMixi
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
                     _add_memorized_history(self.gyyre_memory, messages, self.generated_code_)
 
-                code = _generate_python_code_from_messages(messages)
+                code = _generate_result_from_messages(messages, generate_code=True)
                 code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 

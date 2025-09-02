@@ -72,6 +72,7 @@ class SemSelectOperator(ABC):
     ) -> Filter:
         """Generate a column selector for dataframes."""
 
+
 class WithSemFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_estimator(
@@ -84,8 +85,6 @@ class WithSemFeaturesOperator(ABC):
         """Return an estimator that computes features on a pandas df."""
 
 
-
-
 class SemFillNAOperator(ABC):
     @abstractmethod
     def generate_imputation_estimator(
@@ -93,6 +92,7 @@ class SemFillNAOperator(ABC):
             data_op: DataOp,
             target_column: str,
             nl_prompt: str,
+            **kwargs
     ) -> BaseEstimator & TransformerMixin:
         """Return an estimator that imputes missing values for the target column on a pandas df."""
 

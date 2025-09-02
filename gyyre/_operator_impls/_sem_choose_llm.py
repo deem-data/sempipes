@@ -5,7 +5,7 @@ from skrub import DataOp
 from sklearn.base import BaseEstimator
 
 from gyyre._operators import SemChooseOperator
-from gyyre._code_gen._llm import _generate_python_code
+from gyyre._code_gen._llm import _generate_result_from_prompt
 from gyyre._code_gen._exec import _safe_exec
 
 
@@ -30,11 +30,15 @@ class SemChooseLLM(SemChooseOperator):
                     try:
                         prompt = self._build_prompt(estimator, user_prompt, param_name,
                             previous_exceptions=previous_exceptions)
-                        python_code = _generate_python_code(prompt)
+                        python_code = _generate_result_from_prompt(prompt, generate_code=True)
 
-                        suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
+                        suggested_choices = _safe_exec(
+                            python_code, "__generated_sempipes_choices"
+                        )
                         estimator.set_params(**{param_name: suggested_choices})
-                        print(f"\tSuggested choices for {param_name}: {suggested_choices}")
+                        print(
+                            f"\tSuggested choices for {param_name}: {suggested_choices}"
+                        )
                         break
                     except Exception as e: # pylint: disable=broad-except
                         print(f"An error occurred in attempt {attempt}:", e)
@@ -59,10 +63,13 @@ class SemChooseLLM(SemChooseOperator):
             This request has been previously attempted, but the generated code did not work. 
             Here are the previous exceptions:\n
             """
-            previous_exceptions_memory += '\n'.join([f"### Previous exception: {str(e)}"
-                                                     for e in previous_exceptions])
+            previous_exceptions_memory += "\n".join(
+                [f"### Previous exception: {str(e)}" for e in previous_exceptions]
+            )
 
-        estimator_name = f"{estimator.__class__.__module__}.{estimator.__class__.__name__}"
+        estimator_name = (
+            f"{estimator.__class__.__module__}.{estimator.__class__.__name__}"
+        )
 
         return f"""
         You need to help a data scientist improve their machine learning script in Python, which is written 
@@ -112,3 +119,7 @@ class SemChooseLLM(SemChooseOperator):
     
         __generated_sempipes_choices = skrub.choose_from([<Your suggested parameter values>])
         """
+<<<<<<< HEAD
+=======
+        return prompt
+>>>>>>> 292e6ed (Add LLM and sem_fillna)

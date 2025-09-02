@@ -31,7 +31,7 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
     def is_model(some_op):
         if hasattr(some_op, "_skrub_impl"):
             impl = some_op._skrub_impl
-            if isinstance(impl, Apply) and hasattr(impl, 'estimator'):
+            if isinstance(impl, Apply) and hasattr(impl, "estimator"):
                 est = impl.estimator
                 return isinstance(est, (ClassifierMixin, RegressorMixin))
         return False

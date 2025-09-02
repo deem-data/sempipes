@@ -28,8 +28,15 @@ def apply_with_sem_choose(
     data_op = self
     SemChooseLLM().set_params_on_estimator(data_op, estimator, choices, y=y)
     # TODO forward the * args
-    return self.apply(estimator,y=y, cols=cols, exclude_cols=exclude_cols, how=how, allow_reject=allow_reject,
-                      unsupervised=unsupervised)
+    return self.apply(
+        estimator,
+        y=y,
+        cols=cols,
+        exclude_cols=exclude_cols,
+        how=how,
+        allow_reject=allow_reject,
+        unsupervised=unsupervised,
+    )
 
 
 def with_sem_features(
@@ -39,7 +46,9 @@ def with_sem_features(
     how_many: int = 10,
 ) -> DataOp:
     data_op = self
-    feature_gen_estimator = WithSemFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
+    feature_gen_estimator = WithSemFeaturesCaafe().generate_features_estimator(
+        data_op, nl_prompt, name, how_many
+    )
     return self.skb.apply(feature_gen_estimator).skb.set_name(name)
 
 
@@ -47,9 +56,12 @@ def sem_fillna(
         self: DataOp,
         target_column: str,
         nl_prompt: str,
+        **kwargs,
 ) -> DataOp:
     data_op = self
-    imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(data_op, target_column, nl_prompt)
+    imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(
+        data_op, target_column, nl_prompt, **kwargs
+    )
     return self.skb.apply(imputation_estimator)
 
 def sem_select(

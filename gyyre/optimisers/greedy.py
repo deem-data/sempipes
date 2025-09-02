@@ -26,8 +26,8 @@ def greedy_optimise_semantic_operator(
         learner = dag_sink.skb.make_learner(fitted=False)
 
         env = dag_sink.skb.get_data()
-        env[f'gyyre_dag_summary__{operator_name}'] = dag_summary
-        env[f'gyyre_memory__{operator_name}'] = memory
+        env[f"gyyre_dag_summary__{operator_name}"] = dag_summary
+        env[f"gyyre_memory__{operator_name}"] = memory
 
         learner.fit(env)
 
@@ -37,7 +37,7 @@ def greedy_optimise_semantic_operator(
         states.append(op_state)
 
         env = dag_sink.skb.get_data()
-        env[f'gyyre_prefitted_state__{operator_name}'] = op_state
+        env[f"gyyre_prefitted_state__{operator_name}"] = op_state
 
         op_memory_update = op_fitted.memory_update_from_latest_fit()
 
