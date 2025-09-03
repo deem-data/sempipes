@@ -1,6 +1,6 @@
-from sempipes._operators import SemFillNAOperator
-from sempipes.code_gen._llm import _generate_python_code
-from sempipes.code_gen._exec import _safe_exec
+from gyyre._operators import SemFillNAOperator
+from gyyre.code_gen._llm import _generate_python_code
+from gyyre.code_gen._exec import _safe_exec
 
 import pandas as pd
 import numpy as np

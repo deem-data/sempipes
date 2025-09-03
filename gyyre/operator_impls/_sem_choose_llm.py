@@ -1,8 +1,8 @@
 import traceback
 
-from sempipes._operators import SemChooseOperator
-from sempipes.code_gen._llm import _generate_python_code
-from sempipes.code_gen._exec import _safe_exec
+from gyyre._operators import SemChooseOperator
+from gyyre.code_gen._llm import _generate_python_code
+from gyyre.code_gen._exec import _safe_exec
 
 
 class SemChooseLLM(SemChooseOperator):

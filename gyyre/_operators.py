@@ -8,7 +8,7 @@ class SemChooseOperator(ABC):
 
 class WithSemFeaturesOperator(ABC):
     @abstractmethod
-    def generate_features_estimator(self, data_op, nl_prompt, how_many):
+    def generate_features_estimator(self, data_op, nl_prompt, name, how_many):
         """Return an estimator that computes features on a pandas df."""
         pass
 

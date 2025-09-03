@@ -26,6 +26,7 @@ def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
     import skrub
     import sklearn
     import numpy
+    import pandas as pd
 
     safe_builtins = {
         "__import__": _make_safe_import(_ALLOWED_MODULES),
@@ -40,8 +41,14 @@ def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
          "len": len,
          "range": range,
          "isinstance": isinstance,
+         "sum": sum,
+         "any": any,
+         "all": all,
+         "map": map,
+         "hash": hash,
     }
-    safe_globals = {"__builtins__": safe_builtins, "skrub": skrub, "sklearn": sklearn, "numpy": numpy}
+    safe_globals = {"__builtins__": safe_builtins, "skrub": skrub, "sklearn": sklearn,
+                    "numpy": numpy, "np": numpy, "pandas": pd, "pd": pd }
     safe_locals = safe_locals_to_add
 
     exec(python_code, safe_globals, safe_locals)

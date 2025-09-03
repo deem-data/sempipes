@@ -1,6 +1,6 @@
 from litellm import completion
 
-_DEFAULT_MODEL = "openai/gpt-5"
+_DEFAULT_MODEL = "openai/gpt-4.1"
 
 
 def _unwrap_python(text: str) -> str:
@@ -20,7 +20,7 @@ def _unwrap_python(text: str) -> str:
 def _generate_python_code(prompt: str) -> str:
 
     prompt_preview = prompt[:80].replace("\n", " ").strip()
-    print(f"\tQuerying '{_DEFAULT_MODEL}' with: '{prompt_preview}...'")
+    print(f"\t> Querying '{_DEFAULT_MODEL}' with: '{prompt_preview}...'")
 
     response = completion(
         model=_DEFAULT_MODEL,
@@ -30,6 +30,16 @@ def _generate_python_code(prompt: str) -> str:
             {"role": "user", "content": prompt},
         ],
     )
+
+    # TODO add proper error handling
+    raw_code = response.choices[0].message['content']
+    return _unwrap_python(raw_code)
+
+def _generate_python_code_from_messages(messages: list[dict]) -> str:
+
+    print(f"\t> Querying '{_DEFAULT_MODEL}' with {len(messages)} messages...'")
+
+    response = completion( model=_DEFAULT_MODEL, messages=messages,)
 
     # TODO add proper error handling
     raw_code = response.choices[0].message['content']
