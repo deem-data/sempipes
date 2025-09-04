@@ -1,19 +1,22 @@
 import builtins
+import warnings
+import skrub
+import sklearn
+import numpy
+import pandas as pd
+
+warnings.simplefilter(action="ignore", category=pd.errors.SettingWithCopyWarning)
 
 _ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
-
-import warnings
-import pandas as pd
-warnings.simplefilter(action="ignore", category=pd.errors.SettingWithCopyWarning)
 
 def _make_safe_import(allowed_modules):
     real_import = builtins.__import__
 
-    def safe_import(name, globals=None, locals=None, fromlist=(), level=0):
+    def safe_import(name, globals_to_import=None, locals_to_import=None, fromlist=(), level=0):
         top_name = name.split(".")[0]
         if top_name not in allowed_modules:
             raise ImportError(f"Import of '{name}' is not allowed")
-        return real_import(name, globals, locals, fromlist, level)
+        return real_import(name, globals_to_import, locals_to_import, fromlist, level)
 
     return safe_import
 
@@ -21,12 +24,6 @@ def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
 
     if safe_locals_to_add is None:
         safe_locals_to_add = {}
-
-    # TODO Add more imports
-    import skrub
-    import sklearn
-    import numpy
-    import pandas as pd
 
     safe_builtins = {
         "__import__": _make_safe_import(_ALLOWED_MODULES),
@@ -47,10 +44,18 @@ def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
          "map": map,
          "hash": hash,
     }
-    safe_globals = {"__builtins__": safe_builtins, "skrub": skrub, "sklearn": sklearn,
-                    "numpy": numpy, "np": numpy, "pandas": pd, "pd": pd }
-    safe_locals = safe_locals_to_add
 
-    exec(python_code, safe_globals, safe_locals)
+    safe_globals = {
+        "__builtins__": safe_builtins,
+        "skrub": skrub,
+        "sklearn": sklearn,
+        "numpy": numpy,
+        "np": numpy,
+        "pandas": pd,
+        "pd": pd,
+    }
+
+    safe_locals = safe_locals_to_add
+    exec(python_code, safe_globals, safe_locals_to_add)
 
     return safe_locals[variable_to_return]

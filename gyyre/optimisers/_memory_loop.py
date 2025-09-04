@@ -6,7 +6,7 @@ def optimise_semantic_operator(dag_sink, operator_name, num_iterations):
     memory = []
     states = []
 
-    print(f"--- COMPUTING DAG SUMMARY for context-aware optimisation ---")
+    print("--- COMPUTING DAG SUMMARY for context-aware optimisation ---")
     dag_summary = summarise_dag(dag_sink)
 
     for key, value in dag_summary.items():

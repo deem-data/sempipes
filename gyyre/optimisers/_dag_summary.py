@@ -24,11 +24,10 @@ def summarise_dag(dag_sink_node):
             impl = some_op._skrub_impl
             if isinstance(impl, Apply) and hasattr(impl, 'estimator'):
                 est = impl.estimator
-                return isinstance(est, ClassifierMixin) or isinstance(est, RegressorMixin)
+                return isinstance(est, (ClassifierMixin, RegressorMixin))
         return False
 
-    model_node = find_node(dag_sink_node, predicate=lambda x: is_model(x))
-
+    model_node = find_node(dag_sink_node, predicate=is_model)
     if model_node is not None:
         estimator = model_node._skrub_impl.estimator
         summary["model_steps"] = model_node.skb.describe_steps()
@@ -40,7 +39,6 @@ def summarise_dag(dag_sink_node):
             summary["task_type"] = "regression"
 
     y_op = find_y(dag_sink_node)
-
     if y_op is not None:
         summary["target_steps"] = y_op.skb.describe_steps()
         if hasattr(y_op, '_skrub_impl'):
@@ -49,14 +47,12 @@ def summarise_dag(dag_sink_node):
                 summary["target_name"] = y_op.skb.name
             elif isinstance(y_op._skrub_impl, GetItem):
                 summary["target_name"] = y_op._skrub_impl.key
-
             try:
                 summary["target_unique_values_from_preview"] = [val.item() for val in np.unique(y_op.skb.preview())]
-            except:
+            except: # pylint: disable=bare-except
                 pass
 
     X_op = find_X(dag_sink_node)
-
     if X_op is not None:
         if X_op.skb.description is not None:
             summary["dataset_description"] = X_op.skb.description

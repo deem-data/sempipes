@@ -9,4 +9,5 @@ https://arxiv.org/abs/2407.11418
 
  - CatDB: Data-catalog-guided, LLM-based Generation of
 Data-centric ML Pipelines, VLDB'25 
-https://fathollahzadeh.github.io/papers/CatDB_VLDB2025.pdf
+   - https://fathollahzadeh.github.io/papers/CatDB_VLDB2025.pdf
+   - https://www.youtube.com/watch?v=6Cl7B6ZHAOM

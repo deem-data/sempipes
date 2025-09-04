@@ -3,6 +3,7 @@ plotly==6.3.0
 #graphviz==0.21
 networkx==3.5
 litellm==1.76.1
+pylint==3.3.8
 
 #pip install --config-settings="--global-option=build_ext" \
 #            --config-settings="--global-option=-I$(brew --prefix graphviz)/include/" \

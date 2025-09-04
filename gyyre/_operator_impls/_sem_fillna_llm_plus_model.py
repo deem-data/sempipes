@@ -1,7 +1,3 @@
-from gyyre._operators import SemFillNAOperator
-from gyyre._code_gen._llm import _generate_python_code
-from gyyre._code_gen._exec import _safe_exec
-
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -11,6 +7,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+
+from gyyre._operators import SemFillNAOperator
+from gyyre._code_gen._llm import _generate_python_code
+from gyyre._code_gen._exec import _safe_exec
 
 class SemFillNALLLMPlusModel(SemFillNAOperator):
     def generate_imputation_estimator(self, data_op, target_column, nl_prompt):

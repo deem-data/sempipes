@@ -26,7 +26,7 @@ class SemChooseLLM(SemChooseOperator):
                         estimator.set_params(**{param_name: suggested_choices})
                         print(f"\tSuggested choices for {param_name}: {suggested_choices}")
                         break
-                    except Exception as e:
+                    except Exception as e: # pylint: disable=broad-except
                         print(f"An error occurred in attempt {attempt}:", e)
                         tb_str = traceback.format_exc()
                         print(tb_str)
