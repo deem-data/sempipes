@@ -6,3 +6,7 @@ https://www.vldb.org/cidrdb/papers/2025/p32-wang.pdf
 
  - Semantic Operators: A Declarative Model for Rich, AI-based Data Processing, VLDB'24
 https://arxiv.org/abs/2407.11418
+
+ - CatDB: Data-catalog-guided, LLM-based Generation of
+Data-centric ML Pipelines, VLDB'25 
+https://fathollahzadeh.github.io/papers/CatDB_VLDB2025.pdf

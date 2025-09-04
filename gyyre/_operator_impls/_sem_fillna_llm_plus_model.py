@@ -1,6 +1,6 @@
 from gyyre._operators import SemFillNAOperator
-from gyyre.code_gen._llm import _generate_python_code
-from gyyre.code_gen._exec import _safe_exec
+from gyyre._code_gen._llm import _generate_python_code
+from gyyre._code_gen._exec import _safe_exec
 
 import pandas as pd
 import numpy as np
@@ -43,7 +43,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
     def fit(self, df, y=None):
 
-        print(f"--- Sempipes.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
+        print(f"--- gyyre.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
 
         target_column_type = str(df[self.target_column].dtype)
         candidate_columns = [column for column in df.columns if column != self.target_column]
@@ -82,7 +82,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         # Train on rows where target is known
         known_mask = y.notna()
-        print(f"\tFitting imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")
+        print(f"\t> Fitting imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")
         model.fit(X[known_mask], y[known_mask])
         self.imputation_model_ = model
 
@@ -95,6 +95,6 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
         num_missing_values = missing_mask.sum()
 
         if num_missing_values > 0:
-            print(f"\tImputing {num_missing_values} values...")
+            print(f"\t> Imputing {num_missing_values} values...")
             df.loc[missing_mask, self.target_column] = self.imputation_model_.predict(df[missing_mask])
         return df

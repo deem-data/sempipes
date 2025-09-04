@@ -1,15 +1,29 @@
 import skrub
 import numpy as np
+from gyyre.optimisers._dag_summary import summarise_dag
 
 def optimise_semantic_operator(dag_sink, operator_name, num_iterations):
     memory = []
     states = []
+
+    print(f"--- COMPUTING DAG SUMMARY for context-aware optimisation ---")
+    dag_summary = summarise_dag(dag_sink)
+
+    for key, value in dag_summary.items():
+        if "_steps" in key and value is not None:
+            value = value.replace("\n", " > ")
+        if "_definition" in key and value is not None:
+            value = value.replace("\n", " ")
+
+        print(f"\t> {key}: {value}")
+    print("\n")
 
     for iteration in range(num_iterations):
         print(f"---ITERATION {iteration} -> Fitting with memory ---")
         learner = dag_sink.skb.make_learner(fitted=False)
 
         env = dag_sink.skb.get_data()
+        env[f'gyyre_dag_summary__{operator_name}'] = dag_summary
         env[f'gyyre_memory__{operator_name}'] = memory
 
         learner.fit(env)

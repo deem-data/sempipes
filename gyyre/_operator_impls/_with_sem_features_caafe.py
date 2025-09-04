@@ -1,18 +1,44 @@
-# TODO This class needs some serious cleanup
+# TODO This class needs some serious cleanup / refactoring
 import skrub
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
 from gyyre._operators import WithSemFeaturesOperator
-from gyyre.code_gen._llm import _generate_python_code_from_messages
-from gyyre.code_gen._exec import _safe_exec
+from gyyre._code_gen._llm import _generate_python_code_from_messages
+from gyyre._code_gen._exec import _safe_exec
 
-from gyyre.operator_impls._mixins import GyyrePrefittedMixin, GyyreMemoryMixin
+from gyyre._operator_impls._mixins import GyyreContextAwareMixin, GyyrePrefittedMixin, GyyreMemoryMixin
 
-# # Usefulness: (Description why this adds useful real world knowledge to classify \"{ds[4][-1]}\" according to dataset description and attributes.)
-# This code generates additional columns that are useful for a downstream classification algorithm (such as XGBoost) predicting \"{ds[4][-1]}\".
-def _get_prompt(df, nl_prompt, how_many, data_description_unparsed=None, samples=None):
+
+
+def _get_prompt(df, nl_prompt, how_many, samples=None, dag_summary=None):
+    data_description_unparsed = None
+
+    task_description = "This code generates additional columns that are useful for a downstream classification algorithm (such as XGBoost) predicting a target label."
+    usefulness = ""
+    model_reference = "classifier"
+
+    if dag_summary is not None:
+        task_type = dag_summary["task_type"]
+        model = dag_summary["model"]
+        target_name = dag_summary["target_name"]
+        data_description_unparsed = dag_summary["dataset_description"]
+
+        if task_type and model and target_name:
+            task_description = f"This code generates additional columns that are useful for a downstream {task_type} algorithm ({model}) predicting \"{target_name}\"."
+            #print(task_description)
+
+        if task_type and target_name:
+            action = "predict"
+            if task_type == "classification":
+                action = "classify"
+            usefulness= f"\n# Usefulness: (Description why this adds useful real world knowledge to {action} \"{target_name}\" according to dataset description and attributes.)"
+            #print(usefulness)
+
+        if task_type == "regression":
+            model_reference = "regressor"
+
     return f"""
 The dataframe `df` is loaded and in memory. Columns are also named attributes.
 Description of the dataset in `df` (column dtypes might be inaccurate):
@@ -24,10 +50,10 @@ Columns in `df` (true feature dtypes listed here, categoricals encoded as int):
 This code was written by an expert datascientist working to improve predictions. It is a snippet of code that adds new columns to the dataset.
 Number of samples (rows) in training dataset: {int(len(df))}
 
-This code generates additional columns that are useful for a downstream classification algorithm (such as XGBoost) predicting a target label.
+{task_description}
 Additional columns add new semantic information, that is they use real world knowledge on the dataset. They can e.g. be feature combinations, transformations, aggregations where the new column is a function of the existing columns.
 The scale of columns and offset does not matter. Make sure all used columns exist. Follow the above description of columns closely and consider the datatypes and meanings of classes.
-The classifier will be trained on the dataset with the generated columns and evaluated on a holdout set. The evaluation metric is accuracy. The best performing code will be selected.
+The {model_reference} will be trained on the dataset with the generated columns and evaluated on a holdout set. The evaluation metric is accuracy. The best performing code will be selected.
 Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care to the following: {nl_prompt}.
@@ -35,7 +61,7 @@ The data scientist wants you to take special care to the following: {nl_prompt}.
 
 Code formatting for each added column:
 ```python
-# (Feature name and description)
+# (Feature name and description){usefulness}
 # Input samples: (Three samples of the columns used in the following code, e.g. '{df.columns[0]}': {list(df.iloc[:3, 0].values)}, '{df.columns[1]}': {list(df.iloc[:3, 1].values)}, ...)
 (Some pandas code using {df.columns[0]}', '{df.columns[1]}', ... to add a new column for each row in df)
 ```end
@@ -47,7 +73,7 @@ Codeblock:
 
 
 
-def _build_prompt_from_df(df, nl_prompt, how_many):
+def _build_prompt_from_df(df, nl_prompt, how_many, dag_summary=None):
     samples = ""
     df_ = df.head(10)
     for column in list(df_):
@@ -63,8 +89,8 @@ def _build_prompt_from_df(df, nl_prompt, how_many):
         df,
         nl_prompt,
         how_many,
-        data_description_unparsed=None,
         samples=samples,
+        dag_summary=dag_summary,
     )
 
 # TODO this should be moved to the exec code
@@ -74,11 +100,13 @@ def strip_code_fences(s: str) -> str:
     keep = [ln for ln in lines if not ln.lstrip().startswith("```")]
     return "".join(keep)
 
-class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyrePrefittedMixin, GyyreMemoryMixin):
+class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyreContextAwareMixin,
+                          GyyrePrefittedMixin, GyyreMemoryMixin):
 
-    def __init__(self, nl_prompt, how_many, gyyre_prefitted_state=None, gyyre_memory=None):
+    def __init__(self, nl_prompt, how_many, gyyre_dag_summary=None, gyyre_prefitted_state=None, gyyre_memory=None):
         self.nl_prompt = nl_prompt
         self.how_many = how_many
+        self.gyyre_dag_summary = gyyre_dag_summary
         self.gyyre_prefitted_state = gyyre_prefitted_state
         self.gyyre_memory = gyyre_memory
 
@@ -98,13 +126,20 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyrePrefittedMixin, 
 
     def fit(self, df, y=None, **fit_params):
 
+        dag_summary_info = ""
+        if self.gyyre_dag_summary is not None:
+            task_type = self.gyyre_dag_summary["task_type"]
+            model = self.gyyre_dag_summary["model"]
+            target_name = self.gyyre_dag_summary["target_name"]
+            dag_summary_info = f" for a {task_type} task, predicting {target_name} with {model}"
+
         prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self.gyyre_prefitted_state is not None:
             print(f"--- Skipping fit, using provided state for gyyre.with_sem_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self.gyyre_prefitted_state["generated_code"]
         else:
-            print(f"--- Fitting gyyre.with_sem_features('{prompt_preview}...', {self.how_many})")
+            print(f"--- Fitting gyyre.with_sem_features('{prompt_preview}...', {self.how_many}){dag_summary_info}")
             max_retries = 5
             messages = []
             for attempt in range(1, max_retries + 1):
@@ -112,7 +147,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyrePrefittedMixin, 
                 code = ""
 
                 try:
-                    prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many)
+                    prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self.gyyre_dag_summary)
 
                     if attempt == 1:
                         messages += [{
@@ -193,10 +228,10 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyrePrefittedMixin, 
 
 class WithSemFeaturesCaafe(WithSemFeaturesOperator):
     def generate_features_estimator(self, data_op, nl_prompt, name, how_many):
-        # TODO explore computational graph or cached preview results to improve feature generation
 
+        gyyre_dag_summary = skrub.var(f"gyyre_dag_summary__{name}", None)
         gyyre_prefitted_state = skrub.var(f"gyyre_prefitted_state__{name}", None)
         gyyre_memory = skrub.var(f"gyyre_memory__{name}", [])
 
-        return LLMFeatureGenerator(nl_prompt, how_many,
+        return LLMFeatureGenerator(nl_prompt, how_many, gyyre_dag_summary=gyyre_dag_summary,
             gyyre_prefitted_state=gyyre_prefitted_state, gyyre_memory=gyyre_memory)

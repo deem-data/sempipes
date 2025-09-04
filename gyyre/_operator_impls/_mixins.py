@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
+
+class GyyreContextAwareMixin(ABC):
+    gyyre_dag_summary: dict = {}
 
 
 class GyyrePrefittedMixin(ABC):

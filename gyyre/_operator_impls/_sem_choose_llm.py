@@ -1,8 +1,8 @@
 import traceback
 
 from gyyre._operators import SemChooseOperator
-from gyyre.code_gen._llm import _generate_python_code
-from gyyre.code_gen._exec import _safe_exec
+from gyyre._code_gen._llm import _generate_python_code
+from gyyre._code_gen._exec import _safe_exec
 
 
 class SemChooseLLM(SemChooseOperator):
@@ -21,7 +21,7 @@ class SemChooseLLM(SemChooseOperator):
                         prompt = self._build_prompt(estimator, user_prompt, param_name,
                                                previous_exceptions=previous_exceptions)
                         python_code = _generate_python_code(prompt)
-                        # print(python_code)
+
                         suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
                         estimator.set_params(**{param_name: suggested_choices})
                         print(f"\tSuggested choices for {param_name}: {suggested_choices}")
@@ -80,7 +80,7 @@ class SemChooseLLM(SemChooseOperator):
     
         ```{user_prompt}```
     
-        Please respond with Python code that specifies parameter values that match their request. Make sure that the Python code is executable and uses the correct types.
+        Please respond with Python code that specifies parameter values that match their request. Make sure that the Python code is executable and uses the correct types. IMPORTANT: The first suggested choice should be the most likely to work well, and is very critical to get right since it will often be used as a default value! 
     
         ONLY INCLUDE VALID PYTHON CODE IN YOUR RESPONSE, NO MARKDOWN OR TEXT. THE PYTHON CODE SHOULD MATCH THIS TEMPLATE:
     

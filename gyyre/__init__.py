@@ -2,9 +2,9 @@ from skrub import selectors
 from skrub._data_ops._data_ops import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 
-from gyyre.operator_impls._sem_choose_llm import SemChooseLLM
-from gyyre.operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
-from gyyre.operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
+from gyyre._operator_impls._sem_choose_llm import SemChooseLLM
+from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
+from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 
 from gyyre.optimisers._memory_loop import optimise_semantic_operator
 
