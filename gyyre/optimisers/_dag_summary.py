@@ -41,7 +41,9 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
         estimator = model_node._skrub_impl.estimator
         summary.model_steps = model_node.skb.describe_steps()
         summary.model_definition = model_node._skrub_impl.creation_stack_description()
-        summary.model = f"{estimator.__class__.__module__}.{estimator.__class__.__qualname__}"
+        summary.model = (
+            f"{estimator.__class__.__module__}.{estimator.__class__.__qualname__}"
+        )
         if isinstance(estimator, ClassifierMixin):
             summary.task_type = "classification"
         if isinstance(estimator, RegressorMixin):
@@ -50,15 +52,17 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
     y_op = find_y(dag_sink_node)
     if y_op is not None:
         summary.target_steps = y_op.skb.describe_steps()
-        if hasattr(y_op, '_skrub_impl'):
+        if hasattr(y_op, "_skrub_impl"):
             summary.target_definition = y_op._skrub_impl.creation_stack_description()
             if y_op.skb.name is not None:
                 summary.target_name = y_op.skb.name
             elif isinstance(y_op._skrub_impl, GetItem):
                 summary.target_name = y_op._skrub_impl.key
             try:
-                summary.target_unique_values_from_preview = [val.item() for val in np.unique(y_op.skb.preview())]
-            except: # pylint: disable=bare-except
+                summary.target_unique_values_from_preview = [
+                    val.item() for val in np.unique(y_op.skb.preview())
+                ]
+            except:  # pylint: disable=bare-except
                 pass
 
     X_op = find_X(dag_sink_node)

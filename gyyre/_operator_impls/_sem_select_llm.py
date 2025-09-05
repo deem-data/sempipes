@@ -3,7 +3,7 @@ from typing import Any
 from skrub import _dataframe as sbd
 from skrub.selectors._base import Filter
 
-from gyyre._code_gen._llm import _generate_python_code
+from gyyre._code_gen._llm import _generate_result_from_prompt
 from gyyre._code_gen._exec import _safe_exec
 from gyyre._operators import SemSelectOperator
 
@@ -65,16 +65,19 @@ def _sem_select(column: Any, nl_prompt: str) -> bool:
         ```            
         """
 
-        python_code = _generate_python_code(prompt)
+        python_code = _generate_result_from_prompt(prompt, generate_code=True)
         decision = _safe_exec(python_code, "__column_is_relevant")
 
         return decision
 
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         print(f"An error occurred for column {column_name}:", e)
         return False
 
 
 class SemSelectLLM(SemSelectOperator):
-    def generate_column_selector(self, nl_prompt: str,) -> Filter:
+    def generate_column_selector(
+        self,
+        nl_prompt: str,
+    ) -> Filter:
         return Filter(_sem_select, args=(nl_prompt,), name="sem_select")
