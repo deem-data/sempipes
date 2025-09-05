@@ -1,15 +1,14 @@
 import builtins
-import warnings
+from typing import Any
+from collections.abc import Iterable
 import skrub
 import sklearn
 import numpy
 import pandas as pd
 
-warnings.simplefilter(action="ignore", category=pd.errors.SettingWithCopyWarning)
-
 _ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
 
-def _make_safe_import(allowed_modules):
+def _make_safe_import(allowed_modules: Iterable[str]):
     real_import = builtins.__import__
 
     def safe_import(name, globals_to_import=None, locals_to_import=None, fromlist=(), level=0):
@@ -20,7 +19,12 @@ def _make_safe_import(allowed_modules):
 
     return safe_import
 
-def _safe_exec(python_code, variable_to_return, safe_locals_to_add=None):
+
+def _safe_exec(
+    python_code: str,
+    variable_to_return: str,
+    safe_locals_to_add: dict[str, Any] | None = None,
+) -> Any:
 
     if safe_locals_to_add is None:
         safe_locals_to_add = {}

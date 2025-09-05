@@ -1,5 +1,9 @@
+from typing import Self
+from collections.abc import Iterable
 import pandas as pd
 import numpy as np
+
+from skrub import DataOp
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from sklearn.compose import ColumnTransformer
@@ -12,25 +16,35 @@ from gyyre._operators import SemFillNAOperator
 from gyyre._code_gen._llm import _generate_python_code
 from gyyre._code_gen._exec import _safe_exec
 
+
 class SemFillNALLLMPlusModel(SemFillNAOperator):
-    def generate_imputation_estimator(self, data_op, target_column, nl_prompt):
+    def generate_imputation_estimator(self, data_op: DataOp, target_column: str, nl_prompt: str):
         # TODO explore computational graph or cached preview results to improve imputer generation
         return LearnedImputer(target_column, nl_prompt)
 
 
 class LearnedImputer(BaseEstimator, TransformerMixin):
 
-    def __init__(self, target_column, nl_prompt):
+    def __init__(self, target_column: str, nl_prompt: str):
         self.target_column = target_column
         self.nl_prompt = nl_prompt
         self.imputation_model_ = None
 
     @staticmethod
-    def _build_prompt(target_column, target_column_type, candidate_columns, nl_prompt):
+    def _build_prompt(
+            target_column: str,
+            target_column_type: str,
+            candidate_columns: Iterable[str],
+            nl_prompt: str
+    ) -> str:
         return f"""
-        The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' in a dataframe. The dataframe has the following columns available to help with this task: {candidate_columns}. You need to assist the data scientists with choosing which columns to use to fill the missing values in the target column.
-
-        The data scientist wants you to take special care to the following: {nl_prompt}.
+        The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' 
+        in a dataframe. The dataframe has the following columns available to help with this task: 
+        {candidate_columns}. 
+        
+        You need to assist the data scientists with choosing which columns to use to fill the missing values in 
+        the target column. The data scientist wants you to take special care to the following: 
+        {nl_prompt}.
 
         Code formatting for your answer:
         ```python
@@ -41,7 +55,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
     Codeblock:    
     """
 
-    def fit(self, df, y=None):
+    def fit(self, df: pd.DataFrame, y=None) -> Self:
 
         print(f"--- gyyre.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
 
@@ -88,7 +102,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, df):
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         check_is_fitted(self, "imputation_model_")
         y = df[self.target_column]
         missing_mask = y.isna()

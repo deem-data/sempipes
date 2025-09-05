@@ -35,7 +35,11 @@ def _generate_python_code_from_messages(messages: list[dict]) -> str:
 
     print(f"\t> Querying '{_DEFAULT_MODEL}' with {len(messages)} messages...'")
 
-    response = completion( model=_DEFAULT_MODEL, messages=messages,)
+    response = completion(
+        model=_DEFAULT_MODEL,
+        messages=messages,
+        temperature=0.0,
+    )
 
     # TODO add proper error handling
     raw_code = response.choices[0].message['content']
