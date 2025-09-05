@@ -12,11 +12,11 @@ from gyyre._code_gen._exec import _safe_exec
 class SemChooseLLM(SemChooseOperator):
 
     def set_params_on_estimator(
-            self,
-            data_op: DataOp,
-            estimator: BaseEstimator,
-            choices: dict[str, str] | None,
-            y=None
+        self,
+        data_op: DataOp,
+        estimator: BaseEstimator,
+        choices: dict[str, str] | None,
+        y=None
     ) -> None:
         print(f"--- gyyre.apply_with_sem_choose({estimator}, {choices})")
 
@@ -29,7 +29,7 @@ class SemChooseLLM(SemChooseOperator):
                 for attempt in range(1, max_retries + 1):
                     try:
                         prompt = self._build_prompt(estimator, user_prompt, param_name,
-                                               previous_exceptions=previous_exceptions)
+                            previous_exceptions=previous_exceptions)
                         python_code = _generate_python_code(prompt)
 
                         suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
@@ -39,16 +39,15 @@ class SemChooseLLM(SemChooseOperator):
                     except Exception as e: # pylint: disable=broad-except
                         print(f"An error occurred in attempt {attempt}:", e)
                         tb_str = traceback.format_exc()
-                        print(tb_str)
                         previous_exceptions.append(tb_str)
 
 
     @staticmethod
     def _build_prompt(
-            estimator: BaseEstimator,
-            user_prompt: str,
-            param_name: str,
-            previous_exceptions: Iterable[Exception] | None = None
+        estimator: BaseEstimator,
+        user_prompt: str,
+        param_name: str,
+        previous_exceptions: Iterable[Exception] | None = None
     ) -> str:
         previous_exceptions_memory = ''
         if previous_exceptions is None:

@@ -4,6 +4,7 @@ from typing import Any
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
+from skrub.selectors._base import Filter
 
 from gyyre.optimisers._dag_summary import DagSummary
 
@@ -63,6 +64,14 @@ class SemChooseOperator(ABC):
     ) -> None:
         """Set parameters on the given estimator based on choices provided."""
 
+class SemSelectOperator(ABC):
+    @abstractmethod
+    def generate_column_selector(
+        self,
+        nl_prompt: str,
+    ) -> Filter:
+        """Generate a column selector for dataframes."""
+
 class WithSemFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_estimator(
@@ -74,6 +83,9 @@ class WithSemFeaturesOperator(ABC):
     ) -> BaseEstimator & TransformerMixin & GyyreContextAwareMixin & GyyrePrefittableMixin & GyyreOptimisableMixin:
         """Return an estimator that computes features on a pandas df."""
 
+
+
+
 class SemFillNAOperator(ABC):
     @abstractmethod
     def generate_imputation_estimator(
@@ -81,7 +93,7 @@ class SemFillNAOperator(ABC):
             data_op: DataOp,
             target_column: str,
             nl_prompt: str,
-    ) -> BaseEstimator & TransformerMixin & GyyreContextAwareMixin:
+    ) -> BaseEstimator & TransformerMixin:
         """Return an estimator that imputes missing values for the target column on a pandas df."""
 
 

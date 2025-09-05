@@ -4,10 +4,11 @@ from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 
 from gyyre._operator_impls._sem_choose_llm import SemChooseLLM
+from gyyre._operator_impls._sem_select_llm import SemSelectLLM
 from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
 from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 
-from gyyre.optimisers.greedy import optimise_semantic_operator
+from gyyre.optimisers.greedy import greedy_optimise_semantic_operator
 
 def sem_choose(**kwargs) -> dict:
     return kwargs
@@ -51,9 +52,15 @@ def sem_fillna(
     imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(data_op, target_column, nl_prompt)
     return self.skb.apply(imputation_estimator)
 
+def sem_select(nl_prompt: str):
+    return SemSelectLLM().generate_column_selector(nl_prompt)
 
 DataOp.with_sem_features = with_sem_features
 DataOp.sem_fillna = sem_fillna
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
-__all__ = ['sem_choose', 'optimise_semantic_operator']
+__all__ = [
+    'sem_choose',
+    'sem_select',
+    'greedy_optimise_semantic_operator'
+]

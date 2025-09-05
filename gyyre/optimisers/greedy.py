@@ -6,7 +6,7 @@ import numpy as np
 from skrub import DataOp
 from gyyre.optimisers._dag_summary import _summarise_dag
 
-def optimise_semantic_operator(
+def greedy_optimise_semantic_operator(
         dag_sink: DataOp,
         operator_name: str,
         num_iterations: int,

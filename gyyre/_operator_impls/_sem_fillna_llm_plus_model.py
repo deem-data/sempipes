@@ -32,10 +32,10 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
     @staticmethod
     def _build_prompt(
-            target_column: str,
-            target_column_type: str,
-            candidate_columns: Iterable[str],
-            nl_prompt: str
+        target_column: str,
+        target_column_type: str,
+        candidate_columns: Iterable[str],
+        nl_prompt: str
     ) -> str:
         return f"""
         The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' 
@@ -94,6 +94,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         model = Pipeline([("prep", preprocess), ("est", learner)])
 
+        # TODO we could keep a small holdout set to measure the imputer performance
         # Train on rows where target is known
         known_mask = y.notna()
         print(f"\t> Fitting imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")

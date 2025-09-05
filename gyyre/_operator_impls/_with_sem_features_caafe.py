@@ -1,5 +1,5 @@
 # TODO This class needs some serious cleanup / refactoring
-from typing import Any, Self
+from typing import Any
 
 import pandas as pd
 import skrub
@@ -173,9 +173,9 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, GyyreContextAwareMixi
         self,
         nl_prompt: str,
         how_many: int,
-        gyyre_dag_summary: DagSummary | None = None,
-        gyyre_prefitted_state: dict[str, Any] | None = None,
-        gyyre_memory: list[dict[str, Any]] | None = None,
+        gyyre_dag_summary: DagSummary | None | DataOp = None,
+        gyyre_prefitted_state: dict[str, Any] | None | DataOp = None,
+        gyyre_memory: list[dict[str, Any]] | None | DataOp = None,
     ) -> None:
 
         self.nl_prompt = nl_prompt
@@ -255,5 +255,10 @@ class WithSemFeaturesCaafe(WithSemFeaturesOperator):
         gyyre_prefitted_state = skrub.var(f"gyyre_prefitted_state__{name}", None)
         gyyre_memory = skrub.var(f"gyyre_memory__{name}", [])
 
-        return LLMFeatureGenerator(nl_prompt, how_many, gyyre_dag_summary=gyyre_dag_summary,
-            gyyre_prefitted_state=gyyre_prefitted_state, gyyre_memory=gyyre_memory)
+        return LLMFeatureGenerator(
+            nl_prompt,
+            how_many,
+            gyyre_dag_summary=gyyre_dag_summary,
+            gyyre_prefitted_state=gyyre_prefitted_state,
+            gyyre_memory=gyyre_memory
+        )
