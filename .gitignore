@@ -29,3 +29,6 @@ target/
 *.iml
 .pytest_cache/
 */build/
+poetry.lock
+.history
+*/__pycache__

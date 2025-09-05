@@ -18,7 +18,9 @@ from gyyre._code_gen._exec import _safe_exec
 
 
 class SemFillNALLLMPlusModel(SemFillNAOperator):
-    def generate_imputation_estimator(self, data_op: DataOp, target_column: str, nl_prompt: str):
+    def generate_imputation_estimator(
+        self, data_op: DataOp, target_column: str, nl_prompt: str
+    ):
         # TODO explore computational graph or cached preview results to improve imputer generation
         return LearnedImputer(target_column, nl_prompt)
 
@@ -35,7 +37,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
         target_column: str,
         target_column_type: str,
         candidate_columns: Iterable[str],
-        nl_prompt: str
+        nl_prompt: str,
     ) -> str:
         return f"""
         The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' 
@@ -60,9 +62,13 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
         print(f"--- gyyre.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
 
         target_column_type = str(df[self.target_column].dtype)
-        candidate_columns = [column for column in df.columns if column != self.target_column]
+        candidate_columns = [
+            column for column in df.columns if column != self.target_column
+        ]
 
-        prompt = self._build_prompt(self.target_column, target_column_type, candidate_columns, self.nl_prompt)
+        prompt = self._build_prompt(
+            self.target_column, target_column_type, candidate_columns, self.nl_prompt
+        )
         python_code = _generate_python_code(prompt)
         feature_columns = _safe_exec(python_code, "__chosen_columns")
 
@@ -74,16 +80,28 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         preprocess = ColumnTransformer(
             transformers=[
-                ("num", Pipeline([
-                    ("impute", SimpleImputer(strategy="median")),
-                    ("scale", StandardScaler())
-                ]), num_cols),
-                ("cat", Pipeline([
-                    ("impute", SimpleImputer(strategy="most_frequent")),
-                    ("oh", OneHotEncoder(handle_unknown="ignore"))
-                ]), cat_cols),
+                (
+                    "num",
+                    Pipeline(
+                        [
+                            ("impute", SimpleImputer(strategy="median")),
+                            ("scale", StandardScaler()),
+                        ]
+                    ),
+                    num_cols,
+                ),
+                (
+                    "cat",
+                    Pipeline(
+                        [
+                            ("impute", SimpleImputer(strategy="most_frequent")),
+                            ("oh", OneHotEncoder(handle_unknown="ignore")),
+                        ]
+                    ),
+                    cat_cols,
+                ),
             ],
-            remainder="drop"
+            remainder="drop",
         )
 
         is_numeric_target = pd.api.types.is_numeric_dtype(y)
@@ -97,7 +115,9 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
         # TODO we could keep a small holdout set to measure the imputer performance
         # Train on rows where target is known
         known_mask = y.notna()
-        print(f"\t> Fitting imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows...")
+        print(
+            f"\t> Fitting imputation model {learner} on columns {feature_columns} of {known_mask.sum()} rows..."
+        )
         model.fit(X[known_mask], y[known_mask])
         self.imputation_model_ = model
 
@@ -111,5 +131,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         if num_missing_values > 0:
             print(f"\t> Imputing {num_missing_values} values...")
-            df.loc[missing_mask, self.target_column] = self.imputation_model_.predict(df[missing_mask])
+            df.loc[missing_mask, self.target_column] = self.imputation_model_.predict(
+                df[missing_mask]
+            )
         return df

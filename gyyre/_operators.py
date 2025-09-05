@@ -20,6 +20,7 @@ class GyyreContextAwareMixin(ABC):
     Attributes:
         gyyre_dag_summary (DagSummary | None): A summary of the computational graph context.
     """
+
     gyyre_dag_summary: DagSummary | None = None
 
 
@@ -34,6 +35,7 @@ class GyyrePrefittableMixin(ABC):
     Attributes:
         gyyre_prefitted_state (dict[str, Any] | None): The prefitted state of the operator.
     """
+
     gyyre_prefitted_state: dict[str, Any] = {}
 
     @abstractmethod
@@ -44,6 +46,7 @@ class GyyrePrefittableMixin(ABC):
         Returns:
             dict[str, Any]: The internal state of the operator.
         """
+
 
 class GyyreOptimisableMixin(ABC):
     gyyre_memory: list[dict[str, Any]] = {}
@@ -56,13 +59,14 @@ class GyyreOptimisableMixin(ABC):
 class SemChooseOperator(ABC):
     @abstractmethod
     def set_params_on_estimator(
-            self,
-            data_op: DataOp,
-            estimator: BaseEstimator,
-            choices,
-            y=None,
+        self,
+        data_op: DataOp,
+        estimator: BaseEstimator,
+        choices,
+        y=None,
     ) -> None:
         """Set parameters on the given estimator based on choices provided."""
+
 
 class SemSelectOperator(ABC):
     @abstractmethod
@@ -72,29 +76,31 @@ class SemSelectOperator(ABC):
     ) -> Filter:
         """Generate a column selector for dataframes."""
 
+
 class WithSemFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_estimator(
-            self,
-            data_op: DataOp,
-            nl_prompt: str,
-            name: str,
-            how_many: int,
-    ) -> BaseEstimator & TransformerMixin & GyyreContextAwareMixin & GyyrePrefittableMixin & GyyreOptimisableMixin:
+        self,
+        data_op: DataOp,
+        nl_prompt: str,
+        name: str,
+        how_many: int,
+    ) -> (
+        BaseEstimator
+        & TransformerMixin
+        & GyyreContextAwareMixin
+        & GyyrePrefittableMixin
+        & GyyreOptimisableMixin
+    ):
         """Return an estimator that computes features on a pandas df."""
-
-
 
 
 class SemFillNAOperator(ABC):
     @abstractmethod
     def generate_imputation_estimator(
-            self,
-            data_op: DataOp,
-            target_column: str,
-            nl_prompt: str,
+        self,
+        data_op: DataOp,
+        target_column: str,
+        nl_prompt: str,
     ) -> BaseEstimator & TransformerMixin:
         """Return an estimator that imputes missing values for the target column on a pandas df."""
-
-
-

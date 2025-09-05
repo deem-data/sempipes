@@ -8,10 +8,13 @@ import pandas as pd
 
 _ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
 
+
 def _make_safe_import(allowed_modules: Iterable[str]):
     real_import = builtins.__import__
 
-    def safe_import(name, globals_to_import=None, locals_to_import=None, fromlist=(), level=0):
+    def safe_import(
+        name, globals_to_import=None, locals_to_import=None, fromlist=(), level=0
+    ):
         top_name = name.split(".")[0]
         if top_name not in allowed_modules:
             raise ImportError(f"Import of '{name}' is not allowed")
@@ -31,22 +34,22 @@ def _safe_exec(
 
     safe_builtins = {
         "__import__": _make_safe_import(_ALLOWED_MODULES),
-         "int": int,
-         "float": float,
-         "str": str,
-         "bool": bool,
-         "list": list,
-         "dict": dict,
-         "set": set,
-         "tuple": tuple,
-         "len": len,
-         "range": range,
-         "isinstance": isinstance,
-         "sum": sum,
-         "any": any,
-         "all": all,
-         "map": map,
-         "hash": hash,
+        "int": int,
+        "float": float,
+        "str": str,
+        "bool": bool,
+        "list": list,
+        "dict": dict,
+        "set": set,
+        "tuple": tuple,
+        "len": len,
+        "range": range,
+        "isinstance": isinstance,
+        "sum": sum,
+        "any": any,
+        "all": all,
+        "map": map,
+        "hash": hash,
     }
 
     safe_globals = {

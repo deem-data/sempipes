@@ -70,11 +70,14 @@ def _sem_select(column: Any, nl_prompt: str) -> bool:
 
         return decision
 
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         print(f"An error occurred for column {column_name}:", e)
         return False
 
 
 class SemSelectLLM(SemSelectOperator):
-    def generate_column_selector(self, nl_prompt: str,) -> Filter:
+    def generate_column_selector(
+        self,
+        nl_prompt: str,
+    ) -> Filter:
         return Filter(_sem_select, args=(nl_prompt,), name="sem_select")

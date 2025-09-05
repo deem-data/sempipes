@@ -16,7 +16,7 @@ class SemChooseLLM(SemChooseOperator):
         data_op: DataOp,
         estimator: BaseEstimator,
         choices: dict[str, str] | None,
-        y=None
+        y=None,
     ) -> None:
         print(f"--- gyyre.apply_with_sem_choose({estimator}, {choices})")
 
@@ -28,28 +28,35 @@ class SemChooseLLM(SemChooseOperator):
                 previous_exceptions = []
                 for attempt in range(1, max_retries + 1):
                     try:
-                        prompt = self._build_prompt(estimator, user_prompt, param_name,
-                            previous_exceptions=previous_exceptions)
+                        prompt = self._build_prompt(
+                            estimator,
+                            user_prompt,
+                            param_name,
+                            previous_exceptions=previous_exceptions,
+                        )
                         python_code = _generate_python_code(prompt)
 
-                        suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
+                        suggested_choices = _safe_exec(
+                            python_code, "__generated_sempipes_choices"
+                        )
                         estimator.set_params(**{param_name: suggested_choices})
-                        print(f"\tSuggested choices for {param_name}: {suggested_choices}")
+                        print(
+                            f"\tSuggested choices for {param_name}: {suggested_choices}"
+                        )
                         break
-                    except Exception as e: # pylint: disable=broad-except
+                    except Exception as e:  # pylint: disable=broad-except
                         print(f"An error occurred in attempt {attempt}:", e)
                         tb_str = traceback.format_exc()
                         previous_exceptions.append(tb_str)
-
 
     @staticmethod
     def _build_prompt(
         estimator: BaseEstimator,
         user_prompt: str,
         param_name: str,
-        previous_exceptions: Iterable[Exception] | None = None
+        previous_exceptions: Iterable[Exception] | None = None,
     ) -> str:
-        previous_exceptions_memory = ''
+        previous_exceptions_memory = ""
         if previous_exceptions is None:
             previous_exceptions = []
 
@@ -59,10 +66,13 @@ class SemChooseLLM(SemChooseOperator):
             This request has been previously attempted, but the generated code did not work. 
             Here are the previous exceptions:\n
             """
-            previous_exceptions_memory += '\n'.join([f"### Previous exception: {str(e)}"
-                                                     for e in previous_exceptions])
+            previous_exceptions_memory += "\n".join(
+                [f"### Previous exception: {str(e)}" for e in previous_exceptions]
+            )
 
-        estimator_name = f"{estimator.__class__.__module__}.{estimator.__class__.__name__}"
+        estimator_name = (
+            f"{estimator.__class__.__module__}.{estimator.__class__.__name__}"
+        )
 
         return f"""
         You need to help a data scientist improve their machine learning script in Python, which is written 

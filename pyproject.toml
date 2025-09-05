@@ -1,0 +1,39 @@
+[project]
+name = "gyyre"
+version = "0.1.0"
+description = "gyyre: Semantic pipelines"
+authors = [
+    {name = "Sebastian Schelter", email="schelter@tu-berlin.de"},
+    {name = "Olga Ovcharenko", email="ovcharenko.folga@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "skrub (==0.6.1)",
+    "plotly (==6.3.0)",
+    "networkx (==3.5)",
+    "litellm (==1.76.1)",
+    "pylint (==3.3.8)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+ruff = "^0.12.12"
+mypy = "^1.17.1"
+pytest = "^8.4.2"
+nbqa = "^1.9.1"
+pre-commit = "^4.3.0"
+pylint = "^3.3.8"
+
+[tool.poetry]
+name = "gyre"
+packages = [{ include = "gyyre" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["gyyre"]
