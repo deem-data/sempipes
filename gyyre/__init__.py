@@ -52,15 +52,20 @@ def sem_fillna(
     imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(data_op, target_column, nl_prompt)
     return self.skb.apply(imputation_estimator)
 
-def sem_select(nl_prompt: str):
-    return SemSelectLLM().generate_column_selector(nl_prompt)
+def sem_select(
+    self: DataOp,
+    nl_prompt: str,
+) -> DataOp:
+    selector = SemSelectLLM().generate_column_selector(nl_prompt)
+    return self.skb.select(selector)
+
 
 DataOp.with_sem_features = with_sem_features
 DataOp.sem_fillna = sem_fillna
+DataOp.sem_select = sem_select
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
 __all__ = [
     'sem_choose',
-    'sem_select',
     'greedy_optimise_semantic_operator'
 ]
