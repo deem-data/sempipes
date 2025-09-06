@@ -1,20 +1,20 @@
-from typing import Self
 from collections.abc import Iterable
-import pandas as pd
-import numpy as np
+from typing import Self
 
-from skrub import DataOp
+import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.impute import SimpleImputer
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.utils.validation import check_is_fitted
+from skrub import DataOp
 
-from gyyre._operators import SemFillNAOperator
-from gyyre._code_gen._llm import _generate_python_code
 from gyyre._code_gen._exec import _safe_exec
+from gyyre._code_gen._llm import _generate_python_code
+from gyyre._operators import SemFillNAOperator
 
 
 class SemFillNALLLMPlusModel(SemFillNAOperator):
@@ -24,7 +24,6 @@ class SemFillNALLLMPlusModel(SemFillNAOperator):
 
 
 class LearnedImputer(BaseEstimator, TransformerMixin):
-
     def __init__(self, target_column: str, nl_prompt: str):
         self.target_column = target_column
         self.nl_prompt = nl_prompt
@@ -32,10 +31,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
     @staticmethod
     def _build_prompt(
-        target_column: str,
-        target_column_type: str,
-        candidate_columns: Iterable[str],
-        nl_prompt: str
+        target_column: str, target_column_type: str, candidate_columns: Iterable[str], nl_prompt: str
     ) -> str:
         return f"""
         The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' 
@@ -56,7 +52,6 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
     """
 
     def fit(self, df: pd.DataFrame, y=None) -> Self:
-
         print(f"--- gyyre.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
 
         target_column_type = str(df[self.target_column].dtype)
@@ -74,16 +69,23 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         preprocess = ColumnTransformer(
             transformers=[
-                ("num", Pipeline([
-                    ("impute", SimpleImputer(strategy="median")),
-                    ("scale", StandardScaler())
-                ]), num_cols),
-                ("cat", Pipeline([
-                    ("impute", SimpleImputer(strategy="most_frequent")),
-                    ("oh", OneHotEncoder(handle_unknown="ignore"))
-                ]), cat_cols),
+                (
+                    "num",
+                    Pipeline([("impute", SimpleImputer(strategy="median")), ("scale", StandardScaler())]),
+                    num_cols,
+                ),
+                (
+                    "cat",
+                    Pipeline(
+                        [
+                            ("impute", SimpleImputer(strategy="most_frequent")),
+                            ("oh", OneHotEncoder(handle_unknown="ignore")),
+                        ]
+                    ),
+                    cat_cols,
+                ),
             ],
-            remainder="drop"
+            remainder="drop",
         )
 
         is_numeric_target = pd.api.types.is_numeric_dtype(y)

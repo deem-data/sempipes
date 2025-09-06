@@ -2,11 +2,10 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-
 from sklearn.base import ClassifierMixin, RegressorMixin
 from skrub import DataOp
 from skrub._data_ops._data_ops import Apply, GetItem
-from skrub._data_ops._evaluation import find_node, find_y, find_X
+from skrub._data_ops._evaluation import find_node, find_X, find_y
 
 
 @dataclass
@@ -25,13 +24,12 @@ class DagSummary:
 
 # TODO We can do much more here!
 def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
-
     summary = DagSummary()
 
     def is_model(some_op):
         if hasattr(some_op, "_skrub_impl"):
             impl = some_op._skrub_impl
-            if isinstance(impl, Apply) and hasattr(impl, 'estimator'):
+            if isinstance(impl, Apply) and hasattr(impl, "estimator"):
                 est = impl.estimator
                 return isinstance(est, (ClassifierMixin, RegressorMixin))
         return False
@@ -50,7 +48,7 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
     y_op = find_y(dag_sink_node)
     if y_op is not None:
         summary.target_steps = y_op.skb.describe_steps()
-        if hasattr(y_op, '_skrub_impl'):
+        if hasattr(y_op, "_skrub_impl"):
             summary.target_definition = y_op._skrub_impl.creation_stack_description()
             if y_op.skb.name is not None:
                 summary.target_name = y_op.skb.name
@@ -58,7 +56,7 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
                 summary.target_name = y_op._skrub_impl.key
             try:
                 summary.target_unique_values_from_preview = [val.item() for val in np.unique(y_op.skb.preview())]
-            except: # pylint: disable=bare-except
+            except:  # pylint: disable=bare-except
                 pass
 
     X_op = find_X(dag_sink_node)

@@ -1,12 +1,15 @@
 import builtins
-from typing import Any
 from collections.abc import Iterable
-import skrub
-import sklearn
+from typing import Any
+
 import numpy
 import pandas as pd
+import re
+import sklearn
+import skrub
 
 _ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
+
 
 def _make_safe_import(allowed_modules: Iterable[str]):
     real_import = builtins.__import__
@@ -25,28 +28,27 @@ def _safe_exec(
     variable_to_return: str,
     safe_locals_to_add: dict[str, Any] | None = None,
 ) -> Any:
-
     if safe_locals_to_add is None:
         safe_locals_to_add = {}
 
     safe_builtins = {
         "__import__": _make_safe_import(_ALLOWED_MODULES),
-         "int": int,
-         "float": float,
-         "str": str,
-         "bool": bool,
-         "list": list,
-         "dict": dict,
-         "set": set,
-         "tuple": tuple,
-         "len": len,
-         "range": range,
-         "isinstance": isinstance,
-         "sum": sum,
-         "any": any,
-         "all": all,
-         "map": map,
-         "hash": hash,
+        "int": int,
+        "float": float,
+        "str": str,
+        "bool": bool,
+        "list": list,
+        "dict": dict,
+        "set": set,
+        "tuple": tuple,
+        "len": len,
+        "range": range,
+        "isinstance": isinstance,
+        "sum": sum,
+        "any": any,
+        "all": all,
+        "map": map,
+        "hash": hash,
     }
 
     safe_globals = {
@@ -57,6 +59,7 @@ def _safe_exec(
         "np": numpy,
         "pandas": pd,
         "pd": pd,
+        "re": re,
     }
 
     safe_locals = safe_locals_to_add

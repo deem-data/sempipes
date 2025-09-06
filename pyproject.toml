@@ -1,0 +1,29 @@
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py39"
+
+[tool.ruff.lint]
+# Select a minimal set of rules
+select = [
+    "F",
+    "E",
+    "I",
+]
+
+ignore = [
+    "E501",  # Line too long
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+docstring-code-format = false
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"**/{docs}/*" = ["ALL"]
+"**__init__.py" = ["ALL"]

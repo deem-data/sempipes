@@ -1,22 +1,17 @@
 import traceback
 from collections.abc import Iterable
 
-from skrub import DataOp
 from sklearn.base import BaseEstimator
+from skrub import DataOp
 
-from gyyre._operators import SemChooseOperator
-from gyyre._code_gen._llm import _generate_python_code
 from gyyre._code_gen._exec import _safe_exec
+from gyyre._code_gen._llm import _generate_python_code
+from gyyre._operators import SemChooseOperator
 
 
 class SemChooseLLM(SemChooseOperator):
-
     def set_params_on_estimator(
-        self,
-        data_op: DataOp,
-        estimator: BaseEstimator,
-        choices: dict[str, str] | None,
-        y=None
+        self, data_op: DataOp, estimator: BaseEstimator, choices: dict[str, str] | None, y=None
     ) -> None:
         print(f"--- gyyre.apply_with_sem_choose({estimator}, {choices})")
 
@@ -24,32 +19,31 @@ class SemChooseLLM(SemChooseOperator):
 
         if choices is not None:
             for param_name, user_prompt in choices.items():
-
                 previous_exceptions = []
                 for attempt in range(1, max_retries + 1):
                     try:
-                        prompt = self._build_prompt(estimator, user_prompt, param_name,
-                            previous_exceptions=previous_exceptions)
+                        prompt = self._build_prompt(
+                            estimator, user_prompt, param_name, previous_exceptions=previous_exceptions
+                        )
                         python_code = _generate_python_code(prompt)
 
                         suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
                         estimator.set_params(**{param_name: suggested_choices})
                         print(f"\tSuggested choices for {param_name}: {suggested_choices}")
                         break
-                    except Exception as e: # pylint: disable=broad-except
+                    except Exception as e:  # pylint: disable=broad-except
                         print(f"An error occurred in attempt {attempt}:", e)
                         tb_str = traceback.format_exc()
                         previous_exceptions.append(tb_str)
-
 
     @staticmethod
     def _build_prompt(
         estimator: BaseEstimator,
         user_prompt: str,
         param_name: str,
-        previous_exceptions: Iterable[Exception] | None = None
+        previous_exceptions: Iterable[Exception] | None = None,
     ) -> str:
-        previous_exceptions_memory = ''
+        previous_exceptions_memory = ""
         if previous_exceptions is None:
             previous_exceptions = []
 
@@ -59,8 +53,7 @@ class SemChooseLLM(SemChooseOperator):
             This request has been previously attempted, but the generated code did not work. 
             Here are the previous exceptions:\n
             """
-            previous_exceptions_memory += '\n'.join([f"### Previous exception: {str(e)}"
-                                                     for e in previous_exceptions])
+            previous_exceptions_memory += "\n".join([f"### Previous exception: {str(e)}" for e in previous_exceptions])
 
         estimator_name = f"{estimator.__class__.__module__}.{estimator.__class__.__name__}"
 
