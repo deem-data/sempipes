@@ -7,7 +7,7 @@ from gyyre._operator_impls._sem_choose_llm import SemChooseLLM
 from gyyre._operator_impls._sem_select_llm import SemSelectLLM
 from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
 from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
-
+from gyyre._operator_impls._sem_fillna_llm import SemFillNAWithLLLM
 from gyyre.optimisers.greedy import greedy_optimise_semantic_operator
 
 
@@ -56,9 +56,19 @@ def sem_fillna(
     self: DataOp,
     target_column: str,
     nl_prompt: str,
+    impute_with_existing_values_only: bool,
+    **kwargs,
 ) -> DataOp:
     data_op = self
-    imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(data_op, target_column, nl_prompt)
+
+    if "with_llm_only" in kwargs and kwargs["with_llm_only"]:
+        imputation_estimator = SemFillNAWithLLLM().generate_imputation_estimator(
+            data_op, target_column, nl_prompt, impute_with_existing_values_only
+        )
+    else:
+        # TODO Handle this case better for users
+        assert impute_with_existing_values_only
+        imputation_estimator = SemFillNALLLMPlusModel().generate_imputation_estimator(data_op, target_column, nl_prompt)
     return self.skb.apply(imputation_estimator)
 
 
