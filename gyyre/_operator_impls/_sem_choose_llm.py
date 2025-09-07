@@ -1,5 +1,4 @@
 import traceback
-from collections.abc import Iterable
 
 from sklearn.base import BaseEstimator
 from skrub import DataOp
@@ -19,7 +18,7 @@ class SemChooseLLM(SemChooseOperator):
 
         if choices is not None:
             for param_name, user_prompt in choices.items():
-                previous_exceptions = []
+                previous_exceptions: list[str] = []
                 for attempt in range(1, max_retries + 1):
                     try:
                         prompt = self._build_prompt(
@@ -41,7 +40,7 @@ class SemChooseLLM(SemChooseOperator):
         estimator: BaseEstimator,
         user_prompt: str,
         param_name: str,
-        previous_exceptions: Iterable[Exception] | None = None,
+        previous_exceptions: list[str] | None = None,
     ) -> str:
         previous_exceptions_memory = ""
         if previous_exceptions is None:

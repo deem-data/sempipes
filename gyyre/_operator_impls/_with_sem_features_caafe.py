@@ -190,16 +190,16 @@ class LLMFeatureGenerator(
         nl_prompt: str,
         how_many: int,
         gyyre_dag_summary: DagSummary | None | DataOp = None,
-        gyyre_prefitted_state: dict[str, Any] | None | DataOp = None,
-        gyyre_memory: list[dict[str, Any]] | None | DataOp = None,
+        gyyre_prefitted_state: dict[str, Any] | DataOp | None = None,
+        gyyre_memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.how_many = how_many
         self.gyyre_dag_summary = gyyre_dag_summary
-        self.gyyre_prefitted_state = gyyre_prefitted_state
-        self.gyyre_memory = gyyre_memory
+        self.gyyre_prefitted_state: dict[str, Any] | DataOp | None = gyyre_prefitted_state
+        self.gyyre_memory: list[dict[str, Any]] | DataOp | None = gyyre_memory
 
-        self.generated_code_ = []
+        self.generated_code_: list[str] = []
 
     def state_after_fit(self):
         return {"generated_code": self.generated_code_}

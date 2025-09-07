@@ -16,3 +16,14 @@ repos:
           - networkx==3.5
           - litellm==1.76.1
           - jupyter==1.1.1
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        args: ["--config-file", "mypy.ini"]
+        additional_dependencies:
+          - skrub==0.6.1
+          - plotly==6.3.0
+          - networkx==3.5
+          - litellm==1.76.1
+          - jupyter==1.1.1
