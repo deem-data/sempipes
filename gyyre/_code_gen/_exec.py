@@ -1,7 +1,7 @@
 import builtins
+import re
 from collections.abc import Iterable
 from typing import Any
-import re
 
 import numpy
 import pandas as pd

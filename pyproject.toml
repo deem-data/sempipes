@@ -1,7 +1,7 @@
 [tool.ruff]
 line-length = 120
 indent-width = 4
-target-version = "py39"
+target-version = "py312"
 
 [tool.ruff.lint]
 # Select a minimal set of rules
@@ -13,6 +13,7 @@ select = [
 
 ignore = [
     "E501",  # Line too long
+    "F401"   # Unused import, cannot configure this for `import gyyre` only
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
