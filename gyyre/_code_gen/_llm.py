@@ -1,4 +1,4 @@
-from litellm import completion, batch_completion
+from litellm import batch_completion, completion
 
 _DEFAULT_MODEL = "openai/gpt-4.1"
 

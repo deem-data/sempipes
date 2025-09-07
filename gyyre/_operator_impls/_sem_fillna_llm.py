@@ -1,7 +1,8 @@
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_is_fitted
 
-from gyyre._operators import SemFillNAOperator
 from gyyre._code_gen._llm import _batch_generate_results
+from gyyre._operators import SemFillNAOperator
 
 
 class SemFillNAWithLLLM(SemFillNAOperator):
@@ -20,11 +21,17 @@ class SemFillNAWithLLLM(SemFillNAOperator):
 
 
 class LLMImputer(BaseEstimator, TransformerMixin):
-    def __init__(self, target_column, nl_prompt, impute_with_existing_values_only):
+    def __init__(
+        self,
+        target_column: str,
+        nl_prompt: str,
+        impute_with_existing_values_only: bool,
+    ) -> None:
         self.target_column = target_column
         self.nl_prompt = nl_prompt
         self.impute_with_existing_values_only = impute_with_existing_values_only
-        self.imputation_model_ = None
+        self.target_column_type_ = None
+        self.target_column_unique_values_ = None
 
     @staticmethod
     def _build_prompt(
@@ -37,7 +44,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
     ):
         # TODO handle this intelligently
         assert len(target_column_unique_values) < 100, "Too many unique values to include in the prompt."
-        target_column_unique_values = ",".join([str(value) for value in target_column_unique_values])
+        target_column_unique_values = ", ".join([str(value) for value in target_column_unique_values])
 
         if impute_existing_values_only:
             values_instruction = f""" The target column has the following unique values: {target_column_unique_values}. Use only existing values to fill in the missing values. """
@@ -57,12 +64,17 @@ class LLMImputer(BaseEstimator, TransformerMixin):
         """
 
     def fit(self, df, y=None):  # pylint: disable=unused-argument
-        # TODO maybe add examples of good imputations
         print(f"--- Sempipes.sem_fillna_llm('{self.target_column}', '{self.nl_prompt}')")
+
+        self.target_column_type_ = df[self.target_column].dtype
+        self.target_column_unique_values_ = list(df[self.target_column].dropna().unique())
+        # TODO maybe add examples of good imputations
 
         return self
 
     def transform(self, df):
+        check_is_fitted(self, ["target_column_type_", "target_column_unique_values_"])
+
         indices_to_impute = df[self.target_column].isna()
         rows_to_impute = df[indices_to_impute]
 
@@ -70,9 +82,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
             print("\t> No missing values to impute.")
             return df
 
-        target_column_type = df[self.target_column].dtype
-
-        target_column_unique_values = list(df[self.target_column].dropna().unique())
+        # TODO Should we check if there are more previously unseen unique values in the target column?
 
         # Build prompts for each row to impute
         prompts = []
@@ -80,13 +90,12 @@ class LLMImputer(BaseEstimator, TransformerMixin):
             candidate_columns = {column: row[column] for column in df.columns if column != self.target_column}
             prompt = self._build_prompt(
                 self.target_column,
-                target_column_type,
+                self.target_column_type_,
                 candidate_columns,
                 self.nl_prompt,
-                target_column_unique_values,
+                self.target_column_unique_values_,
                 self.impute_with_existing_values_only,
             )
-
             prompts.append(prompt)
 
         # TODO find a way to set the batch size

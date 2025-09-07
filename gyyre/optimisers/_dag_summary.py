@@ -56,7 +56,7 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
                 summary.target_name = y_op._skrub_impl.key
             try:
                 summary.target_unique_values_from_preview = [val.item() for val in np.unique(y_op.skb.preview())]
-            except:  # pylint: disable=bare-except
+            except Exception as __e:  # pylint: disable=broad-exception-caught
                 pass
 
     X_op = find_X(dag_sink_node)

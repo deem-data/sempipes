@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.2
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v3.3.8
+    hooks:
+      - id: pylint
+        args: [gyyre]
+        additional_dependencies:
+          - skrub==0.6.1
+          - plotly==6.3.0
+          - networkx==3.5
+          - litellm==1.76.1
+          - jupyter==1.1.1
