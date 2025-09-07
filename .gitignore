@@ -1,3 +1,4 @@
+dist/
 Cargo.lock
 *.npz
 results_*.txt
