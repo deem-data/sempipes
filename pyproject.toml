@@ -1,3 +1,32 @@
+[tool.poetry]
+name = "gyyre"
+version = "0.0.1"
+description = ""
+authors = [
+    "Sebastian Schelter <schelter@tu-berlin.de>",
+    "Olga Ovcharenko <ovcharenko@tu-berlin.de>"
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+skrub = "^0.6.1"
+plotly = "^6.3.0"
+graphviz = "^0.21"
+networkx = "^3.5"
+litellm = "^1.76.1"
+
+[tool.poetry.dev-dependencies]
+ruff = "^0.7.2"
+pre-commit = "^4.0.1"
+pylint = "^3.3.8"
+pytest = "^8.3.3"
+jupyter = "^1.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.ruff]
 line-length = 120
 indent-width = 4
