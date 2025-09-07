@@ -14,8 +14,8 @@ def greedy_optimise_semantic_operator(
     scoring: str = "accuracy",
     cv: int = 3,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    memory = []
-    states = []
+    memory: list[dict[str, Any]] = []
+    states: list[dict[str, Any]] = []
 
     print("--- COMPUTING DAG SUMMARY for context-aware optimisation ---")
     dag_summary = _summarise_dag(dag_sink)

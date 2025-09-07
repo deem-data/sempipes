@@ -27,7 +27,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
     def __init__(self, target_column: str, nl_prompt: str):
         self.target_column = target_column
         self.nl_prompt = nl_prompt
-        self.imputation_model_ = None
+        self.imputation_model_: RandomForestClassifier | RandomForestRegressor | None = None
 
     @staticmethod
     def _build_prompt(
@@ -113,5 +113,6 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
 
         if num_missing_values > 0:
             print(f"\t> Imputing {num_missing_values} values...")
-            df.loc[missing_mask, self.target_column] = self.imputation_model_.predict(df[missing_mask])
+            predicted_values = self.imputation_model_.predict(df[missing_mask])  # type: ignore[union-attr]
+            df.loc[missing_mask, self.target_column] = predicted_values
         return df

@@ -37,7 +37,7 @@ class GyyrePrefittableMixin(ABC):
         gyyre_prefitted_state (dict[str, Any] | None): The prefitted state of the operator.
     """
 
-    gyyre_prefitted_state: dict[str, Any] = {}
+    gyyre_prefitted_state: dict[str, Any] | DataOp | None = {}
 
     @abstractmethod
     def state_after_fit(self) -> dict[str, Any]:
@@ -50,11 +50,21 @@ class GyyrePrefittableMixin(ABC):
 
 
 class GyyreOptimisableMixin(ABC):
-    gyyre_memory: list[dict[str, Any]] = {}
+    gyyre_memory: list[dict[str, Any]] | DataOp | None = {}
 
     @abstractmethod
     def memory_update_from_latest_fit(self) -> dict[str, Any]:
         pass
+
+
+class EstimatorTransformer(BaseEstimator, TransformerMixin):
+    pass
+
+
+class OptimisableEstimatorTransformer(  # pylint: disable=too-many-ancestors
+    EstimatorTransformer, GyyreContextAwareMixin, GyyrePrefittableMixin, GyyreOptimisableMixin, ABC
+):
+    pass
 
 
 class SemChooseOperator(ABC):
@@ -86,7 +96,7 @@ class WithSemFeaturesOperator(ABC):
         nl_prompt: str,
         name: str,
         how_many: int,
-    ) -> BaseEstimator & TransformerMixin & GyyreContextAwareMixin & GyyrePrefittableMixin & GyyreOptimisableMixin:
+    ) -> OptimisableEstimatorTransformer:
         """Return an estimator that computes features on a pandas df."""
 
 
@@ -97,5 +107,5 @@ class SemFillNAOperator(ABC):
         data_op: DataOp,
         target_column: str,
         nl_prompt: str,
-    ) -> BaseEstimator & TransformerMixin:
+    ) -> EstimatorTransformer:
         """Return an estimator that imputes missing values for the target column on a pandas df."""
