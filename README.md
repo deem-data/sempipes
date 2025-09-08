@@ -5,7 +5,7 @@ Gyyre is a research project to extend Python-based machine learning scripts with
 ### Semantic Operators
 
  - `sem_choose(nl_prompt)` -- a semantic drop-in alternative for [skrub's choose_from](https://skrub-data.org/stable/reference/generated/skrub.choose_from.html) to suggest hyperparameter ranges and other pipeline components
- - `sem_fillna(target_column, nl_prompt: str, impute_with_existing_values_only)` -- missing value imputation
+ - `sem_fillna(target_column, nl_prompt, impute_with_existing_values_only)` -- missing value imputation
  - `with_sem_features(nl_prompt, how_many)` -- automated generation of additional feature columns in dataframes
  - `sem_select(nl_prompt)`  -- a semantic drop-in alternative for [skrub's selectors](https://skrub-data.org/stable/userguide_selectors.html) to select columns from dataframes
    
