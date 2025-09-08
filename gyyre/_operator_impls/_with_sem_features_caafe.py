@@ -1,3 +1,4 @@
+# This code is based on Apache-licensed code from https://github.com/noahho/CAAFE/
 # TODO This class needs some serious cleanup / refactoring
 from typing import Any
 
