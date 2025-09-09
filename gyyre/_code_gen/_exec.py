@@ -1,4 +1,6 @@
+import ast
 import builtins
+import json
 import re
 from collections.abc import Iterable
 from typing import Any
@@ -8,7 +10,7 @@ import pandas as pd
 import sklearn
 import skrub
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re"]
+_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast"]
 
 
 def _make_safe_import(allowed_modules: Iterable[str]):
@@ -60,6 +62,8 @@ def _safe_exec(
         "pandas": pd,
         "pd": pd,
         "re": re,
+        "json": json,
+        "ast": ast,
     }
 
     safe_locals = safe_locals_to_add
