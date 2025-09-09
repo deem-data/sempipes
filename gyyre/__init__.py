@@ -4,6 +4,7 @@ from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 
 from gyyre._operator_impls._sem_choose_llm import SemChooseLLM
+from gyyre._operator_impls._sem_extract_features import SemExractFeaturesLLM
 from gyyre._operator_impls._sem_select_llm import SemSelectLLM
 from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
 from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
@@ -80,9 +81,20 @@ def sem_select(
     return self.skb.select(selector)
 
 
+def sem_extract_features(
+    self: DataOp,
+    nl_prompt: str,
+    input_cols: list[str],
+    output_cols: dict[str, str] | None = None,
+) -> DataOp:
+    feature_extractor = SemExractFeaturesLLM().generate_features_extractor(nl_prompt, input_cols, output_cols)
+    return self.skb.apply(feature_extractor)
+
+
 DataOp.with_sem_features = with_sem_features
 DataOp.sem_fillna = sem_fillna
 DataOp.sem_select = sem_select
+DataOp.sem_extract_features = sem_extract_features
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
 __all__ = ["sem_choose", "greedy_optimise_semantic_operator"]

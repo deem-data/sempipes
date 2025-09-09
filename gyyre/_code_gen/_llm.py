@@ -3,10 +3,7 @@ from litellm import batch_completion, completion
 _DEFAULT_MODEL = "openai/gpt-4.1"
 
 
-def _unwrap_python(text: str) -> str:
-    prefix = "```python"
-    suffix = "```"
-    suffix2 = "```end"
+def _unwrap_llm_response(text: str, prefix: str = "```python", suffix: str = "```", suffix2: str = "```end") -> str:
     text = text.strip()
     if text.startswith(prefix):
         text = text[len(prefix) :]
@@ -31,6 +28,10 @@ def _get_cleaning_message(prompt: str) -> list[dict]:
     ]
 
 
+def _get_generic_message(system_content: str, user_content: str | list[dict]) -> list[dict]:
+    return [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
+
+
 def _generate_python_code(prompt: str) -> str:
     messages = [
         {
@@ -53,7 +54,21 @@ def _generate_python_code_from_messages(messages: list[dict]) -> str:
 
     # TODO add proper error handling
     raw_code = response.choices[0].message["content"]
-    return _unwrap_python(raw_code)
+    return _unwrap_llm_response(raw_code, prefix="```python", suffix="```", suffix2="```end")
+
+
+def _generate_json_from_messages(messages: list[object]) -> str:
+    print(f"\t> Querying '{_DEFAULT_MODEL}' with {len(messages)} messages...'")
+
+    response = completion(
+        model=_DEFAULT_MODEL,
+        messages=messages,
+        temperature=0.0,
+    )
+
+    # TODO add proper error handling
+    raw_code = response.choices[0].message["content"]
+    return _unwrap_llm_response(raw_code, prefix="```json", suffix="```", suffix2="```end")
 
 
 def _batch_generate_results(
@@ -66,11 +81,10 @@ def _batch_generate_results(
     """
     assert batch_size is not None and batch_size > 0, "batch_size must be a positive integer"
 
-    all_messages = [_get_cleaning_message(prompt) for prompt in prompts]
     outputs = []
 
     for start_index in range(0, len(prompts), batch_size):
-        message_batch = all_messages[start_index : start_index + batch_size]
+        message_batch = prompts[start_index : start_index + batch_size]
 
         responses = batch_completion(
             model=_DEFAULT_MODEL,
