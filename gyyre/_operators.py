@@ -100,6 +100,17 @@ class WithSemFeaturesOperator(ABC):
         """Return an estimator that computes features on a pandas df."""
 
 
+class SemExtractFeaturesOperator(ABC):
+    @abstractmethod
+    def generate_features_extractor(
+        self,
+        nl_prompt: str,
+        input_columns: list[str],
+        output_columns: dict[str, str] | None,
+    ) -> EstimatorTransformer:
+        """Return an estimator that extracts features from the image/text on a pandas df."""
+
+
 class SemFillNAOperator(ABC):
     @abstractmethod
     def generate_imputation_estimator(
