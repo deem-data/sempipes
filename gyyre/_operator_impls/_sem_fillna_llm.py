@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from gyyre._code_gen._llm import _batch_generate_results
+from gyyre._code_gen._llm import _batch_generate_results, _get_cleaning_message
 from gyyre._operators import SemFillNAOperator
 
 
@@ -64,7 +64,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
         """
 
     def fit(self, df, y=None):  # pylint: disable=unused-argument
-        print(f"--- Sempipes.sem_fillna_llm('{self.target_column}', '{self.nl_prompt}')")
+        print(f"--- gyyre.sem_fillna_llm('{self.target_column}', '{self.nl_prompt}')")
 
         self.target_column_type_ = df[self.target_column].dtype
         self.target_column_unique_values_ = list(df[self.target_column].dropna().unique())
@@ -96,7 +96,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
                 self.target_column_unique_values_,
                 self.impute_with_existing_values_only,
             )
-            prompts.append(prompt)
+            prompts.append(_get_cleaning_message(prompt))
 
         # TODO find a way to set the batch size
         results = _batch_generate_results(prompts, batch_size=10)
