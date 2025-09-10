@@ -105,8 +105,8 @@ class SemExtractFeaturesOperator(ABC):
     def generate_features_extractor(
         self,
         nl_prompt: str,
-        input_cols: list[str],
-        output_cols: dict[str, str] | None,
+        input_columns: list[str],
+        output_columns: dict[str, str] | None,
     ) -> EstimatorTransformer:
         """Return an estimator that extracts features from the image/text on a pandas df."""
 

@@ -15,7 +15,7 @@ def test_sem_extract_features_text():
     # Define the target columns
     toxicity_ref = toxicity_ref.sem_extract_features(
         nl_prompt="Extract a single feature called `hate_speech_presence` from the text tweets that could help predict toxicity.",
-        input_cols=["text"],
+        input_columns=["text"],
     ).skb.eval()
 
     accuracy = (binary_label == toxicity_ref["hate_speech_presence"]).sum() / toxicity.shape[0]
@@ -31,7 +31,7 @@ def test_sem_extract_features_text_explicit_cols():
 
     toxicity_ref = skrub.var("toxicity_text", toxicity)
 
-    output_cols = {
+    output_columns = {
         "sentiment_label": "Classify the overall sentiment of the tweet as 'positive', 'negative', or 'neutral.",
         "hate_speech_presence": "Classify with '1' if a tween is toxic and '0' if there is not toxic.",
     }
@@ -39,8 +39,8 @@ def test_sem_extract_features_text_explicit_cols():
     # Define the target columns
     toxicity_ref = toxicity_ref.sem_extract_features(
         nl_prompt="Extract features from textual tweets that could help predict toxicity.",
-        input_cols=["text"],
-        output_cols=output_cols,
+        input_columns=["text"],
+        output_columns=output_columns,
     ).skb.eval()
 
     toxicity_ref["hate_speech_presence"] = toxicity_ref["hate_speech_presence"].astype(int)
@@ -65,15 +65,12 @@ def test_sem_extract_features_text_pipeline():
 
     # Define the target columns
     toxicity_ref = toxicity_ref.sem_extract_features(
-        nl_prompt="Extract up to five features from the text tweets that could help predict toxicity. Focus on sentiment, presence of hate speech, and any other relevant linguistic features. If neutral or not valid content like a link, treat as a no sentiment.",
-        input_cols=["text"],
+        nl_prompt="Extract up to five features from the text tweets that could help predict toxicity. Focus on sentiment, presence of hate speech, and any other relevant linguistic features. If you encounter neutral or not valid content like a link, treat as a no sentiment.",
+        input_columns=["text"],
     ).skb.eval()
 
-    model2 = skrub.tabular_pipeline("classifier")
-    results2 = cross_validate(model2, toxicity_ref, label)
-    print(f"Tabular predictor performance with extracted features: {results2["test_score"]}")
+    model_with_new_features = skrub.tabular_pipeline("classifier")
+    results_with_new_features = cross_validate(model_with_new_features, toxicity_ref, label)
+    print(f"Tabular predictor performance with extracted features: {results_with_new_features["test_score"]}")
 
-    assert (results["test_score"] < results2["test_score"]).all()
-
-
-test_sem_extract_features_text_explicit_cols()
+    assert (results["test_score"] < results_with_new_features["test_score"]).all()

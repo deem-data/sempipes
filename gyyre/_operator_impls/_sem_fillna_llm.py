@@ -64,7 +64,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
         """
 
     def fit(self, df, y=None):  # pylint: disable=unused-argument
-        print(f"--- Sempipes.sem_fillna_llm('{self.target_column}', '{self.nl_prompt}')")
+        print(f"--- gyyre.sem_fillna_llm('{self.target_column}', '{self.nl_prompt}')")
 
         self.target_column_type_ = df[self.target_column].dtype
         self.target_column_unique_values_ = list(df[self.target_column].dropna().unique())

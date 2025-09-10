@@ -84,10 +84,10 @@ def sem_select(
 def sem_extract_features(
     self: DataOp,
     nl_prompt: str,
-    input_cols: list[str],
-    output_cols: dict[str, str] | None = None,
+    input_columns: list[str],
+    output_columns: dict[str, str] | None = None,
 ) -> DataOp:
-    feature_extractor = SemExractFeaturesLLM().generate_features_extractor(nl_prompt, input_cols, output_cols)
+    feature_extractor = SemExractFeaturesLLM().generate_features_extractor(nl_prompt, input_columns, output_columns)
     return self.skb.apply(feature_extractor)
 
 

@@ -12,7 +12,7 @@ from gyyre._code_gen._llm import (
     _batch_generate_results,
     _generate_json_from_messages,
     _get_generic_message,
-    _unwrap_llm_response,
+    _unwrap_json,
 )
 from gyyre._operators import EstimatorTransformer, SemExtractFeaturesOperator
 
@@ -50,39 +50,39 @@ def _create_file_url(local_path: str) -> tuple[str, str]:
 
 def _get_modality_prompts(
     df: pd.DataFrame,
-    col_modality_dict: dict[str, Modality],
+    modality_per_column: dict[str, Modality],
 ) -> tuple[str, dict, dict]:
     samples_str = ""
     samples_image: dict[str, list[tuple[str, str]]] = {}
     samples_audio: dict[str, list[tuple[str, str]]] = {}
 
-    for col, modality in col_modality_dict.items():
-        samples_list = df.loc[df[col].notna(), col].head(2).tolist()
+    for column, modality in modality_per_column.items():
+        samples_list = df.loc[df[column].notna(), column].head(2).tolist()
 
         if modality == Modality.TEXT:
-            samples_str += f"Samples of column `{col}`: {samples_list}.\n"
+            samples_str += f"Samples of column `{column}`: {samples_list}.\n"
 
         elif modality == Modality.AUDIO:
-            samples_audio[col] = [_create_file_url(val) for val in samples_list]
+            samples_audio[column] = [_create_file_url(val) for val in samples_list]
 
         elif modality == Modality.IMAGE:
-            samples_audio[col] = [_create_file_url(val) for val in samples_list]
+            samples_audio[column] = [_create_file_url(val) for val in samples_list]
 
     return samples_str, samples_image, samples_audio
 
 
 def _get_feature_suggestion_message(
-    nl_prompt: str, input_cols: list[str], samples_text: str, samples_image: dict, samples_audio: dict
+    nl_prompt: str, input_columns: list[str], samples_text: str, samples_image: dict, samples_audio: dict
 ) -> list[object]:
     # TODO add column description from scrub
 
     task_prompt = f"""
-    Your goal is to help a data scientist select which features can be generated from multi-modal data from a pandas dataframe for a machine learning script 
-        which they are developing. You can your decision for each column individually or for combinations of multiple columns. 
+    Your goal is to help a data scientist select which features can be generated from multi-modal data from a pandas dataframe for a machine learning script which they are developing. 
+    You can make your decision for each column individually or for combinations of multiple columns. 
 
     The data scientist wants you to take special care to the following: {nl_prompt}
 
-    The data scientist wants to generate new features based on the following columns in a dataframe: {input_cols}.
+    The data scientist wants to generate new features based on the following columns in a dataframe: {input_columns}.
 
     Here is detailed information about a column for which you need to make a decision now:
     """
@@ -109,13 +109,13 @@ def _get_feature_suggestion_message(
     if samples_text != "":
         content.append({"type": "text", "text": f"Samples of text columns: \n{samples_text}"})
 
-    for col, images in samples_image.items():
-        content.append({"type": "text", "text": f"Samples of image column `{col}`:"})
-        for img in images:
-            content.append({"type": "image", "image": img})
+    for column, images in samples_image.items():
+        content.append({"type": "text", "text": f"Samples of image column `{column}`:"})
+        for image in images:
+            content.append({"type": "image", "image": image})
 
-    for col, (audios, audio_formats) in samples_audio.items():
-        content.append({"type": "text", "text": f"Samples of image column `{col}`:"})
+    for column, (audios, audio_formats) in samples_audio.items():
+        content.append({"type": "text", "text": f"Samples of image column `{column}`:"})
         for audio, audio_format in zip(audios, audio_formats):
             content.append({"type": "input_audio", "input_audio": {"data": audio, "format": audio_format}})
 
@@ -126,21 +126,21 @@ def _get_feature_suggestion_message(
     return messages
 
 
-def _get_pre_post_feature_generation_messages(cols_to_generate: list[str]) -> tuple[str, str]:
+def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) -> tuple[str, str]:
     task_prompt = f"""
     Your goal is to help a data scientist generate features from multi-modal data.
     You are provided the name of the features to extract, how to extract them, and from which columns.
 
-    Generate the following columns: {cols_to_generate}.
+    Generate the following columns: {columns_to_generate}.
 
     """
 
-    example_result = {key: "..." for key in cols_to_generate}
+    example_result = {key: "..." for key in columns_to_generate}
     example_result_str = json.dumps(example_result, indent=2)
 
     response_example = f"""
     Please respond with a JSON object with feature names as keys and generated feature values as values. 
-    JSON object should contain the following keys: {cols_to_generate}. 
+    JSON object should contain the following keys: {columns_to_generate}. 
 
     Answer with only the JSON, without any additional text, explanations, or formatting.
     
@@ -153,17 +153,17 @@ def _get_pre_post_feature_generation_messages(cols_to_generate: list[str]) -> tu
     return task_prompt, response_example
 
 
-def _get_modality(col: pd.Series) -> Modality:
-    sample_col = col.sample(frac=0.2)
+def _get_modality(column: pd.Series) -> Modality:
+    sample_of_column = column.sample(frac=0.2)
     modality = None
     if (
-        pd.api.types.is_string_dtype(sample_col)
-        and sample_col.str.endswith(r"\.(jpg|jpeg|png|bmp|gif)$", na=False).all()
+        pd.api.types.is_string_dtype(sample_of_column)
+        and sample_of_column.str.endswith(r"\.(jpg|jpeg|png|bmp|gif)$", na=False).all()
     ):
         modality = Modality.IMAGE
     elif (
-        pd.api.types.is_string_dtype(sample_col)
-        and sample_col.str.endswith(r"\.(wav|mp3|flac|aac|ogg)$", na=False).all()
+        pd.api.types.is_string_dtype(sample_of_column)
+        and sample_of_column.str.endswith(r"\.(wav|mp3|flac|aac|ogg)$", na=False).all()
     ):
         modality = Modality.AUDIO
     else:
@@ -172,12 +172,12 @@ def _get_modality(col: pd.Series) -> Modality:
 
 
 class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
-    def __init__(self, nl_prompt: str, input_cols: list[str], output_cols: dict[str, str] | None) -> None:
+    def __init__(self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None) -> None:
         self.nl_prompt = nl_prompt
-        self.input_cols = input_cols
-        self.output_cols = {} if output_cols is None else output_cols
-        self.col_modality_dict: dict[str, Modality] = {}
-        self.generated_features_list_: list[dict[str, object]] = []
+        self.input_columns = input_columns
+        self.output_columns = {} if output_columns is None else output_columns
+        self.modality_per_column: dict[str, Modality] = {}
+        self.generated_features_: list[dict[str, object]] = []
 
     def _build_mm_generation_prompt(self, row):
         audios, images = [], []
@@ -185,30 +185,30 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         context_prompt = """
         Here are values of columns (images/text/audio) that can be used for the feature extraction:
         """
-        for i, feature_dict in enumerate(self.generated_features_list_):
-            feature_name = feature_dict["feature_name"]
-            feature_prompt = feature_dict["feature_prompt"]
-            input_columns = feature_dict["input_columns"]
+        for i, feature in enumerate(self.generated_features_):
+            feature_name = feature["feature_name"]
+            feature_prompt = feature["feature_prompt"]
+            input_columns = feature["input_columns"]
 
             value_prompt = f"""\n {i+1}. Generate value of a column named `{feature_name}`. {feature_prompt}. 
             For generation you use the follwing context and columns: {input_columns}.
             """
 
-            for col in input_columns:
-                modality = self.col_modality_dict[col]
+            for input_column in input_columns:
+                modality = self.modality_per_column[input_column]
                 if modality == Modality.TEXT:
-                    context_prompt += f"\nTextual column `{col}`: {row[col]}."
+                    context_prompt += f"\nTextual column `{input_column}`: {row[input_column]}."
 
                 elif modality == Modality.AUDIO:
-                    audio, audio_format = _create_file_url(row[col])
+                    audio, audio_format = _create_file_url(row[input_column])
                     audios.append({"type": "input_audio", "input_audio": {"data": audio, "format": audio_format}})
 
                 elif modality == Modality.IMAGE:
-                    image, _ = _create_file_url(row[col])
+                    image, _ = _create_file_url(row[input_column])
                     images.append({"type": "image_url", "image_url": {"url": image}})
 
         pre_message, post_message = _get_pre_post_feature_generation_messages(
-            cols_to_generate=list(self.output_cols.keys())
+            columns_to_generate=list(self.output_columns.keys())
         )
 
         context = [
@@ -219,54 +219,56 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         return context
 
-    def _build_output_cols_to_generate_llm(self, df: pd.DataFrame):
+    def _build_output_columns_to_generate_llm(self, df: pd.DataFrame):
         # Form prompts with examples
         # TODO can be replaced with column descritions later
         samples_str, samples_image, samples_audio = _get_modality_prompts(
-            df=df, col_modality_dict=self.col_modality_dict
+            df=df, modality_per_column=self.modality_per_column
         )
         messages = _get_feature_suggestion_message(
             nl_prompt=self.nl_prompt,
-            input_cols=self.input_cols,
+            input_columns=self.input_columns,
             samples_text=samples_str,
             samples_image=samples_image,
             samples_audio=samples_audio,
         )
 
-        generated_output_json = _generate_json_from_messages(messages=messages)
+        generated_output = _generate_json_from_messages(messages=messages)
 
         # Validate that generated dicts have correct keys for later generation
-        for feature_dict in json.loads(generated_output_json):
-            if list(feature_dict.keys()) == ["feature_name", "feature_prompt", "input_columns"]:
-                self.generated_features_list_.append(feature_dict)
-                self.output_cols[feature_dict["feature_name"]] = feature_dict["feature_prompt"]
+        for feature in json.loads(generated_output):
+            if list(feature.keys()) == ["feature_name", "feature_prompt", "input_columns"]:
+                self.generated_features_.append(feature)
+                self.output_columns[feature["feature_name"]] = feature["feature_prompt"]
             else:
                 print("\t> Unable to parse some of the suggested features.")
 
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
         # Determine modalities of input columns
-        self.col_modality_dict = {col: _get_modality(df[col]) for col in self.input_cols}
+        self.modality_per_column = {column: _get_modality(df[column]) for column in self.input_columns}
 
-        if self.output_cols == {}:
+        if self.output_columns == {}:
             # Ask LLm which features to generate given input columns
-            print(f"--- Sempipes.sem_extract_features('{self.input_cols}', '{self.nl_prompt}')")
+            print(f"--- gyyre.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
 
-            self._build_output_cols_to_generate_llm(df)
+            self._build_output_columns_to_generate_llm(df)
 
         else:
             # Use user-given columns
-            print(f"--- Sempipes.sem_extract_features('{self.input_cols}', '{self.output_cols}', '{self.nl_prompt}')")
+            print(
+                f"--- gyyre.sem_extract_features('{self.input_columns}', '{self.output_columns}', '{self.nl_prompt}')"
+            )
 
-            for new_feature, prompt in self.output_cols.items():
-                self.generated_features_list_.append(
-                    {"feature_name": new_feature, "feature_prompt": prompt, "input_columns": self.input_cols}
+            for new_feature, prompt in self.output_columns.items():
+                self.generated_features_.append(
+                    {"feature_name": new_feature, "feature_prompt": prompt, "input_columns": self.input_columns}
                 )
 
-        print(f"\t> Generated possible columns: { self.generated_features_list_}")
+        print(f"\t> Generated possible columns: { self.generated_features_}")
         return self
 
     def transform(self, df):
-        check_is_fitted(self, "generated_features_list_")
+        check_is_fitted(self, "generated_features_")
 
         # Construct prompts with multi-modal data
         prompts = []
@@ -274,31 +276,35 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             prompt = self._build_mm_generation_prompt(row=row)
             prompts.append(_get_generic_message(_SYSTEM_PROMPT, prompt))
 
-        result_jsons = _batch_generate_results(prompts, batch_size=100)
+        results = _batch_generate_results(prompts, batch_size=100)
 
         # Parse new results
-        generated_cols: dict[str, list[Any]] = {}
-        for res in result_jsons:
-            raw_res = _unwrap_llm_response(res, prefix="```json", suffix="```", suffix2="```end")
+        generated_columns: dict[str, list[Any]] = {}
+        for result in results:
+            raw_result = _unwrap_json(result)
 
             try:
-                for k, v in json.loads(raw_res).items():
-                    generated_cols[k] = [v] if generated_cols.get(k) is None else generated_cols[k] + [v]
+                for column_name, cell_value in json.loads(raw_result).items():
+                    generated_columns[column_name] = (
+                        [cell_value]
+                        if generated_columns.get(column_name) is None
+                        else generated_columns[column_name] + [cell_value]
+                    )
             except Exception as e:
-                print(f"Error processing response: {raw_res}")
+                print(f"Error processing response: {raw_result}")
                 raise e
 
         # Assign new results back
-        for new_col, new_vals in generated_cols.items():
-            df[new_col] = new_vals
+        for new_column, new_vals in generated_columns.items():
+            df[new_column] = new_vals
 
-        print(f"\t> Generated {len(generated_cols)} columns: {list(generated_cols.keys())}")
+        print(f"\t> Generated {len(generated_columns)} columns: {list(generated_columns.keys())}")
 
         return df
 
 
 class SemExractFeaturesLLM(SemExtractFeaturesOperator):
     def generate_features_extractor(
-        self, nl_prompt: str, input_cols: list[str], output_cols: dict[str, str] | None
+        self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None
     ) -> EstimatorTransformer:
-        return LLMFeatureExtractor(nl_prompt=nl_prompt, input_cols=input_cols, output_cols=output_cols)
+        return LLMFeatureExtractor(nl_prompt=nl_prompt, input_columns=input_columns, output_columns=output_columns)
