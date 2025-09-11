@@ -9,8 +9,9 @@ import numpy
 import pandas as pd
 import sklearn
 import skrub
+import datetime
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast"]
+_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime"]
 
 
 def _make_safe_import(allowed_modules: Iterable[str]):
@@ -64,6 +65,7 @@ def _safe_exec(
         "re": re,
         "json": json,
         "ast": ast,
+        "datetime": datetime,
     }
 
     safe_locals = safe_locals_to_add

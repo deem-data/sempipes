@@ -1,6 +1,13 @@
+import os
 from litellm import batch_completion, completion
 
 _DEFAULT_MODEL = "openai/gpt-4.1"
+
+def _model():
+    env_model = os.environ.get("__GYYRE_MODEL")
+    if env_model:
+        return env_model
+    return _DEFAULT_MODEL
 
 
 def _unwrap_json(text: str) -> str:
@@ -65,12 +72,12 @@ def _generate_python_code(prompt: str) -> str:
 
 
 def _generate_python_code_from_messages(messages: list[dict]) -> str:
-    print(f"\t> Querying '{_DEFAULT_MODEL}' with {len(messages)} messages...'")
+    print(f"\t> Querying '{_model()}' with {len(messages)} messages...'")
 
     response = completion(
-        model=_DEFAULT_MODEL,
+        model=_model(),
         messages=messages,
-        temperature=0.0,
+        #temperature=0.0,
     )
 
     # TODO add proper error handling
@@ -108,9 +115,9 @@ def _batch_generate_results(
         message_batch = prompts[start_index : start_index + batch_size]
 
         responses = batch_completion(
-            model=_DEFAULT_MODEL,
+            model=_model(),
             messages=message_batch,
-            temperature=0.0,
+            #temperature=0.0,
         )
 
         for response in responses:

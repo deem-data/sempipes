@@ -16,8 +16,12 @@ revenue_df = data.revenue
 data = data.drop(columns=["revenue"])
 
 movie_stats = skrub.var("movie_stats", data).skb.mark_as_X().skb.subsample(n=100)
-revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
+movie_stats = movie_stats.skb.set_description("""
+In a world… where movies made an estimated $41.7 billion in 2018, the film industry is more popular than ever. But what movies make the most money at the box office? How much does a director matter? Or the budget? For some movies, it's "You had me at 'Hello.'" For others, the trailer falls short of expectations and you think "What we have here is a failure to communicate." In this competition, you're presented with metadata on several thousand past films from The Movie Database to try and predict their overall worldwide box office revenue. Data points provided include cast, crew, plot keywords, budget, posters, release dates, languages, production companies, and countries. You can collect other publicly available data to use in your model predictions, but in the spirit of this competition, use only data that would have been available before a movie's release. It is your job to predict the international box office revenue for each movie. For each id in the test set, you must predict the value of the revenue variable. Submissions are evaluated on Root-Mean-Squared-Logarithmic-Error (RMSLE) between the predicted value and the actual revenue. Logs are taken to not overweight blockbuster revenue movies.
+""")
 
+revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
+revenue = revenue.skb.set_description("the international box office revenue for a movie")
 
 movie_stats = movie_stats.with_sem_features(
     nl_prompt="""
