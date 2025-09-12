@@ -1,5 +1,6 @@
 import ast
 import builtins
+import datetime
 import json
 import re
 from collections.abc import Iterable
@@ -9,7 +10,6 @@ import numpy
 import pandas as pd
 import sklearn
 import skrub
-import datetime
 
 _ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime"]
 
