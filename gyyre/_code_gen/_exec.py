@@ -1,5 +1,6 @@
 import ast
 import builtins
+import datetime
 import json
 import re
 from collections.abc import Iterable
@@ -10,7 +11,7 @@ import pandas as pd
 import sklearn
 import skrub
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast"]
+_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime"]
 
 
 def _make_safe_import(allowed_modules: Iterable[str]):
@@ -64,6 +65,7 @@ def _safe_exec(
         "re": re,
         "json": json,
         "ast": ast,
+        "datetime": datetime,
     }
 
     safe_locals = safe_locals_to_add

@@ -16,6 +16,7 @@ class DagSummary:
     model_steps: str | None = None
     model_definition: str | None = None
     target_name: str | None = None
+    target_description: str | None = None
     target_definition: str | None = None
     target_steps: str | None = None
     target_unique_values_from_preview: list[Any] | None = None
@@ -54,6 +55,9 @@ def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
                 summary.target_name = y_op.skb.name
             elif isinstance(y_op._skrub_impl, GetItem):
                 summary.target_name = y_op._skrub_impl.key
+
+            if y_op.skb.description is not None:
+                summary.target_description = y_op.skb.description
             try:
                 summary.target_unique_values_from_preview = [val.item() for val in np.unique(y_op.skb.preview())]
             except Exception as __e:  # pylint: disable=broad-exception-caught

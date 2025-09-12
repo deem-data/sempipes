@@ -17,6 +17,7 @@ repos:
           - litellm==1.76.1
           - jupyter==1.1.1
           - lightgbm==4.6.0
+          - xgboost==3.0.5
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:
@@ -29,3 +30,4 @@ repos:
           - litellm==1.76.1
           - jupyter==1.1.1
           - lightgbm==4.6.0
+          - xgboost==3.0.5
