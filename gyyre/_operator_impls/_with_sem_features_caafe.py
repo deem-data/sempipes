@@ -47,10 +47,13 @@ def _get_prompt(
         target_name = dag_summary.target_name
         data_description_unparsed = dag_summary.dataset_description
 
+        target_description = ""
+        if dag_summary.target_description:
+            target_description = f" ({dag_summary.target_description})"
         if task_type and model and target_name:
             task_description = (
                 f"This code generates additional columns that are useful for a "
-                f'downstream {task_type} algorithm ({model}) predicting "{target_name}".'
+                f'downstream {task_type} algorithm ({model}) predicting "{target_name} {target_description}".'
             )
 
         if task_type and target_name:
