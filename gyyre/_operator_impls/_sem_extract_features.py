@@ -33,10 +33,15 @@ def _create_file_url(local_path: str) -> tuple[str, str]:
 
     Supports common image formats (png, jpg, jpeg, gif) and audio formats (wav, mp3, mpeg).
     """
+
     # Guess the MIME type from file extension
     mime_type, _ = mimetypes.guess_type(local_path)
     if mime_type is None:
         raise ValueError(f"Unsupported file type for {local_path}")
+
+    data_type = mime_type.split("/")[1]
+    if local_path.startswith("http://") or local_path.startswith("https://"):
+        return local_path, data_type
 
     with open(local_path, "rb") as f:
         file_bytes = f.read()
@@ -44,7 +49,8 @@ def _create_file_url(local_path: str) -> tuple[str, str]:
 
     # Construct data URL
     data_url = f"data:{mime_type};base64,{file_base64}"
-    return data_url, mime_type
+
+    return data_url, data_type
 
 
 def _get_modality_prompts(
@@ -65,7 +71,7 @@ def _get_modality_prompts(
             samples_audio[column] = [_create_file_url(val) for val in samples_list]
 
         elif modality == Modality.IMAGE:
-            samples_audio[column] = [_create_file_url(val) for val in samples_list]
+            samples_image[column] = [_create_file_url(val) for val in samples_list]
 
     return samples_str, samples_image, samples_audio
 
@@ -110,12 +116,12 @@ def _get_feature_suggestion_message(
 
     for column, images in samples_image.items():
         content.append({"type": "text", "text": f"Samples of image column `{column}`:"})
-        for image in images:
-            content.append({"type": "image", "image": image})
+        for image, _ in images:
+            content.append({"type": "image_url", "image_url": {"url": image}})
 
-    for column, (audios, audio_formats) in samples_audio.items():
+    for column, audios in samples_audio.items():
         content.append({"type": "text", "text": f"Samples of image column `{column}`:"})
-        for audio, audio_format in zip(audios, audio_formats):
+        for audio, audio_format in audios:
             content.append({"type": "input_audio", "input_audio": {"data": audio, "format": audio_format}})
 
     content.append({"type": "text", "text": response_example})
@@ -157,12 +163,12 @@ def _get_modality(column: pd.Series) -> Modality:
     modality = None
     if (
         pd.api.types.is_string_dtype(sample_of_column)
-        and sample_of_column.str.endswith(r"\.(jpg|jpeg|png|bmp|gif)$", na=False).all()
+        and sample_of_column.str.endswith((".jpg", ".jpeg", ".png", ".bmp", ".gif"), na=False).all()
     ):
         modality = Modality.IMAGE
     elif (
         pd.api.types.is_string_dtype(sample_of_column)
-        and sample_of_column.str.endswith(r"\.(wav|mp3|flac|aac|ogg)$", na=False).all()
+        and sample_of_column.str.endswith(("wav", "mp3", "flac", "aac", "ogg"), na=False).all()
     ):
         modality = Modality.AUDIO
     else:

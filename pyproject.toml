@@ -15,6 +15,7 @@ plotly = "^6.3.0"
 graphviz = "^0.21"
 networkx = "^3.5"
 litellm = "^1.76.1"
+kagglehub = "^0.3.13"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"
