@@ -1,3 +1,4 @@
+import json
 import warnings
 
 import lightgbm as lgb
@@ -15,6 +16,10 @@ data = pd.read_csv("comparisons/tmdb_box_office_prediction/train.csv")
 revenue_df = data.revenue
 data = data.drop(columns=["revenue"])
 
+print("\n\n\n\n\n\n\n\n\ndata")
+print(data)
+print(data.columns)
+
 movie_stats = skrub.var("movie_stats", data).skb.mark_as_X().skb.subsample(n=100)
 movie_stats = movie_stats.skb.set_description("""
 In a world… where movies made an estimated $41.7 billion in 2018, the film industry is more popular than ever. But what movies make the most money at the box office? How much does a director matter? Or the budget? For some movies, it's "You had me at 'Hello.'" For others, the trailer falls short of expectations and you think "What we have here is a failure to communicate." In this competition, you're presented with metadata on several thousand past films from The Movie Database to try and predict their overall worldwide box office revenue. Data points provided include cast, crew, plot keywords, budget, posters, release dates, languages, production companies, and countries. You can collect other publicly available data to use in your model predictions, but in the spirit of this competition, use only data that would have been available before a movie's release. It is your job to predict the international box office revenue for each movie. For each id in the test set, you must predict the value of the revenue variable. Submissions are evaluated on Root-Mean-Squared-Logarithmic-Error (RMSLE) between the predicted value and the actual revenue. Logs are taken to not overweight blockbuster revenue movies.
@@ -22,6 +27,19 @@ In a world… where movies made an estimated $41.7 billion in 2018, the film ind
 
 revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
 revenue = revenue.skb.set_description("the international box office revenue for a movie")
+
+
+movie_stats = movie_stats.assign(spoken_languages_str=movie_stats["spoken_languages"].apply(json.dumps))
+movie_stats = movie_stats.assign(cast_str=movie_stats["cast"].apply(json.dumps))
+movie_stats = movie_stats.sem_extract_features(
+    nl_prompt="""
+        Extract up to five helpful features that are very helpful for the movie revenue prediction. 
+        Extract new features from the movie overview, spoken languages, and cast columns.
+        Consider that genre spoken languages and cast columns are in JSON format.
+    """,
+    input_columns=["overview", "spoken_languages_str", "cast_str"],
+)
+
 
 movie_stats = movie_stats.with_sem_features(
     nl_prompt="""
@@ -34,14 +52,19 @@ movie_stats = movie_stats.with_sem_features(
     how_many=25,
 )
 
+print("\n\n\n\n\n\n\n\n\nmovie_stats")
+print(movie_stats.columns)
+
 json_columns = [
     "belongs_to_collection",
     "genres",
     "production_companies",
     "production_countries",
     "spoken_languages",
+    "spoken_languages_str",
     "Keywords",
     "cast",
+    "cast_str",
     "crew",
 ]
 
@@ -82,10 +105,14 @@ model = lgb.LGBMRegressor(**params)  # type: ignore
 predictions = X.skb.apply(model, y=y_log)
 predictions = predictions.skb.apply_func(np.expm1)
 
+print("\n\n\n\n\n\n\n\ncolumns")
+print(movie_stats.columns)
+
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     split = predictions.skb.train_test_split(random_state=seed, test_size=0.5)
     learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
+    print(split["train"])
     learner.fit(split["train"])
     y_pred = learner.predict(split["test"])
 
