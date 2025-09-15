@@ -16,15 +16,13 @@ def test_sem_extract_features_image():
     styles = pd.read_csv(styles_csv_path, on_bad_lines="skip")[:200]
 
     # Extract the whole dataset
-    styles["full_path"] = [
-        os.path.join(dataset_path, "fashion-dataset", "images", f"{img}.jpg") for img in styles["id"]
-    ]
-    X_cols = ["gender", "season", "year", "productDisplayName", "baseColour", "usage"]
-    y_col = "masterCategory"
+    styles["full_path"] = [os.path.join(dataset_path, "fashion-dataset", "images", f"{id}.jpg") for id in styles["id"]]
+    X_columns = ["gender", "season", "year", "productDisplayName", "baseColour", "usage"]
+    y_column = "masterCategory"
 
     # Train over texts
     model = skrub.tabular_pipeline("classifier")
-    results = cross_validate(model, styles[X_cols], styles[y_col])
+    results = cross_validate(model, styles[X_columns], styles[y_column])
     print(f"Tabular predictor performance w/o extracted features: {results["test_score"]}")
 
     # Extract pictures
@@ -34,12 +32,12 @@ def test_sem_extract_features_image():
         input_columns=["productDisplayName", "full_path"],
     ).skb.eval()
 
-    X_cols_remove = ["subCategory", "id", "full_path", "masterCategory", "articleType"]
-    X_cols_with_new_features = styles.columns[~styles.columns.isin(X_cols_remove)]
+    X_columns_remove = ["subCategory", "id", "full_path", "masterCategory", "articleType"]
+    X_columns_with_new_features = styles.columns[~styles.columns.isin(X_columns_remove)]
 
     model_with_new_features = skrub.tabular_pipeline("classifier")
     results_with_new_features = cross_validate(
-        model_with_new_features, styles_ref[X_cols_with_new_features], styles[y_col]
+        model_with_new_features, styles_ref[X_columns_with_new_features], styles[y_column]
     )
     print(f"Tabular predictor performance with extracted features: {results_with_new_features["test_score"]}")
 
