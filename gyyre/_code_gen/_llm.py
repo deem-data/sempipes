@@ -3,7 +3,7 @@ import re
 
 from litellm import batch_completion, completion
 
-_DEFAULT_MODEL = "ollama/phi4"
+_DEFAULT_MODEL = "openai/gpt-4.1"
 
 
 def _model():
