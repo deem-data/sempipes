@@ -32,8 +32,8 @@ def test_sem_extract_features_image():
         input_columns=["productDisplayName", "full_path"],
     ).skb.eval()
 
-    X_columns_remove = ["subCategory", "id", "full_path", "masterCategory", "articleType"]
-    X_columns_with_new_features = styles.columns[~styles.columns.isin(X_columns_remove)]
+    X_columns_to_remove = ["subCategory", "id", "full_path", "masterCategory", "articleType"]
+    X_columns_with_new_features = styles.columns[~styles.columns.isin(X_columns_to_remove)]
 
     model_with_new_features = skrub.tabular_pipeline("classifier")
     results_with_new_features = cross_validate(

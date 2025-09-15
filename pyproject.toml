@@ -15,7 +15,6 @@ plotly = "^6.3.0"
 graphviz = "^0.21"
 networkx = "^3.5"
 litellm = "^1.76.1"
-kagglehub = "^0.3.13"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"
@@ -27,6 +26,7 @@ jupyter = "^1.1.1"
 lightgbm = "^4.6.0"
 xgboost = "^3.0.5"
 catboost = "^1.2.8"
+kagglehub = "^0.3.13"
 
 [build-system]
 requires = ["poetry-core"]
