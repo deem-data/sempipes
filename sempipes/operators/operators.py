@@ -138,3 +138,11 @@ class SemFillNAOperator(ABC):
         nl_prompt: str,
     ) -> EstimatorTransformer:
         """Return an estimator that imputes missing values for the target column on a pandas df."""
+
+
+class SemDeduplicateOperator(ABC):
+    @abstractmethod
+    def generate_deduplication_estimator(
+        self, target_column: str, nl_prompt: str, deduplicate_with_existing_values_only: bool
+    ) -> EstimatorTransformer:
+        """Return an estimator that deduplicates values in the target column on a pandas df."""

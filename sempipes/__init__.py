@@ -4,6 +4,8 @@ from skrub import selectors
 from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 from sempipes.operators.operators import SemChoices
+
+from sempipes.operators.sem_deduplicate import SemDeduplicateWithLLM
 from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.operators.sem_extract_features import SemExractFeaturesLLM
 from sempipes.operators.sem_select_llm import SemSelectLLM
@@ -102,10 +104,20 @@ def sem_extract_features(
     return self.skb.apply(feature_extractor)
 
 
+def sem_deduplicate(
+    self: DataOp, target_column: str, nl_prompt: str, deduplicate_with_existing_values_only: bool
+) -> DataOp:
+    deduplication_estimator = SemDeduplicateWithLLM().generate_deduplication_estimator(
+        target_column, nl_prompt, deduplicate_with_existing_values_only
+    )
+    return self.skb.apply(deduplication_estimator)
+
+
 DataOp.with_sem_features = with_sem_features
 DataOp.sem_fillna = sem_fillna
 DataOp.sem_select = sem_select
 DataOp.sem_extract_features = sem_extract_features
+DataOp.sem_deduplicate = sem_deduplicate
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
 __all__ = ["sem_choose", "set_config", "Config", "LLM"]
