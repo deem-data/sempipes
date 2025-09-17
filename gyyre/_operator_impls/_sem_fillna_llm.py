@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from gyyre._code_gen._llm import _batch_generate_results, _get_cleaning_message
+from gyyre._llm._llm import _batch_generate_results, _get_cleaning_message
 from gyyre._operators import SemFillNAOperator
 
 

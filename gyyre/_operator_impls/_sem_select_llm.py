@@ -4,7 +4,7 @@ from skrub import _dataframe as sbd
 from skrub.selectors._base import Filter
 
 from gyyre._code_gen._exec import _safe_exec
-from gyyre._code_gen._llm import _generate_python_code
+from gyyre._llm._llm import _generate_python_code
 from gyyre._operators import SemSelectOperator
 
 

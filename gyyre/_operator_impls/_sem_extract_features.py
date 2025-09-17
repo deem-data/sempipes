@@ -2,13 +2,12 @@ import base64
 import json
 import mimetypes
 from enum import Enum
-from typing import Any
 
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from gyyre._code_gen._llm import (
+from gyyre._llm._llm import (
     _batch_generate_results,
     _generate_json_from_messages,
     _get_generic_message,
@@ -73,7 +72,7 @@ def _get_modality_prompts(
 
 def _get_feature_suggestion_message(
     nl_prompt: str, input_columns: list[str], samples_text: str, samples_image: dict, samples_audio: dict
-) -> list[object]:
+) -> list[dict]:
     # TODO add column description from scrub
 
     task_prompt = f"""
@@ -102,7 +101,7 @@ def _get_feature_suggestion_message(
     ```
     """
 
-    content: list[dict[str, Any]] = [
+    content: list[dict] = [
         {"type": "text", "text": task_prompt},
     ]
 
@@ -121,7 +120,7 @@ def _get_feature_suggestion_message(
 
     content.append({"type": "text", "text": response_example})
 
-    messages = [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": content}]
+    messages: list[dict] = [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": content}]
 
     return messages
 
@@ -279,7 +278,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         results = _batch_generate_results(prompts, batch_size=100)
 
         # Parse new results
-        generated_columns: dict[str, list[Any]] = {}
+        generated_columns: dict = {}
         for result in results:
             raw_result = _unwrap_json(result)
 

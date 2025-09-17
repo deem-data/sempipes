@@ -10,6 +10,7 @@ from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
 from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 from gyyre._operator_impls._sem_fillna_llm import SemFillNAWithLLLM
 from gyyre.optimisers.greedy import greedy_optimise_semantic_operator
+from gyyre.config import set_config, Config
 
 
 def sem_choose(**kwargs) -> dict:
@@ -97,4 +98,4 @@ DataOp.sem_select = sem_select
 DataOp.sem_extract_features = sem_extract_features
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
-__all__ = ["sem_choose", "greedy_optimise_semantic_operator"]
+__all__ = ["sem_choose", "greedy_optimise_semantic_operator", "set_config", "Config"]
