@@ -13,7 +13,7 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from gyyre._code_gen._exec import _safe_exec
-from gyyre._code_gen._llm import _generate_python_code
+from gyyre._llm._llm import _generate_python_code
 from gyyre._operators import SemFillNAOperator
 
 
