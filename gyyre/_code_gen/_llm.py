@@ -107,7 +107,6 @@ def _generate_json_from_messages(messages: list[object]) -> str:
 
     # TODO add proper error handling
     raw_code = response.choices[0].message["content"]
-    print(raw_code)
     return _unwrap_json(raw_code)
 
 

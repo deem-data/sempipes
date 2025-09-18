@@ -68,10 +68,10 @@ def _get_modality_prompts(
             samples_str += f"Samples of column `{column}`: {samples_list}.\n"
 
         elif modality == Modality.AUDIO:
-            samples_audio[column] = [_create_file_url(val) for val in samples_list]
+            samples_audio[column] = [_create_file_url(audio_sample) for audio_sample in samples_list]
 
         elif modality == Modality.IMAGE:
-            samples_image[column] = [_create_file_url(val) for val in samples_list]
+            samples_image[column] = [_create_file_url(image_sample) for image_sample in samples_list]
 
     return samples_str, samples_image, samples_audio
 
