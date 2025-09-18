@@ -22,7 +22,7 @@ def greedy_optimise_semantic_operator(
     # print(dag_summary)
 
     for iteration in range(num_iterations):
-        print(f"---ITERATION {iteration} -> Fitting with memory ---")
+        print(f"--- ITERATION {iteration} -> Fitting with memory ---")
         learner = dag_sink.skb.make_learner(fitted=False)
 
         env = dag_sink.skb.get_data()
@@ -31,7 +31,7 @@ def greedy_optimise_semantic_operator(
 
         learner.fit(env)
 
-        print(f"---ITERATION {iteration} -> Evaluation ---")
+        print(f"--- ITERATION {iteration} -> Evaluation ---")
         op_fitted = learner.find_fitted_estimator(operator_name).transformer_
         op_state = op_fitted.state_after_fit()
         states.append(op_state)

@@ -9,7 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
-    all_df = pd.read_csv("comparisons/tmdb_box_office_prediction/train.csv")
+    all_df = pd.read_csv("comparisons/tmdb_box_office_prediction/data.csv")
     train_df, test_df = sklearn.model_selection.train_test_split(all_df, test_size=0.5, random_state=seed)
 
     train_df["release_date"] = pd.to_datetime(train_df["release_date"], format="%m/%d/%y")
