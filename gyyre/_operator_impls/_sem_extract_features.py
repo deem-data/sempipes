@@ -95,16 +95,18 @@ def _get_feature_suggestion_message(
     response_example = """
     Please respond with a JSON object per each feature to extract. JSON object should contain the following keys: `feature_name` - name of the new feature to generate, `feature_prompt` - prompt to generate this feature using an LLM, and `input_columns` - list of columns to use as input to generate this feature. 
     
-    Example response for a column `image_column`:
+    Example response for a columns ["description", "image"]:
     ```json
     [
         {
             "feature_name": "image_brightness",
             "feature_prompt": "Generate a categorical feature that represents color of the product on the image.",
-            "input_columns": ["image_column"]
+            "input_columns": ["description"]
         }
     ]
     ```
+
+    Answer ONLY with a JSON object like in the example.
     """
 
     content: list[dict] = [
@@ -147,7 +149,7 @@ def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) ->
     Please respond with a JSON object with feature names as keys and generated feature values as values. 
     JSON object should contain the following keys: {columns_to_generate}. 
 
-    Answer with only the JSON, without any additional text, explanations, or formatting.
+    Answer with ONLY the JSON, without any additional text, explanations, comments, or formatting.
     
     Example response:
     ```json
@@ -243,6 +245,10 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         # Validate that generated dicts have correct keys for later generation
         for feature in json.loads(generated_output):
             if list(feature.keys()) == ["feature_name", "feature_prompt", "input_columns"]:
+                if len(set(feature["input_columns"]) - set(df.columns)) != 0:
+                    feature["input_columns"] = self.input_columns
+                    print("Entered")
+
                 self.generated_features_.append(feature)
                 self.output_columns[feature["feature_name"]] = feature["feature_prompt"]
             else:
@@ -281,7 +287,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             prompt = self._build_mm_generation_prompt(row=row)
             prompts.append(_get_generic_message(_SYSTEM_PROMPT, prompt))
 
-        results = _batch_generate_results(prompts, batch_size=100)
+        results = _batch_generate_results(prompts, batch_size=10)
 
         # Parse new results
         generated_columns: dict = {}

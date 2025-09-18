@@ -1,3 +1,6 @@
+import re
+
+
 def _unwrap(text: str, prefix, suffix, suffix2) -> str:
     text = text.strip()
     if text.startswith(prefix):
@@ -14,8 +17,23 @@ def _unwrap(text: str, prefix, suffix, suffix2) -> str:
 
 
 def _unwrap_json(text: str) -> str:
+    # Check if the additional output
+    match = re.search(r"```json(.*?)```", text, re.DOTALL | re.IGNORECASE)
+    if match:
+        text = match.group(1).strip()
+
+    # Remove comments (// ... until end of line)
+    text = re.sub(r"//.*", "", text)
+    
     return _unwrap(text=text, prefix="```json", suffix="```", suffix2="```end")
 
 
 def _unwrap_python(text: str) -> str:
+    # Check for the additional output
+    match = re.search(r"```python(.*?)```", text, re.DOTALL | re.IGNORECASE)
+    if not match:
+        raise ValueError("Error parsing Python code.")
+
+    text = match.group(1).strip()
+
     return _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")
