@@ -9,7 +9,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_log_error
 from sklearn.preprocessing import OrdinalEncoder
 
-data = pd.read_csv("comparisons/tmdb_box_office_prediction/train.csv")
+data = pd.read_csv("comparisons/tmdb_box_office_prediction/data.csv")
 revenue_df = data.revenue
 data = data.drop(columns=["revenue"])
 

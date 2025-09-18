@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 
@@ -27,18 +26,3 @@ def get_config() -> Config:
 def set_config(cfg: Config) -> None:
     """Set the process-wide default config (for the current thread/async task)."""
     _CONFIG.set(cfg)
-
-
-@contextmanager
-def override_config(**overrides):
-    """
-    Temporarily override selected fields for a block/scope.
-    Works with nested overrides and is task/thread-safe.
-    """
-    current = get_config()
-    new_cfg = Config(**{**current.__dict__, **overrides})
-    token = _CONFIG.set(new_cfg)
-    try:
-        yield new_cfg
-    finally:
-        _CONFIG.reset(token)

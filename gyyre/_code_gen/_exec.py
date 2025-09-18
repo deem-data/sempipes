@@ -1,5 +1,6 @@
 import ast
 import builtins
+import collections
 import datetime
 import json
 import re
@@ -11,7 +12,7 @@ import pandas as pd
 import sklearn
 import skrub
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime"]
+_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime", "collections", "math"]
 
 
 def _make_safe_import(allowed_modules: Iterable[str]):
@@ -52,6 +53,11 @@ def _safe_exec(
         "all": all,
         "map": map,
         "hash": hash,
+        "min": min,
+        "max": max,
+        "sorted": sorted,
+        "Exception": Exception,
+        "BaseException": BaseException,
     }
 
     safe_globals = {
@@ -66,9 +72,11 @@ def _safe_exec(
         "json": json,
         "ast": ast,
         "datetime": datetime,
+        "collections": collections,
     }
 
-    safe_locals = safe_locals_to_add
-    exec(python_code, safe_globals, safe_locals_to_add)
+    # We need a single dict to allow function definitions inside the code
+    safe_globals_and_locals = {**safe_globals, **safe_locals_to_add}
+    exec(python_code, safe_globals_and_locals, safe_globals_and_locals)
 
-    return safe_locals[variable_to_return]
+    return safe_globals_and_locals[variable_to_return]
