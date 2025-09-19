@@ -1,11 +1,11 @@
 import skrub
 
-import gyyre
+import sempipes
 
 
 def test_different_llms():
-    gyyre.set_config(
-        gyyre.Config(
+    sempipes.set_config(
+        sempipes.Config(
             llm_for_code_generation="ollama/gpt-oss:20b",
             llm_settings_for_code_generation={"api_base": "http://localhost:11434", "temperature": 0.5},
             llm_for_batch_processing="ollama/gemma3:1b",

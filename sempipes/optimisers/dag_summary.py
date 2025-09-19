@@ -24,7 +24,7 @@ class DagSummary:
 
 
 # TODO We can do much more here!
-def _summarise_dag(dag_sink_node: DataOp) -> DagSummary:
+def summarise_dag(dag_sink_node: DataOp) -> DagSummary:
     summary = DagSummary()
 
     def is_model(some_op):

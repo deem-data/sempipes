@@ -7,7 +7,7 @@ from sklearn.preprocessing import OneHotEncoder
 from skrub import selectors as s
 from xgboost import XGBRegressor
 
-import gyyre  # pylint: disable=unused-import
+import sempipes  # pylint: disable=unused-import
 
 games_df = pd.read_csv("comparisons/scrabble_player_rating/games.csv")
 turns_df = pd.read_csv("comparisons/scrabble_player_rating/turns.csv.gz")

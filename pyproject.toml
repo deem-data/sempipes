@@ -47,7 +47,7 @@ select = [
 
 ignore = [
     "E501",  # Line too long
-    "F401"   # Unused import, cannot configure this for `import gyyre` only
+    "F401"   # Unused import, cannot configure this for `import sempipes` only
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

@@ -7,13 +7,13 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from gyyre._llm._llm import (
-    _batch_generate_results,
-    _generate_json_from_messages,
-    _get_generic_message,
-    _unwrap_json,
+from sempipes.llm.llm import (
+    batch_generate_results,
+    generate_json_from_messages,
+    get_generic_message,
+    unwrap_json,
 )
-from gyyre._operators import EstimatorTransformer, SemExtractFeaturesOperator
+from sempipes.operators.operators import EstimatorTransformer, SemExtractFeaturesOperator
 
 _SYSTEM_PROMPT = """
 You are an expert data scientist, assisting feature extraction from the multi-modal data such as text/images/audio.
@@ -238,7 +238,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             samples_audio=samples_audio,
         )
 
-        generated_output = _generate_json_from_messages(messages=messages)
+        generated_output = generate_json_from_messages(messages=messages)
 
         # Validate that generated dicts have correct keys for later generation
         for feature in json.loads(generated_output):
@@ -279,14 +279,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         prompts = []
         for _, row in df.iterrows():
             prompt = self._build_mm_generation_prompt(row=row)
-            prompts.append(_get_generic_message(_SYSTEM_PROMPT, prompt))
+            prompts.append(get_generic_message(_SYSTEM_PROMPT, prompt))
 
-        results = _batch_generate_results(prompts, batch_size=100)
+        results = batch_generate_results(prompts, batch_size=100)
 
         # Parse new results
         generated_columns: dict = {}
         for result in results:
-            raw_result = _unwrap_json(result)
+            raw_result = unwrap_json(result)
 
             try:
                 for column_name, cell_value in json.loads(raw_result).items():

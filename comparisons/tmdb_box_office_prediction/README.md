@@ -36,7 +36,7 @@ RMSLE on split 4: 2.3817040681718584
 Mean final score:  2.242502389904271 0.15830612660256735
 ```
 
-#### Gyyre
+#### SemPipes
 
 ```commandline
 --- Fitting gyyre.with_sem_features('Create additional features that...', 25)
@@ -70,7 +70,7 @@ RMSLE on split 4: 2.41025955023866
 Mean final score:  2.2702722829847666 0.14170823265364602
 ```
 
-#### Gyyre (optimised)
+#### SemPipes (optimised)
 
 ```commandline
 --- Fitting gyyre.with_sem_features('Create additional features...', 25)

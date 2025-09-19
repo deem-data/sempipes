@@ -13,9 +13,9 @@ def _unwrap(text: str, prefix, suffix, suffix2) -> str:
     return "".join(keep)
 
 
-def _unwrap_json(text: str) -> str:
+def unwrap_json(text: str) -> str:
     return _unwrap(text=text, prefix="```json", suffix="```", suffix2="```end")
 
 
-def _unwrap_python(text: str) -> str:
+def unwrap_python(text: str) -> str:
     return _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")

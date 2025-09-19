@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import skrub
 
-import gyyre  # pylint: disable=unused-import
+import sempipes  # pylint: disable=unused-import
 
 warnings.filterwarnings("ignore", category=UserWarning)
 

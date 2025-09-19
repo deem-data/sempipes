@@ -1,8 +1,8 @@
-import gyyre
-from comparisons.tmdb_box_office_prediction._gyyre_impl import gyyre_pipeline
+import sempipes
+from comparisons.tmdb_box_office_prediction._sempipes_impl import gyyre_pipeline
 
-gyyre.set_config(
-    gyyre.Config(
+sempipes.set_config(
+    sempipes.Config(
         llm_for_code_generation="openai/gpt-5-mini",
         llm_settings_for_code_generation={},
         llm_for_batch_processing="ollama/gpt-oss:20b",
@@ -12,7 +12,7 @@ gyyre.set_config(
 
 predictions = gyyre_pipeline("comparisons/tmdb_box_office_prediction/data.csv")
 
-memory, states = gyyre.greedy_optimise_semantic_operator(
+memory, states = sempipes.greedy_optimise_semantic_operator(
     predictions,
     "additional_movie_features",
     num_iterations=5,

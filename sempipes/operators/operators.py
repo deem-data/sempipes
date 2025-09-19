@@ -7,12 +7,12 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 from skrub.selectors._base import Filter
 
-from gyyre.optimisers._dag_summary import DagSummary
+from sempipes.optimisers.dag_summary import DagSummary
 
 
-class GyyreContextAwareMixin(ABC):
+class ContextAwareMixin(ABC):
     """
-    A mixin for gyyre operators that want to adjust themselves to the context in which they are used.
+    A mixin for sempipes operators that want to adjust themselves to the context in which they are used.
 
     The context is captured in a DagSummary object, which is provided to the operator as constructor parameter.
     The DagSummary contains information about the overall task, the model being used, the target variable, and the
@@ -22,22 +22,22 @@ class GyyreContextAwareMixin(ABC):
         gyyre_dag_summary (DagSummary | None): A summary of the computational graph context.
     """
 
-    gyyre_dag_summary: DagSummary | None = None
+    _dag_summary: DagSummary | None = None
 
 
-class GyyrePrefittableMixin(ABC):
+class PrefittableMixin(ABC):
     """
-    A mixin for gyyre operators that can export and import their internal state for skipping the fit operation.
+    A mixin for sempipes operators that can export and import their internal state for skipping the fit operation.
 
     The prefitted state is captured in a dict, which is provided to the operator as constructor parameter.
     This is required to enable context-aware optimisation, where the operator is fitted multiple times in
     different contexts, and where the pre-fitted state has to be evaluated repeatedly during cross-validation
 
     Attributes:
-        gyyre_prefitted_state (dict[str, Any] | None): The prefitted state of the operator.
+        _prefitted_state (dict[str, Any] | None): The prefitted state of the operator.
     """
 
-    gyyre_prefitted_state: dict[str, Any] | DataOp | None = {}
+    _prefitted_state: dict[str, Any] | DataOp | None = {}
 
     @abstractmethod
     def state_after_fit(self) -> dict[str, Any]:
@@ -49,8 +49,8 @@ class GyyrePrefittableMixin(ABC):
         """
 
 
-class GyyreOptimisableMixin(ABC):
-    gyyre_memory: list[dict[str, Any]] | DataOp | None = {}
+class OptimisableMixin(ABC):
+    _memory: list[dict[str, Any]] | DataOp | None = {}
 
     @abstractmethod
     def memory_update_from_latest_fit(self) -> dict[str, Any]:
@@ -62,7 +62,7 @@ class EstimatorTransformer(BaseEstimator, TransformerMixin):
 
 
 class OptimisableEstimatorTransformer(  # pylint: disable=too-many-ancestors
-    EstimatorTransformer, GyyreContextAwareMixin, GyyrePrefittableMixin, GyyreOptimisableMixin, ABC
+    EstimatorTransformer, ContextAwareMixin, PrefittableMixin, OptimisableMixin, ABC
 ):
     pass
 
