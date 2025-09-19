@@ -15,7 +15,7 @@ def rmsle(y, y_predicted):
     return np.sqrt(mean_squared_error(y, y_predicted))
 
 
-all_data_initial = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/train.csv")
+all_data_initial = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/data.csv")
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):

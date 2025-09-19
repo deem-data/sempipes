@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 # Load the data
-all_data = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/train.csv")
+all_data = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/data.csv")
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):

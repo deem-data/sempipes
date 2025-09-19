@@ -3,6 +3,7 @@ from typing import Any
 import numpy as np
 import skrub
 from skrub import DataOp
+from skrub._data_ops._evaluation import find_node_by_name
 
 from sempipes.optimisers.dag_summary import summarise_dag
 
@@ -19,7 +20,6 @@ def greedy_optimise_semantic_operator(
 
     print("--- COMPUTING DAG SUMMARY for context-aware optimisation ---")
     dag_summary = summarise_dag(dag_sink)
-    # print(dag_summary)
 
     for iteration in range(num_iterations):
         print(f"--- ITERATION {iteration} -> Fitting with memory ---")
@@ -28,6 +28,12 @@ def greedy_optimise_semantic_operator(
         env = dag_sink.skb.get_data()
         env[f"sempipes_dag_summary__{operator_name}"] = dag_summary
         env[f"sempipes_memory__{operator_name}"] = memory
+
+        if iteration == 0:
+            print("--- Starting from an empty state")
+            feature_generation_data_op = find_node_by_name(dag_sink, operator_name)
+            empty_state = feature_generation_data_op._skrub_impl.estimator.empty_state()
+            env[f"sempipes_prefitted_state__{operator_name}"] = empty_state
 
         learner.fit(env)
 

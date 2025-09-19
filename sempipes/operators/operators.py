@@ -49,8 +49,17 @@ class PrefittableMixin(ABC):
         """
 
 
-class OptimisableMixin(ABC):
+class OptimisableMixin(PrefittableMixin):
     _memory: list[dict[str, Any]] | DataOp | None = {}
+
+    @abstractmethod
+    def empty_state(self) -> dict[str, Any]:
+        """
+        Return an empty internal state of the operator, to be used for prefitting in future fits.
+
+        Returns:
+            dict[str, Any]: The internal state of the operator.
+        """
 
     @abstractmethod
     def memory_update_from_latest_fit(self) -> dict[str, Any]:
@@ -62,7 +71,7 @@ class EstimatorTransformer(BaseEstimator, TransformerMixin):
 
 
 class OptimisableEstimatorTransformer(  # pylint: disable=too-many-ancestors
-    EstimatorTransformer, ContextAwareMixin, PrefittableMixin, OptimisableMixin, ABC
+    EstimatorTransformer, ContextAwareMixin, OptimisableMixin, ABC
 ):
     pass
 

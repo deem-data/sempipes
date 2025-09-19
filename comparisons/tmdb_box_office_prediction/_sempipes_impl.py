@@ -10,7 +10,7 @@ import sempipes  # pylint: disable=unused-import
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
-def gyyre_pipeline(data_file):
+def sempipes_pipeline(data_file):
     data = pd.read_csv(data_file)
     revenue_df = data.revenue
     data = data.drop(columns=["revenue"])

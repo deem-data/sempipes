@@ -3,12 +3,12 @@ import json
 import numpy as np
 from sklearn.metrics import mean_squared_log_error
 
-from comparisons.tmdb_box_office_prediction._sempipes_impl import gyyre_pipeline
+from comparisons.tmdb_box_office_prediction._sempipes_impl import sempipes_pipeline
 
-with open("comparisons/tmdb_box_office_prediction/_sempipes_state-gpt-5-mini.json", "r", encoding="utf-8") as f:
+with open("comparisons/tmdb_box_office_prediction/_sempipes_state.json", "r", encoding="utf-8") as f:
     state = json.load(f)
 
-pipeline = gyyre_pipeline("comparisons/tmdb_box_office_prediction/data.csv")
+pipeline = sempipes_pipeline("comparisons/tmdb_box_office_prediction/data.csv")
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):

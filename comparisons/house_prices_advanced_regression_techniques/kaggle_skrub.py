@@ -17,7 +17,7 @@ def rmsle(y, y_predicted):
     return np.sqrt(mean_squared_error(y, y_predicted))
 
 
-all_data_initial = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/train.csv")
+all_data_initial = pd.read_csv("comparisons/house_prices_advanced_regression_techniques/data.csv")
 
 data = skrub.var("data", all_data_initial).skb.subsample(n=100)
 

@@ -1,22 +1,27 @@
+import warnings
+
 import sempipes
-from comparisons.tmdb_box_office_prediction._sempipes_impl import sempipes_pipeline
+from comparisons.house_prices_advanced_regression_techniques._sempipes_impl import sempipes_pipeline
+
+warnings.filterwarnings("ignore")
 
 sempipes.set_config(
     sempipes.Config(
-        llm_for_code_generation="openai/gpt-5-mini",
-        llm_settings_for_code_generation={},
+        llm_for_code_generation="gemini/gemini-2.5-pro",
+        llm_settings_for_code_generation={"temperature": 0.0},
         llm_for_batch_processing="ollama/gpt-oss:20b",
         llm_settings_for_batch_processing={"api_base": "http://localhost:11434", "temperature": 0.0},
     )
 )
 
-predictions = sempipes_pipeline("comparisons/tmdb_box_office_prediction/validation.csv")
+
+pipeline = sempipes_pipeline("comparisons/house_prices_advanced_regression_techniques/validation.csv")
 
 memory, states = sempipes.greedy_optimise_semantic_operator(
-    predictions,
-    "additional_movie_features",
+    pipeline,
+    "house_features",
     num_iterations=5,
-    scoring="neg_root_mean_squared_log_error",
+    scoring="neg_root_mean_squared_error",
     cv=5,
 )
 

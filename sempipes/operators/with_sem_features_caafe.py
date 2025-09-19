@@ -13,7 +13,6 @@ from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import (
     ContextAwareMixin,
     OptimisableMixin,
-    PrefittableMixin,
     WithSemFeaturesOperator,
 )
 from sempipes.optimisers.dag_summary import DagSummary
@@ -183,7 +182,7 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> None:
 
 
 # pylint: disable=too-many-ancestors
-class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, PrefittableMixin, OptimisableMixin):
+class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
     def __init__(
         self,
         nl_prompt: str,
@@ -199,6 +198,9 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Pr
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
 
         self.generated_code_: list[str] = []
+
+    def empty_state(self):
+        return {"generated_code": []}
 
     def state_after_fit(self):
         return {"generated_code": self.generated_code_}
