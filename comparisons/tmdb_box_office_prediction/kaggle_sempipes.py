@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics import mean_squared_log_error
 
-from comparisons.tmdb_box_office_prediction._gyyre_impl import gyyre_pipeline
+from comparisons.tmdb_box_office_prediction._sempipes_impl import gyyre_pipeline
 
 pipeline = gyyre_pipeline("comparisons/tmdb_box_office_prediction/data.csv")
 

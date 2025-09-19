@@ -13,6 +13,8 @@
 
 ### Preliminary results
 
+#### AIDE
+
 RMSLE on split 0: 0.1272016552886734
 RMSLE on split 1: 0.16392404776501368
 RMSLE on split 2: 0.19588776077489128
@@ -22,6 +24,8 @@ RMSLE on split 4: 0.12094492698517204
 Mean final score:  0.1463933979242993 0.02923710836537684
 
 
+#### Kaggle
+
 RMSLE on 0: 0.12890367223815058
 RMSLE on 1: 0.13247316421157498
 RMSLE on 2: 0.14341332505317003
@@ -29,6 +33,9 @@ RMSLE on 3: 0.12661676220744414
 RMSLE on 4: 0.1346140046689381
 
 Mean final score:  0.13320418567585557 0.005807530845031937
+
+
+#### SemPipes
 
 --- Fitting gyyre.with_sem_features('Compute additional features from th...', 10)
 	> Querying 'openai/gpt-4.1' with 2 messages...'

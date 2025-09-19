@@ -5,7 +5,7 @@ import pandas as pd
 import skrub
 from sklearn.model_selection import cross_validate
 
-import gyyre  # pylint: disable=unused-import
+import sempipes  # pylint: disable=unused-import
 
 
 def test_sem_extract_features_image():

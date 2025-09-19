@@ -1,31 +1,31 @@
 from litellm import batch_completion, completion
 
-from gyyre._llm._utils import _unwrap_json, _unwrap_python
-from gyyre.config import get_config
+from sempipes.config import get_config
+from sempipes.llm.utils import unwrap_json, unwrap_python
 
 
-def _get_cleaning_message(prompt: str) -> list[dict]:
-    return _get_generic_message(
+def get_cleaning_message(prompt: str) -> list[dict]:
+    return get_generic_message(
         "You are a helpful assistant, assisting data scientists with data cleaning and preparation, for instance, completing and imputing their data.",
         prompt,
     )
 
 
-def _get_generic_message(system_content: str, user_content: str | list[dict]) -> list[dict]:
+def get_generic_message(system_content: str, user_content: str | list[dict]) -> list[dict]:
     return [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
 
 
-def _generate_python_code(prompt: str) -> str:
-    messages = _get_generic_message(
+def generate_python_code(prompt: str) -> str:
+    messages = get_generic_message(
         "You are a helpful assistant, assisting data scientists with completing and improving their machine learning and data preparation code.",
         prompt,
     )
-    return _generate_python_code_from_messages(messages)
+    return generate_python_code_from_messages(messages)
 
 
-def _generate_python_code_from_messages(messages: list[dict]) -> str:
+def generate_python_code_from_messages(messages: list[dict]) -> str:
     raw_code = _generate_code_from_messages(messages=messages)
-    return _unwrap_python(raw_code)
+    return unwrap_python(raw_code)
 
 
 def _generate_code_from_messages(messages: list[dict]) -> str:
@@ -43,12 +43,12 @@ def _generate_code_from_messages(messages: list[dict]) -> str:
     return raw_code
 
 
-def _generate_json_from_messages(messages: list[dict]) -> str:
+def generate_json_from_messages(messages: list[dict]) -> str:
     raw_code = _generate_code_from_messages(messages=messages)
-    return _unwrap_json(raw_code)
+    return unwrap_json(raw_code)
 
 
-def _batch_generate_results(
+def batch_generate_results(
     prompts: list[str],
     batch_size: int,
 ) -> list[str | None]:

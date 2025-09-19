@@ -3,9 +3,9 @@ from typing import Any
 from skrub import _dataframe as sbd
 from skrub.selectors._base import Filter
 
-from gyyre._code_gen._exec import _safe_exec
-from gyyre._llm._llm import _generate_python_code
-from gyyre._operators import SemSelectOperator
+from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.llm.llm import generate_python_code
+from sempipes.operators.operators import SemSelectOperator
 
 
 def _sem_select(column: Any, nl_prompt: str) -> bool:
@@ -64,8 +64,8 @@ def _sem_select(column: Any, nl_prompt: str) -> bool:
         ```            
         """
 
-        python_code = _generate_python_code(prompt)
-        decision = _safe_exec(python_code, "__column_is_relevant")
+        python_code = generate_python_code(prompt)
+        decision = safe_exec(python_code, "__column_is_relevant")
 
         return decision
 

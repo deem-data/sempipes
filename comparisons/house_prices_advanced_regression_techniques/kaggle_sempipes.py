@@ -10,7 +10,7 @@ from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
 from skrub import selectors as s
 from xgboost import XGBRegressor
 
-import gyyre  # pylint: disable=unused-import
+import sempipes  # pylint: disable=unused-import
 
 warnings.filterwarnings("ignore")
 

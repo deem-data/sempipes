@@ -9,7 +9,7 @@ repos:
     rev: v3.3.8
     hooks:
       - id: pylint
-        args: [gyyre]
+        args: [sempipes]
         additional_dependencies:
           - skrub==0.6.1
           - plotly==6.3.0

@@ -1,6 +1,6 @@
-# Gyyre - Context-Aware Semantic Operators for Machine Learning Pipelines
+# SemPipes - Context-Aware Semantic Operators for Machine Learning Pipelines
 
-Gyyre is a research project to extend Python-based machine learning scripts with semantic operators. It is heavily relying on the awesome work from the [skrub](https://github.com/skrub-data/skrub) project!
+SemPipes is a research project to extend Python-based machine learning scripts with semantic operators. It is heavily relying on the awesome work from the [skrub](https://github.com/skrub-data/skrub) project!
 
 ### Semantic Operators
 
@@ -12,10 +12,10 @@ Gyyre is a research project to extend Python-based machine learning scripts with
 ### Example
 
 ```python
-import gyyre
+import sempipes
 import skrub
 from sklearn.ensemble import HistGradientBoostingClassifier
-from gyyre import sem_choose
+from sempipes import sem_choose
 
 dataset = skrub.datasets.fetch_credit_fraud()
 

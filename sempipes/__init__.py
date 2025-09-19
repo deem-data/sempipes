@@ -3,14 +3,14 @@ from skrub import selectors
 from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 
-from gyyre._operator_impls._sem_choose_llm import SemChooseLLM
-from gyyre._operator_impls._sem_extract_features import SemExractFeaturesLLM
-from gyyre._operator_impls._sem_select_llm import SemSelectLLM
-from gyyre._operator_impls._with_sem_features_caafe import WithSemFeaturesCaafe
-from gyyre._operator_impls._sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
-from gyyre._operator_impls._sem_fillna_llm import SemFillNAWithLLLM
-from gyyre.optimisers.greedy import greedy_optimise_semantic_operator
-from gyyre.config import set_config, Config
+from sempipes.operators.sem_choose_llm import SemChooseLLM
+from sempipes.operators.sem_extract_features import SemExractFeaturesLLM
+from sempipes.operators.sem_select_llm import SemSelectLLM
+from sempipes.operators.with_sem_features_caafe import WithSemFeaturesCaafe
+from sempipes.operators.sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
+from sempipes.operators.sem_fillna_llm import SemFillNAWithLLLM
+from sempipes.optimisers.greedy import greedy_optimise_semantic_operator
+from sempipes.config import set_config, Config
 
 
 def sem_choose(**kwargs) -> dict:

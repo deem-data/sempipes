@@ -12,9 +12,9 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
-from gyyre._code_gen._exec import _safe_exec
-from gyyre._llm._llm import _generate_python_code
-from gyyre._operators import SemFillNAOperator
+from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.llm.llm import generate_python_code
+from sempipes.operators.operators import SemFillNAOperator
 
 
 class SemFillNALLLMPlusModel(SemFillNAOperator):
@@ -52,14 +52,14 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
     """
 
     def fit(self, df: pd.DataFrame, y=None) -> Self:
-        print(f"--- gyyre.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
+        print(f"--- sempipes.sem_fillna('{self.target_column}', '{self.nl_prompt}')")
 
         target_column_type = str(df[self.target_column].dtype)
         candidate_columns = [column for column in df.columns if column != self.target_column]
 
         prompt = self._build_prompt(self.target_column, target_column_type, candidate_columns, self.nl_prompt)
-        python_code = _generate_python_code(prompt)
-        feature_columns = _safe_exec(python_code, "__chosen_columns")
+        python_code = generate_python_code(prompt)
+        feature_columns = safe_exec(python_code, "__chosen_columns")
 
         X = df[feature_columns]
         y = df[self.target_column]

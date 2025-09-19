@@ -27,7 +27,7 @@ def _make_safe_import(allowed_modules: Iterable[str]):
     return safe_import
 
 
-def _safe_exec(
+def safe_exec(
     python_code: str,
     variable_to_return: str,
     safe_locals_to_add: dict[str, Any] | None = None,

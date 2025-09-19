@@ -3,16 +3,16 @@ import traceback
 from sklearn.base import BaseEstimator
 from skrub import DataOp
 
-from gyyre._code_gen._exec import _safe_exec
-from gyyre._llm._llm import _generate_python_code
-from gyyre._operators import SemChooseOperator
+from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.llm.llm import generate_python_code
+from sempipes.operators.operators import SemChooseOperator
 
 
 class SemChooseLLM(SemChooseOperator):
     def set_params_on_estimator(
         self, data_op: DataOp, estimator: BaseEstimator, choices: dict[str, str] | None, y=None
     ) -> None:
-        print(f"--- gyyre.apply_with_sem_choose({estimator}, {choices})")
+        print(f"--- sempipes.apply_with_sem_choose({estimator}, {choices})")
 
         max_retries = 3
 
@@ -24,9 +24,9 @@ class SemChooseLLM(SemChooseOperator):
                         prompt = self._build_prompt(
                             estimator, user_prompt, param_name, previous_exceptions=previous_exceptions
                         )
-                        python_code = _generate_python_code(prompt)
+                        python_code = generate_python_code(prompt)
 
-                        suggested_choices = _safe_exec(python_code, "__generated_sempipes_choices")
+                        suggested_choices = safe_exec(python_code, "__generated_sempipes_choices")
                         estimator.set_params(**{param_name: suggested_choices})
                         print(f"\tSuggested choices for {param_name}: {suggested_choices}")
                         break

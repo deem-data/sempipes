@@ -3,9 +3,9 @@ import json
 import numpy as np
 from sklearn.metrics import mean_squared_log_error
 
-from comparisons.tmdb_box_office_prediction._gyyre_impl import gyyre_pipeline
+from comparisons.tmdb_box_office_prediction._sempipes_impl import gyyre_pipeline
 
-with open("comparisons/tmdb_box_office_prediction/_gyyre_state-gpt-5-mini.json", "r", encoding="utf-8") as f:
+with open("comparisons/tmdb_box_office_prediction/_sempipes_state-gpt-5-mini.json", "r", encoding="utf-8") as f:
     state = json.load(f)
 
 pipeline = gyyre_pipeline("comparisons/tmdb_box_office_prediction/data.csv")
@@ -16,12 +16,12 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
     env_fit = split["train"]
-    env_fit["gyyre_prefitted_state__additional_movie_features"] = state
+    env_fit["sempipes_prefitted_state__additional_movie_features"] = state
 
     learner.fit(env_fit)
 
     env_eval = split["test"]
-    env_eval["gyyre_prefitted_state__additional_movie_features"] = state
+    env_eval["sempipes_prefitted_state__additional_movie_features"] = state
 
     y_pred = learner.predict(env_eval)
 

@@ -8,15 +8,15 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
-from gyyre._code_gen._exec import _safe_exec
-from gyyre._llm._llm import _generate_python_code_from_messages
-from gyyre._operators import (
-    GyyreContextAwareMixin,
-    GyyreOptimisableMixin,
-    GyyrePrefittableMixin,
+from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.llm.llm import generate_python_code_from_messages
+from sempipes.operators.operators import (
+    ContextAwareMixin,
+    OptimisableMixin,
+    PrefittableMixin,
     WithSemFeaturesOperator,
 )
-from gyyre.optimisers._dag_summary import DagSummary
+from sempipes.optimisers.dag_summary import DagSummary
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
@@ -172,10 +172,7 @@ def _add_memorized_history(
 def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> None:
     df_sample = df.head(100).copy(deep=True)
     columns_before = df_sample.columns
-    # print("-" * 120)
-    # print(code_to_execute)
-    # print("-" * 120)
-    df_sample_processed = _safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df_sample})
+    df_sample_processed = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df_sample})
     columns_after = df_sample_processed.columns
     new_columns = sorted(set(columns_after) - set(columns_before))
     removed_columns = sorted(set(columns_before) - set(columns_after))
@@ -186,22 +183,20 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> None:
 
 
 # pylint: disable=too-many-ancestors
-class LLMFeatureGenerator(
-    BaseEstimator, TransformerMixin, GyyreContextAwareMixin, GyyrePrefittableMixin, GyyreOptimisableMixin
-):
+class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, PrefittableMixin, OptimisableMixin):
     def __init__(
         self,
         nl_prompt: str,
         how_many: int,
-        gyyre_dag_summary: DagSummary | None | DataOp = None,
-        gyyre_prefitted_state: dict[str, Any] | DataOp | None = None,
-        gyyre_memory: list[dict[str, Any]] | DataOp | None = None,
+        _dag_summary: DagSummary | None | DataOp = None,
+        _prefitted_state: dict[str, Any] | DataOp | None = None,
+        _memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.how_many = how_many
-        self.gyyre_dag_summary = gyyre_dag_summary
-        self.gyyre_prefitted_state: dict[str, Any] | DataOp | None = gyyre_prefitted_state
-        self.gyyre_memory: list[dict[str, Any]] | DataOp | None = gyyre_memory
+        self._dag_summary = _dag_summary
+        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
+        self._memory: list[dict[str, Any]] | DataOp | None = _memory
 
         self.generated_code_: list[str] = []
 
@@ -216,14 +211,14 @@ class LLMFeatureGenerator(
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
         prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
-        if self.gyyre_prefitted_state is not None:
-            print(f"--- Using provided state for gyyre.with_sem_features('{prompt_preview}...', {self.how_many})")
-            self.generated_code_ = self.gyyre_prefitted_state["generated_code"]
+        if self._prefitted_state is not None:
+            print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
+            self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
         print(
-            f"--- Fitting gyyre.with_sem_features('{prompt_preview}...', {self.how_many})"
-            f"{_dag_summary_info(self.gyyre_dag_summary)}"
+            f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many})"
+            f"{_dag_summary_info(self._dag_summary)}"
         )
 
         messages = []
@@ -231,13 +226,13 @@ class LLMFeatureGenerator(
             code = ""
 
             try:
-                prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self.gyyre_dag_summary)
+                prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._dag_summary)
 
                 if attempt == 1:
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                    _add_memorized_history(self.gyyre_memory, messages, self.generated_code_)
+                    _add_memorized_history(self._memory, messages, self.generated_code_)
 
-                code = _generate_python_code_from_messages(messages)
+                code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 
@@ -261,20 +256,20 @@ class LLMFeatureGenerator(
     def transform(self, df):
         check_is_fitted(self, "generated_code_")
         code_to_execute = "\n".join(self.generated_code_)
-        df = _safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
         return df
 
 
 class WithSemFeaturesCaafe(WithSemFeaturesOperator):
     def generate_features_estimator(self, data_op: DataOp, nl_prompt: str, name: str, how_many: int):
-        gyyre_dag_summary = skrub.var(f"gyyre_dag_summary__{name}", None)
-        gyyre_prefitted_state = skrub.var(f"gyyre_prefitted_state__{name}", None)
-        gyyre_memory = skrub.var(f"gyyre_memory__{name}", [])
+        _dag_summary = skrub.var(f"sempipes_dag_summary__{name}", None)
+        _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
+        _memory = skrub.var(f"sempipes_memory__{name}", [])
 
         return LLMFeatureGenerator(
             nl_prompt,
             how_many,
-            gyyre_dag_summary=gyyre_dag_summary,
-            gyyre_prefitted_state=gyyre_prefitted_state,
-            gyyre_memory=gyyre_memory,
+            _dag_summary=_dag_summary,
+            _prefitted_state=_prefitted_state,
+            _memory=_memory,
         )
