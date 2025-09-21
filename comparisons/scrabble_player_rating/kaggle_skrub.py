@@ -9,7 +9,7 @@ from xgboost import XGBRegressor
 
 games_df = pd.read_csv("comparisons/scrabble_player_rating/games.csv")
 turns_df = pd.read_csv("comparisons/scrabble_player_rating/turns.csv.gz")
-data_df = pd.read_csv("comparisons/scrabble_player_rating/train.csv")
+data_df = pd.read_csv("comparisons/scrabble_player_rating/data.csv")
 
 games = skrub.var("games", games_df)
 turns = skrub.var("turns", turns_df)

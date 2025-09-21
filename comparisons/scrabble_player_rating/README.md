@@ -17,54 +17,73 @@
 #### AIDE
 
 ```commandline
-RMSE on split 0: 292.5272125445576
-RMSE on split 1: 231.66421584540427
-RMSE on split 2: 301.1013230243952
-RMSE on split 3: 244.2488113086773
-RMSE on split 4: 286.29052319714947
+RMSE on split 0: 283.30835226797274
+RMSE on split 1: 223.05487796629538
+RMSE on split 2: 283.8207560311914
+RMSE on split 3: 250.62215926158237
+RMSE on split 4: 234.15469769749097
 
-Mean final score:  271.16641718403673 27.806841479967083
+Mean final score:  254.9921686449066 24.924612009211693
 ```
 
 #### Kaggle
 
 ```commandline
-RMSE on split 0: 158.37883529294564
-RMSE on split 1: 171.50447561579844
-RMSE on split 2: 175.95023266537615
-RMSE on split 3: 192.26843824130367
-RMSE on split 4: 161.4045407702336
+RMSE on split 0: 213.07205170728045
+RMSE on split 1: 202.8428906352155
+RMSE on split 2: 155.5321510170807
+RMSE on split 3: 171.10543624473186
+RMSE on split 4: 158.08040379028643
 
-Mean final score:  171.90130451713148 12.03669931120767
+Mean final score:  180.126586678919 23.553070848657562
 ```
 
 
 #### SemPipes
 
 ```commandline
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 15 new feature columns: ['first_five_turns_ratio', 'game_is_rated', 'is_regular_time_control', 'loser_points', 'max_min_turn_ratio', 'overtime_per_turn', 'overtime_used_ratio', 'player_is_first', 'points_per_second', 'points_per_turn', 'resigned_game', 'score_diff_max_min', 'score_per_initial_time', 'turn_duration_avg', 'winner_points'], removed 0 feature columns: []
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+	> Computed 15 new feature columns: ['avg_points_per_turn', 'first_five_points_ratio', 'is_first_player', 'max_min_diff_per_turn', 'player_avg_first_five_points', 'player_avg_game_duration', 'player_avg_max_min_diff', 'player_avg_max_points_turn', 'player_avg_min_points_turn', 'player_avg_points_per_second', 'player_avg_points_per_turn', 'player_avg_score', 'player_avg_turns', 'player_win_rate', 'points_per_second'], removed 0 feature columns: []
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 16 new feature columns: ['avg_points_per_turn', 'first_turn_points_ratio', 'high_initial_lead', 'is_first', 'is_rapid_time', 'max_min_turn_diff_ratio', 'max_points_turn_ratio', 'min_points_turn_ratio', 'overtime_used', 'player_won', 'points_late_game', 'points_late_per_turn', 'points_per_second', 'relative_first', 'turns_late_game', 'turns_per_minute'], removed 0 feature columns: []
-RMSE on split 0: 168.87156500947694
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+	> Computed 16 new feature columns: ['first_five_points_frac', 'game_avg_score', 'is_first', 'is_winner', 'max_min_diff_per_turn', 'player_avg_points_per_second', 'player_avg_points_per_turn', 'player_avg_score', 'player_win_rate', 'points_per_second', 'points_per_turn', 'score_vs_game_avg', 'seconds_per_turn', 'turns_per_minute', 'win_when_first', 'win_when_not_first'], removed 0 feature columns: []
+RMSE on split 0: 188.2115041980697
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 16 new feature columns: ['first_five_ratio', 'is_first', 'is_lexicon_csw', 'is_rated', 'is_winner', 'max_points_perc', 'maxmin_diff_perc', 'min_points_perc', 'score_per_second', 'score_per_turn', 'seconds_per_turn', 'time_use_perc', 'total_max_time_seconds', 'turns_per_min', 'win_as_first', 'win_as_second'], removed 0 feature columns: []
-RMSE on split 1: 171.64270097174247
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+	> Computed 15 new feature columns: ['is_first_player', 'player_avg_first5', 'player_avg_game_duration', 'player_avg_increment', 'player_avg_initial_time', 'player_avg_max_min_diff', 'player_avg_max_points_turn', 'player_avg_min_points_turn', 'player_avg_score', 'player_avg_turns', 'player_first_win_rate', 'player_notfirst_win_rate', 'player_win_rate', 'points_per_second', 'points_per_turn'], removed 0 feature columns: []
+RMSE on split 1: 127.99819182072456
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 15 new feature columns: ['first_and_winner', 'first_five_turns_frac', 'game_duration_minutes', 'is_rapid', 'is_resigned', 'is_winner', 'play_time_fraction', 'points_per_second', 'points_per_turn', 'score_by_max_turn', 'score_by_min_turn', 'turn_point_range', 'turns_per_minute', 'went_first', 'win_rated'], removed 0 feature columns: []
-RMSE on split 2: 165.003693140487
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+	> Computed 15 new feature columns: ['avg_points_per_turn', 'avg_time_per_turn', 'first_five_turns_ratio', 'game_end_reason_code', 'is_first_player', 'is_rated', 'lexicon_code', 'max_min_diff_per_turn', 'player_avg_score', 'player_win', 'points_per_second', 'time_control_code', 'turns_per_minute', 'win_as_first', 'win_as_second'], removed 0 feature columns: []
+RMSE on split 2: 176.18526625934135
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 15 new feature columns: ['avg_points_per_turn_nickname', 'avg_score_nickname', 'avg_seconds_per_turn_nickname', 'first5_frac_total', 'first5_points_per_turn_normalized', 'fraction_first_nickname', 'games_played', 'is_first', 'is_winner', 'point_range_game', 'points_per_second', 'points_per_turn', 'score_when_first', 'seconds_per_turn', 'win_rate_nickname'], removed 0 feature columns: []
-RMSE on split 3: 151.534230611024
---- Fitting gyyre.with_sem_features('Create additional features that cou...', 15)
+	> Computed 136 new feature columns: ['avg_points_per_turn', 'avg_turn_duration', 'duration_if_first', 'duration_if_notfirst', 'first5_if_first', 'first5_if_notfirst', 'first_five_points_frac', 'increment_if_first', 'increment_if_notfirst', 'initial_time_if_first', 'initial_time_if_notfirst', 'is_first_player', 'is_winner', 'max_min_diff_frac', 'max_turn_if_first', 'max_turn_if_notfirst', 'maxmin_diff_if_first', 'maxmin_diff_if_notfirst', 'min_turn_if_first', 'min_turn_if_notfirst', 'overtime_if_first', 'overtime_if_notfirst', 'player_avg_duration_first_diff', 'player_avg_duration_if_first', 'player_avg_duration_if_notfirst', 'player_avg_first5', 'player_avg_first5_first_diff', 'player_avg_first5_if_first', 'player_avg_first5_if_notfirst', 'player_avg_game_duration', 'player_avg_increment', 'player_avg_increment_first_diff', 'player_avg_increment_if_first', 'player_avg_increment_if_notfirst', 'player_avg_initial_time', 'player_avg_initial_time_first_diff', 'player_avg_initial_time_if_first', 'player_avg_initial_time_if_notfirst', 'player_avg_max_turn', 'player_avg_max_turn_first_diff', 'player_avg_max_turn_if_first', 'player_avg_max_turn_if_notfirst', 'player_avg_maxmin_diff', 'player_avg_maxmin_diff_first_diff', 'player_avg_maxmin_diff_if_first', 'player_avg_maxmin_diff_if_notfirst', 'player_avg_min_turn', 'player_avg_min_turn_first_diff', 'player_avg_min_turn_if_first', 'player_avg_min_turn_if_notfirst', 'player_avg_overtime', 'player_avg_overtime_first_diff', 'player_avg_overtime_if_first', 'player_avg_overtime_if_notfirst', 'player_avg_points_per_second', 'player_avg_points_per_second_first_diff', 'player_avg_points_per_second_if_first', 'player_avg_points_per_second_if_notfirst', 'player_avg_points_per_turn_cumsum', 'player_avg_points_per_turn_first_diff', 'player_avg_points_per_turn_hist', 'player_avg_points_per_turn_if_first', 'player_avg_points_per_turn_if_notfirst', 'player_avg_score', 'player_avg_score_first_diff', 'player_avg_score_if_first', 'player_avg_score_if_notfirst', 'player_avg_total_turns', 'player_avg_total_turns_first_diff', 'player_avg_total_turns_if_first', 'player_avg_total_turns_if_notfirst', 'player_avg_turn_duration', 'player_avg_turn_duration_first_diff', 'player_avg_turn_duration_if_first', 'player_avg_turn_duration_if_notfirst', 'player_duration_if_first_cumsum', 'player_duration_if_notfirst_cumsum', 'player_first5_cumsum', 'player_first5_if_first_cumsum', 'player_first5_if_notfirst_cumsum', 'player_first_games', 'player_first_win_rate', 'player_first_wins', 'player_frac_first', 'player_frac_notfirst', 'player_game_count', 'player_game_duration_cumsum', 'player_increment_cumsum', 'player_increment_if_first_cumsum', 'player_increment_if_notfirst_cumsum', 'player_initial_time_cumsum', 'player_initial_time_if_first_cumsum', 'player_initial_time_if_notfirst_cumsum', 'player_max_turn_cumsum', 'player_max_turn_if_first_cumsum', 'player_max_turn_if_notfirst_cumsum', 'player_maxmin_diff_cumsum', 'player_maxmin_diff_if_first_cumsum', 'player_maxmin_diff_if_notfirst_cumsum', 'player_min_turn_cumsum', 'player_min_turn_if_first_cumsum', 'player_min_turn_if_notfirst_cumsum', 'player_notfirst_games', 'player_notfirst_win_rate', 'player_notfirst_wins', 'player_overtime_cumsum', 'player_overtime_if_first_cumsum', 'player_overtime_if_notfirst_cumsum', 'player_points_per_second_cumsum', 'player_points_per_second_if_first_cumsum', 'player_points_per_second_if_notfirst_cumsum', 'player_points_per_turn_if_first_cumsum', 'player_points_per_turn_if_notfirst_cumsum', 'player_score_cumsum', 'player_score_if_first_cumsum', 'player_score_if_notfirst_cumsum', 'player_total_turns_cumsum', 'player_total_turns_if_first_cumsum', 'player_total_turns_if_notfirst_cumsum', 'player_turn_duration_cumsum', 'player_turn_duration_if_first_cumsum', 'player_turn_duration_if_notfirst_cumsum', 'player_win_cumsum', 'player_win_rate', 'player_win_rate_first_diff', 'points_per_second', 'points_per_second_if_first', 'points_per_second_if_notfirst', 'points_per_turn_if_first', 'points_per_turn_if_notfirst', 'score_if_first', 'score_if_notfirst', 'total_turns_if_first', 'total_turns_if_notfirst', 'turn_duration_if_first', 'turn_duration_if_notfirst'], removed 0 feature columns: []
+RMSE on split 3: 238.03206848027853
+--- Fitting sempipes.with_sem_features('Create additional features that cou...', 15)
 	> Querying 'openai/gpt-4.1' with 2 messages...'
-	> Computed 15 new feature columns: ['avg_points_per_turn', 'did_win', 'first_five_points_ratio', 'game_end_resigned', 'game_end_standard', 'is_first_player', 'is_rapid_time_control', 'is_rated', 'is_regular_time_control', 'max_min_points_gap', 'player_avg_points_per_second', 'player_avg_points_per_turn', 'player_avg_score', 'player_win_rate', 'points_per_second'], removed 0 feature columns: []
-RMSE on split 4: 128.30979052180703
+	> Computed 15 new feature columns: ['player_avg_first5', 'player_avg_game_duration', 'player_avg_max_min_diff', 'player_avg_max_points_turn', 'player_avg_min_points_turn', 'player_avg_points_per_sec', 'player_avg_points_per_turn', 'player_avg_points_per_turn_first', 'player_avg_score', 'player_avg_score_first', 'player_avg_total_turns', 'player_games_first', 'player_games_played', 'player_win_rate', 'player_win_rate_first'], removed 0 feature columns: []
+RMSE on split 4: 117.569718345648
 
-Mean final score:  157.07239605090749 15.952293881347032
+Mean final score:  169.59934982081242 43.613214665771835
+```
+
+#### SemPipes (opt)
+```commandline
+--- Fitting sempipes.with_sem_features('Create additional features that...', 15)
+	> Querying 'openai/gpt-4.1' with 2 messages...'
+	> Computed 15 new feature columns: ['avg_points_first_five_turns', 'finished_early', 'first_five_points_ratio', 'initial_time_per_turn', 'max_to_avg_turn_points', 'maxmin_diff_to_avg_turn_points', 'min_to_avg_turn_points', 'points_per_second', 'points_per_turn', 'score_per_overtime_minute', 'seconds_per_turn', 'turns_per_minute', 'used_overtime', 'went_first', 'won_game'], removed 0 feature columns: []
+--- Using provided state for sempipes.with_sem_features('Create additional features that...', 15)
+RMSE on split 0: 202.20882808683206
+--- Using provided state for sempipes.with_sem_features('Create additional features that...', 15)
+RMSE on split 1: 124.04541758968769
+--- Using provided state for sempipes.with_sem_features('Create additional features that...', 15)
+RMSE on split 2: 176.2383750598887
+--- Using provided state for sempipes.with_sem_features('Create additional features that...', 15)
+RMSE on split 3: 128.09396727842025
+--- Using provided state for sempipes.with_sem_features('Create additional features that...', 15)
+RMSE on split 4: 128.4171744866122
+
+Mean final score:  151.80075250028818 31.677542464595522
 ```

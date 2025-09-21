@@ -1,6 +1,6 @@
 ### Competition and Dataset:
 
- - https://www.kaggle.com/competitions/scrabble-player-rating
+ - https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques
 
 ### AIDE baseline:
 

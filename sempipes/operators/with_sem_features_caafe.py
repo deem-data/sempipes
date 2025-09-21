@@ -130,15 +130,15 @@ def _dag_summary_info(gyyre_dag_summary):
 
 
 def _add_memorized_history(
-    gyyre_memory: list[dict[str, Any]] | None,
+    memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
     generated_code: list[str],
 ) -> None:
-    if gyyre_memory is not None and len(gyyre_memory) > 0:
+    if memory is not None and len(memory) > 0:
         current_accuracy = 0.0
         current_roc = 0.0
 
-        for memory_line in gyyre_memory:
+        for memory_line in memory:
             memorized_code = memory_line["update"]
             memorized_accuracy = memory_line["score"]
             # TODO also compute and provide ROC AUC

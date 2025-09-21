@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 # Load the data
 games = pd.read_csv("comparisons/scrabble_player_rating/games.csv")
 turns = pd.read_csv("comparisons/scrabble_player_rating/turns.csv.gz")
-all_data = pd.read_csv("comparisons/scrabble_player_rating/train.csv")
+all_data = pd.read_csv("comparisons/scrabble_player_rating/data.csv")
 
 all_players = all_data.nickname.unique()
 non_bot_players = [player for player in all_players if player not in {"BetterBot", "HastyBot", "STEEBot"}]

@@ -10,7 +10,7 @@ from xgboost import XGBRegressor
 games = pd.read_csv("comparisons/scrabble_player_rating/games.csv")
 nominal_features = ["time_control_name", "game_end_reason", "lexicon", "rating_mode"]
 turns = pd.read_csv("comparisons/scrabble_player_rating/turns.csv.gz")
-all_data = pd.read_csv("comparisons/scrabble_player_rating/train.csv")
+all_data = pd.read_csv("comparisons/scrabble_player_rating/data.csv")
 
 all_players = all_data.nickname.unique()
 non_bot_players = [player for player in all_players if player not in {"BetterBot", "HastyBot", "STEEBot"}]
@@ -85,6 +85,7 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     y = train_data["rating"]
     X = train_data.apply(relabel_values(train_data), axis=1)
 
+    X["lexicon"] = pd.Categorical(X["lexicon"], categories=["CSW21", "ECWL", "NSWL20", "NWL20"])
     one_hot_encoded_features = pd.get_dummies(X[nominal_features])
     X_encoded = pd.concat((X, one_hot_encoded_features), axis=1)
     X_encoded.drop(columns=nominal_features + non_informative_features, axis=1, inplace=True)
