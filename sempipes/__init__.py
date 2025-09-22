@@ -9,8 +9,8 @@ from sempipes.operators.sem_select_llm import SemSelectLLM
 from sempipes.operators.with_sem_features_caafe import WithSemFeaturesCaafe
 from sempipes.operators.sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 from sempipes.operators.sem_fillna_llm import SemFillNAWithLLLM
-from sempipes.optimisers.greedy import greedy_optimise_semantic_operator
-from sempipes.config import set_config, Config
+from sempipes.optimisers.olopro import optimise_olopro
+from sempipes.config import set_config, Config, LLM
 
 
 def sem_choose(**kwargs) -> dict:
@@ -98,4 +98,4 @@ DataOp.sem_select = sem_select
 DataOp.sem_extract_features = sem_extract_features
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
-__all__ = ["sem_choose", "greedy_optimise_semantic_operator", "set_config", "Config"]
+__all__ = ["sem_choose", "optimise_olopro", "set_config", "Config", "LLM"]

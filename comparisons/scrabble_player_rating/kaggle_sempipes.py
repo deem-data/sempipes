@@ -8,7 +8,7 @@ from comparisons.scrabble_player_rating._sempipes_impl import sempipes_pipeline
 pipeline = sempipes_pipeline("comparisons/scrabble_player_rating/validation.csv")
 
 
-def custom_splitter(all_data, y, random_state, test_size):  # pylint: disable=unused-argument,redefined-outer-name
+def custom_splitter(all_data, y, random_state, test_size):  # pylint: disable=unused-argument
     all_players = all_data.nickname.unique()
     non_bot_players = [player for player in all_players if player not in {"BetterBot", "HastyBot", "STEEBot"}]
     train_players, test_players = train_test_split(non_bot_players, test_size=test_size, random_state=random_state)

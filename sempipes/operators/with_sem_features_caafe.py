@@ -15,7 +15,7 @@ from sempipes.operators.operators import (
     OptimisableMixin,
     WithSemFeaturesOperator,
 )
-from sempipes.optimisers.dag_summary import DagSummary
+from sempipes.optimisers.pipeline_summary import PipelineSummary
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
@@ -29,7 +29,7 @@ def _get_prompt(
     nl_prompt: str,
     how_many: int,
     samples: str | None = None,
-    dag_summary: DagSummary | None = None,
+    pipeline_summary: PipelineSummary | None = None,
 ) -> str:
     data_description_unparsed = None
 
@@ -39,21 +39,25 @@ def _get_prompt(
     )
     usefulness = ""
     model_reference = "classifier"
+    target_metric = "accuracy"
 
-    if dag_summary is not None:
-        task_type = dag_summary.task_type
-        model = dag_summary.model
-        target_name = dag_summary.target_name
-        data_description_unparsed = dag_summary.dataset_description
+    if pipeline_summary is not None:
+        task_type = pipeline_summary.task_type
+        model = pipeline_summary.model
+        target_name = pipeline_summary.target_name
+        data_description_unparsed = pipeline_summary.dataset_description
 
         target_description = ""
-        if dag_summary.target_description:
-            target_description = f" ({dag_summary.target_description})"
+        if pipeline_summary.target_description:
+            target_description = f" ({pipeline_summary.target_description})"
         if task_type and model and target_name:
             task_description = (
                 f"This code generates additional columns that are useful for a "
                 f'downstream {task_type} algorithm ({model}) predicting "{target_name} {target_description}".'
             )
+
+        if pipeline_summary.target_metric:
+            target_metric = pipeline_summary.target_metric
 
         if task_type and target_name:
             action = "predict"
@@ -84,7 +88,7 @@ be feature combinations, transformations, aggregations where the new column is a
 The scale of columns and offset does not matter. Make sure all used columns exist. Follow the above description of 
 columns closely and consider the datatypes and meanings of classes.
 The {model_reference} will be trained on the dataset with the generated columns and evaluated on a holdout set. The 
-evaluation metric is accuracy. The best performing code will be selected.
+evaluation metric is {target_metric}. The best performing code will be selected.
 Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care to the following: {nl_prompt}.
@@ -106,7 +110,7 @@ Codeblock:
 
 
 def _build_prompt_from_df(
-    df: pd.DataFrame, nl_prompt: str, how_many: int, dag_summary: DagSummary | None = None
+    df: pd.DataFrame, nl_prompt: str, how_many: int, pipeline_summary: PipelineSummary | None = None
 ) -> str:
     samples = ""
     df_ = df.head(10)
@@ -117,14 +121,14 @@ def _build_prompt_from_df(
         if str(df[column].dtype) == "float64":
             sampled_values = [round(sample, 2) for sample in sampled_values]
         samples += f"{df_[column].name} ({df[column].dtype}): NaN-freq [{nan_freq}%], Samples {sampled_values}\n"
-    return _get_prompt(df, nl_prompt, how_many, samples=samples, dag_summary=dag_summary)
+    return _get_prompt(df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary)
 
 
-def _dag_summary_info(gyyre_dag_summary):
-    if gyyre_dag_summary is not None:
+def _pipeline_summary_info(pipeline_summary):
+    if pipeline_summary is not None:
         return (
-            f" for a {gyyre_dag_summary.task_type} task, predicting `{gyyre_dag_summary.target_name}` "
-            f"with {gyyre_dag_summary.model}"
+            f" for a {pipeline_summary.task_type} task, predicting `{pipeline_summary.target_name}` "
+            f"with {pipeline_summary.model}"
         )
     return ""
 
@@ -133,37 +137,34 @@ def _add_memorized_history(
     memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
     generated_code: list[str],
+    target_metric: str,
 ) -> None:
     if memory is not None and len(memory) > 0:
-        current_accuracy = 0.0
-        current_roc = 0.0
+        # TODO this might not work for neg_rmse for example
+        current_score = None
 
         for memory_line in memory:
             memorized_code = memory_line["update"]
-            memorized_accuracy = memory_line["score"]
-            # TODO also compute and provide ROC AUC
-            memorized_roc = memory_line["score"]
+            memorized_score = memory_line["score"]
 
-            improvement_acc = memorized_accuracy - current_accuracy
-            improvement_roc = memorized_roc - current_roc
+            if current_score is None:
+                improvement = abs(memorized_score)
+            else:
+                improvement = memorized_score - current_score
 
-            if improvement_roc + improvement_acc >= 0.0:
+            if improvement > 0.0:
                 generated_code.append(memorized_code)
                 add_feature_sentence = "The code was executed and changes to ´df´ were kept."
-                current_accuracy = memorized_accuracy
-                current_roc = memorized_roc
+                current_score = memorized_score
             else:
-                add_feature_sentence = (
-                    f"The last code changes to ´df´ were discarded. "
-                    f"(Improvement: {improvement_roc + improvement_acc})"
-                )
+                add_feature_sentence = f"The last code changes to ´df´ were discarded. " f"(Improvement: {improvement})"
 
             messages += [
                 {"role": "assistant", "content": memorized_code},
                 {
                     "role": "user",
-                    "content": f"Performance after adding feature ROC {memorized_roc:.3f}, "
-                    f"ACC {memorized_accuracy:.3f}. {add_feature_sentence}\nNext codeblock:\n",
+                    "content": f"Performance after adding feature: {target_metric}={memorized_score:.5f}. "
+                    f".{add_feature_sentence}\nNext codeblock:\n",
                 },
             ]
 
@@ -187,13 +188,13 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         self,
         nl_prompt: str,
         how_many: int,
-        _dag_summary: DagSummary | None | DataOp = None,
+        _pipeline_summary: PipelineSummary | None | DataOp = None,
         _prefitted_state: dict[str, Any] | DataOp | None = None,
         _memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.how_many = how_many
-        self._dag_summary = _dag_summary
+        self._pipeline_summary = _pipeline_summary
         self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
 
@@ -211,28 +212,32 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         return ""
 
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
-        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
+        # prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self._prefitted_state is not None:
-            print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
+            # print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
-        print(
-            f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many})"
-            f"{_dag_summary_info(self._dag_summary)}"
-        )
+        # print(
+        #     f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many})"
+        #     f"{_pipeline_summary_info(self._pipeline_summary)}"
+        # )
+
+        target_metric = "accuracy"
+        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
+            target_metric = self._pipeline_summary.target_metric
 
         messages = []
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
 
             try:
-                prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._dag_summary)
+                prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._pipeline_summary)
 
                 if attempt == 1:
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                    _add_memorized_history(self._memory, messages, self.generated_code_)
+                    _add_memorized_history(self._memory, messages, self.generated_code_, target_metric)
 
                 code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(self.generated_code_)
@@ -264,14 +269,14 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
 
 class WithSemFeaturesCaafe(WithSemFeaturesOperator):
     def generate_features_estimator(self, data_op: DataOp, nl_prompt: str, name: str, how_many: int):
-        _dag_summary = skrub.var(f"sempipes_dag_summary__{name}", None)
+        _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
         _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
         _memory = skrub.var(f"sempipes_memory__{name}", [])
 
         return LLMFeatureGenerator(
             nl_prompt,
             how_many,
-            _dag_summary=_dag_summary,
+            _pipeline_summary=_pipeline_summary,
             _prefitted_state=_prefitted_state,
             _memory=_memory,
         )

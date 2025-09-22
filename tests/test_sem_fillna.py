@@ -4,6 +4,19 @@ import sempipes  # pylint: disable=unused-import
 
 
 def test_sem_fillna():
+    sempipes.set_config(
+        sempipes.Config(
+            llm_for_code_generation=sempipes.LLM(
+                name="gemini/gemini-2.5-pro",
+                parameters={"temperature": 0.0},
+            ),
+            llm_for_batch_processing=sempipes.LLM(
+                name="ollama/gpt-oss:20b",
+                parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
+            ),
+        )
+    )
+
     # Fetch a dataset
     dataset = skrub.datasets.fetch_employee_salaries(split="train")
     salaries = dataset.employee_salaries.head(n=100)

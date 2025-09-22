@@ -7,10 +7,14 @@ import sempipes
 def _run_notebook(path):
     sempipes.set_config(
         sempipes.Config(
-            llm_for_code_generation="gemini/gemini-2.5-pro",
-            llm_settings_for_code_generation={"temperature": 0.0},
-            llm_for_batch_processing="ollama/gemma3:1b",
-            llm_settings_for_batch_processing={"api_base": "http://localhost:11434", "temperature": 0.0},
+            llm_for_code_generation=sempipes.LLM(
+                name="gemini/gemini-2.5-pro",
+                parameters={"temperature": 0.0},
+            ),
+            llm_for_batch_processing=sempipes.LLM(
+                name="ollama/gemma3:1b",
+                parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
+            ),
         )
     )
 
@@ -34,4 +38,8 @@ def test_demo__sem_select_notebook():
 
 
 def test_demo__greedy_optimise_semantic_operator_notebook():
-    _run_notebook("demo__greedy_optimise_semantic_operator.ipynb")
+    _run_notebook("demo__optimise_semantic_operator.ipynb")
+
+
+def test_demo__greedy_optimise_semantic_operator_tree_search_notebook():
+    _run_notebook("demo__optimise_semantic_operator_tree_search.ipynb")
