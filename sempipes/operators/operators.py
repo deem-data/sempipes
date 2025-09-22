@@ -7,22 +7,22 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 from skrub.selectors._base import Filter
 
-from sempipes.optimisers.dag_summary import DagSummary
+from sempipes.optimisers.pipeline_summary import PipelineSummary
 
 
 class ContextAwareMixin(ABC):
     """
     A mixin for sempipes operators that want to adjust themselves to the context in which they are used.
 
-    The context is captured in a DagSummary object, which is provided to the operator as constructor parameter.
-    The DagSummary contains information about the overall task, the model being used, the target variable, and the
+    The context is captured in a PipelineSummary object, which is provided to the operator as constructor parameter.
+    The PipelineSummary contains information about the overall task, the model being used, the target variable, and the
     computational graph.
 
     Attributes:
-        gyyre_dag_summary (DagSummary | None): A summary of the computational graph context.
+        _pipeline_summary (PipelineSummary | None): A summary of the computational graph context.
     """
 
-    _dag_summary: DagSummary | None = None
+    _pipeline_summary: PipelineSummary | None = None
 
 
 class PrefittableMixin(ABC):

@@ -1,3 +1,4 @@
+import importlib
 from dataclasses import dataclass
 from typing import Any
 
@@ -9,24 +10,40 @@ from skrub._data_ops._evaluation import find_node, find_X, find_y
 
 
 @dataclass
-class DagSummary:
+class PipelineSummary:  # pylint: disable=too-many-instance-attributes
     task_type: str | None = None
     model: str | None = None
     model_name: str | None = None
     model_steps: str | None = None
     model_definition: str | None = None
     target_name: str | None = None
+    target_metric: str | None = None
     target_description: str | None = None
     target_definition: str | None = None
     target_steps: str | None = None
     target_unique_values_from_preview: list[Any] | None = None
     dataset_description: str | None = None
+    available_packages: dict[str, str] | None = None
+
+
+def summarise_pipeline(dag_sink_node: DataOp) -> PipelineSummary:
+    summary = PipelineSummary()
+    _summarise_code_and_packages(summary)
+    _summarise_dag(dag_sink_node, summary)
+    return summary
+
+
+def _summarise_code_and_packages(summary: PipelineSummary) -> None:
+    available_packages = {}
+    for dist in importlib.metadata.distributions():
+        package_name = dist.metadata["Name"]
+        package_version = dist.version
+        available_packages[package_name] = package_version
+    summary.available_packages = available_packages
 
 
 # TODO We can do much more here!
-def summarise_dag(dag_sink_node: DataOp) -> DagSummary:
-    summary = DagSummary()
-
+def _summarise_dag(dag_sink_node: DataOp, summary: PipelineSummary) -> None:
     def is_model(some_op):
         if hasattr(some_op, "_skrub_impl"):
             impl = some_op._skrub_impl
@@ -67,5 +84,3 @@ def summarise_dag(dag_sink_node: DataOp) -> DagSummary:
     if X_op is not None:
         if X_op.skb.description is not None:
             summary.dataset_description = X_op.skb.description
-
-    return summary

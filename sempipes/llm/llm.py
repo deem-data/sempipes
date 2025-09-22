@@ -29,13 +29,13 @@ def generate_python_code_from_messages(messages: list[dict]) -> str:
 
 
 def _generate_code_from_messages(messages: list[dict]) -> str:
-    config = get_config()
-    print(f"\t> Querying '{config.llm_for_code_generation}' with {len(messages)} messages...'")
+    code_gen_llm = get_config().llm_for_code_generation
+    print(f"\t> Querying '{code_gen_llm.name}' with {len(messages)} messages...'")
 
     response = completion(
-        model=config.llm_for_code_generation,
+        model=code_gen_llm.name,
         messages=messages,
-        **config.llm_settings_for_code_generation,
+        **code_gen_llm.parameters,
     )
 
     # TODO add proper error handling
@@ -58,8 +58,8 @@ def batch_generate_results(
     """
     assert batch_size is not None and batch_size > 0, "batch_size must be a positive integer"
 
-    config = get_config()
-    print(f"\t> Querying '{config.llm_for_batch_processing}' with {len(prompts)} requests...'")
+    batch_llm = get_config().llm_for_batch_processing
+    print(f"\t> Querying '{batch_llm.name}' with {len(prompts)} requests...'")
 
     outputs = []
 
@@ -67,9 +67,9 @@ def batch_generate_results(
         message_batch = prompts[start_index : start_index + batch_size]
 
         responses = batch_completion(
-            model=config.llm_for_batch_processing,
+            model=batch_llm.name,
             messages=message_batch,
-            **config.llm_settings_for_batch_processing,
+            **batch_llm.parameters,
         )
 
         for response in responses:

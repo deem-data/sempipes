@@ -6,10 +6,14 @@ import sempipes
 def test_different_llms():
     sempipes.set_config(
         sempipes.Config(
-            llm_for_code_generation="ollama/gpt-oss:20b",
-            llm_settings_for_code_generation={"api_base": "http://localhost:11434", "temperature": 0.5},
-            llm_for_batch_processing="ollama/gemma3:1b",
-            llm_settings_for_batch_processing={"api_base": "http://localhost:11434", "temperature": 0.0},
+            llm_for_code_generation=sempipes.LLM(
+                name="ollama/gpt-oss:20b",
+                parameters={"api_base": "http://localhost:11434", "temperature": 0.5},
+            ),
+            llm_for_batch_processing=sempipes.LLM(
+                name="ollama/gemma3:1b",
+                parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
+            ),
         )
     )
 

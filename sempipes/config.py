@@ -5,12 +5,20 @@ from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
+class LLM:
+    name: str
+    parameters: dict = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class Config:
-    llm_for_code_generation: str = "openai/gpt-4.1"
-    llm_settings_for_code_generation: dict = field(default_factory=lambda: {"temperature": 0.0})
-    llm_for_batch_processing: str = "ollama/gpt-oss:20b"
-    llm_settings_for_batch_processing: dict = field(
-        default_factory=lambda: {"api_base": "http://localhost:11434", "temperature": 0.0}
+    llm_for_code_generation: LLM = LLM(
+        name="openai/gpt-4.1",
+        parameters={"temperature": 0.0},
+    )
+    llm_for_batch_processing: LLM = LLM(
+        name="ollama/gpt-oss:20b",
+        parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
     )
 
 
