@@ -34,6 +34,9 @@ _ALLOWED_MODULES = [
     "dataclasses",
     "typing",
     "PIL",
+    "random",
+    "time",
+    "lightgbm",
 ]
 
 
@@ -78,11 +81,12 @@ def safe_exec(
         "min": min,
         "max": max,
         "abs": abs,
+        "round": round,
+        "zip": zip,
         "sorted": sorted,
         "object": object,
         "Exception": Exception,
         "BaseException": BaseException,
-        "zip": zip,
         "next": next,
         "ValueError": ValueError,
         "TypeError": TypeError,

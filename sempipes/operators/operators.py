@@ -159,3 +159,14 @@ class SemDeduplicateOperator(ABC):
         self, target_column: str, nl_prompt: str, deduplicate_with_existing_values_only: bool
     ) -> EstimatorTransformer:
         """Return an estimator that deduplicates values in the target column on a pandas df."""
+
+
+class SemAugmentDataOperator(ABC):
+    @abstractmethod
+    def generate_data_generator(
+        self,
+        nl_prompt: str,
+        number_of_rows_to_generate: int,
+        **kwargs,
+    ) -> EstimatorTransformer:
+        """Return an estimator that generates a new set of the data."""
