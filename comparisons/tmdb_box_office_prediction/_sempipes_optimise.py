@@ -1,5 +1,6 @@
 import sempipes
 from comparisons.tmdb_box_office_prediction._sempipes_impl import sempipes_pipeline
+from sempipes.optimisers import optimise_olopro
 
 sempipes.set_config(
     sempipes.Config(
@@ -16,7 +17,7 @@ sempipes.set_config(
 
 predictions = sempipes_pipeline("comparisons/tmdb_box_office_prediction/validation.csv")
 
-outcomes = sempipes.optimise_olopro(
+outcomes = optimise_olopro(
     predictions,
     "additional_movie_features",
     budget=5,

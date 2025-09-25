@@ -9,13 +9,13 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import (
     ContextAwareMixin,
     OptimisableMixin,
     WithSemFeaturesOperator,
 )
-from sempipes.optimisers.pipeline_summary import PipelineSummary
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = (

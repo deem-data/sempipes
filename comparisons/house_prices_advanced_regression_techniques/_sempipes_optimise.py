@@ -2,6 +2,7 @@ import warnings
 
 import sempipes
 from comparisons.house_prices_advanced_regression_techniques._sempipes_impl import sempipes_pipeline
+from sempipes.optimisers import optimise_olopro
 
 warnings.filterwarnings("ignore")
 
@@ -20,7 +21,7 @@ sempipes.set_config(
 
 pipeline = sempipes_pipeline("comparisons/house_prices_advanced_regression_techniques/validation.csv")
 
-outcomes = sempipes.optimise_olopro(
+outcomes = optimise_olopro(
     pipeline,
     "house_features",
     budget=5,

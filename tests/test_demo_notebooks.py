@@ -37,5 +37,9 @@ def test_demo__sem_select_notebook():
     _run_notebook("demo__sem_select.ipynb")
 
 
-def test_demo__greedy_optimise_semantic_operator_notebook():
+def test_demo__optimise_semantic_operator_notebook():
     _run_notebook("demo__optimise_semantic_operator.ipynb")
+
+
+def test_demo__optimise_sem_choose_notebook():
+    _run_notebook("demo__optimise_sem_choose.ipynb")

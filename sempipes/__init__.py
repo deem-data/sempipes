@@ -1,25 +1,26 @@
+import skrub
 from sklearn.base import BaseEstimator
 from skrub import selectors
 from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
-
+from sempipes.operators.operators import SemChoices
 from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.operators.sem_extract_features import SemExractFeaturesLLM
 from sempipes.operators.sem_select_llm import SemSelectLLM
 from sempipes.operators.with_sem_features_caafe import WithSemFeaturesCaafe
 from sempipes.operators.sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 from sempipes.operators.sem_fillna_llm import SemFillNAWithLLLM
-from sempipes.optimisers.olopro import optimise_olopro
 from sempipes.config import set_config, Config, LLM
 
 
-def sem_choose(**kwargs) -> dict:
-    return kwargs
+def sem_choose(name, **kwargs) -> SemChoices:
+    return SemChoices(name=name, params_and_prompts=kwargs)
 
 
 def apply_with_sem_choose(
     self: DataOp,
     estimator: BaseEstimator,
+    choices: SemChoices,
     *,
     y=None,
     cols=selectors.all(),
@@ -27,12 +28,10 @@ def apply_with_sem_choose(
     how: str = "auto",
     allow_reject: bool = False,
     unsupervised: bool = False,
-    choices=None,
 ):
-    data_op = self
-    SemChooseLLM().set_params_on_estimator(data_op, estimator, choices, y=y)
-    # TODO forward the * args
-    return self.apply(
+    SemChooseLLM().set_params_on_estimator(estimator, choices)
+
+    estimator_application = self.apply(
         estimator,
         y=y,
         cols=cols,
@@ -41,6 +40,17 @@ def apply_with_sem_choose(
         allow_reject=allow_reject,
         unsupervised=unsupervised,
     )
+
+    choices_storage = skrub.var(f"sempipes__choices__{choices.name}__choices", choices)
+    estimator_application = estimator_application.skb.set_name(f"sempipes__choices__{choices.name}__estimator")
+
+    def store_sem_choices(estimator_for_choices, _choices_to_keep):
+        # The purpose of this function is just to capture the choice variable in the computational graph
+        return estimator_for_choices
+
+    estimator_application = skrub.deferred(store_sem_choices)(estimator_application, choices_storage)
+
+    return estimator_application
 
 
 def with_sem_features(
@@ -98,4 +108,4 @@ DataOp.sem_select = sem_select
 DataOp.sem_extract_features = sem_extract_features
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
-__all__ = ["sem_choose", "optimise_olopro", "set_config", "Config", "LLM"]
+__all__ = ["sem_choose", "set_config", "Config", "LLM"]
