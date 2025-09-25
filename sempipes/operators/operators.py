@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any
 
+# from skrub._data_ops._data_ops import Var
+from pandas import DataFrame
 from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 from skrub.selectors._base import Filter
 
-from sempipes.optimisers.pipeline_summary import PipelineSummary
+from sempipes.inspection.pipeline_summary import PipelineSummary
 
 
 class ContextAwareMixin(ABC):
@@ -76,14 +79,19 @@ class OptimisableEstimatorTransformer(  # pylint: disable=too-many-ancestors
     pass
 
 
+@dataclass(frozen=True)
+class SemChoices:
+    name: str
+    params_and_prompts: dict[str, str]
+
+
 class SemChooseOperator(ABC):
     @abstractmethod
     def set_params_on_estimator(
         self,
-        data_op: DataOp,
         estimator: BaseEstimator,
-        choices,
-        y=None,
+        choices: SemChoices,
+        previous_results: list[DataFrame] | None = None,
     ) -> None:
         """Set parameters on the given estimator based on choices provided."""
 

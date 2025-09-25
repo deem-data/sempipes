@@ -1,6 +1,6 @@
 import skrub
 
-import sempipes  # pylint: disable=unused-import
+import sempipes  # pylint: disable=cyclic-import
 
 
 def test_sem_fillna():

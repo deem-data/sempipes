@@ -1,4 +1,3 @@
-import importlib
 from dataclasses import dataclass
 from typing import Any
 
@@ -7,6 +6,8 @@ from sklearn.base import ClassifierMixin, RegressorMixin
 from skrub import DataOp
 from skrub._data_ops._data_ops import Apply, GetItem
 from skrub._data_ops._evaluation import find_node, find_X, find_y
+
+from sempipes.inspection.runtime_summary import available_packages
 
 
 @dataclass
@@ -28,18 +29,9 @@ class PipelineSummary:  # pylint: disable=too-many-instance-attributes
 
 def summarise_pipeline(dag_sink_node: DataOp) -> PipelineSummary:
     summary = PipelineSummary()
-    _summarise_code_and_packages(summary)
+    summary.available_packages = available_packages()
     _summarise_dag(dag_sink_node, summary)
     return summary
-
-
-def _summarise_code_and_packages(summary: PipelineSummary) -> None:
-    available_packages = {}
-    for dist in importlib.metadata.distributions():
-        package_name = dist.metadata["Name"]
-        package_version = dist.version
-        available_packages[package_name] = package_version
-    summary.available_packages = available_packages
 
 
 # TODO We can do much more here!

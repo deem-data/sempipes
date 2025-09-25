@@ -2,6 +2,7 @@ import warnings
 
 import sempipes
 from comparisons.scrabble_player_rating._sempipes_impl import sempipes_pipeline
+from sempipes.optimisers import optimise_olopro
 
 warnings.filterwarnings("ignore")
 
@@ -21,7 +22,7 @@ sempipes.set_config(
 
 pipeline = sempipes_pipeline("comparisons/scrabble_player_rating/validation.csv")
 
-outcomes = sempipes.optimise_olopro(
+outcomes = optimise_olopro(
     pipeline,
     "player_features",
     budget=10,
