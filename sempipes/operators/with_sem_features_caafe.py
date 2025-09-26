@@ -209,7 +209,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
     def memory_update_from_latest_fit(self):
         if self.generated_code_ is not None and len(self.generated_code_) > 0:
             return self.generated_code_[-1]
-        return ""
+        return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
         # prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()

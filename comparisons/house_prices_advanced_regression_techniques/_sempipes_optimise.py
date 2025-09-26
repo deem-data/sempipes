@@ -24,7 +24,7 @@ pipeline = sempipes_pipeline("comparisons/house_prices_advanced_regression_techn
 outcomes = optimise_olopro(
     pipeline,
     "house_features",
-    budget=5,
+    num_trials=5,
     scoring="neg_root_mean_squared_error",
     cv=5,
 )

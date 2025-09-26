@@ -20,7 +20,7 @@ predictions = sempipes_pipeline("comparisons/tmdb_box_office_prediction/validati
 outcomes = optimise_olopro(
     predictions,
     "additional_movie_features",
-    budget=5,
+    num_trials=5,
     scoring="neg_root_mean_squared_log_error",
     cv=5,
 )

@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-# from skrub._data_ops._data_ops import Var
 from pandas import DataFrame
 from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
@@ -53,6 +52,8 @@ class PrefittableMixin(ABC):
 
 
 class OptimisableMixin(PrefittableMixin):
+    EMPTY_MEMORY_UPDATE: str = ""
+
     _memory: list[dict[str, Any]] | DataOp | None = {}
 
     @abstractmethod
@@ -65,7 +66,7 @@ class OptimisableMixin(PrefittableMixin):
         """
 
     @abstractmethod
-    def memory_update_from_latest_fit(self) -> dict[str, Any]:
+    def memory_update_from_latest_fit(self) -> str:
         pass
 
 

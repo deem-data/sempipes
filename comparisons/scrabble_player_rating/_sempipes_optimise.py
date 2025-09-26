@@ -25,7 +25,7 @@ pipeline = sempipes_pipeline("comparisons/scrabble_player_rating/validation.csv"
 outcomes = optimise_olopro(
     pipeline,
     "player_features",
-    budget=10,
+    num_trials=10,
     scoring="neg_root_mean_squared_error",
     cv=5,
 )

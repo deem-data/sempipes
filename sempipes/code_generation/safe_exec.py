@@ -55,6 +55,7 @@ def safe_exec(
         "hash": hash,
         "min": min,
         "max": max,
+        "abs": abs,
         "sorted": sorted,
         "Exception": Exception,
         "BaseException": BaseException,
