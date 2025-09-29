@@ -148,6 +148,7 @@ def optimise_olopro(  # pylint: disable=too-many-positional-arguments, too-many-
             score = row_with_max_score["mean_test_score"]
         else:
             print(f"\tOLOPRO> Evaluating pipeline via {cv}-fold cross-validation")
+            pipeline = dag_sink.skb.make_learner(fitted=False)
             cv_results = skrub.cross_validate(pipeline, env, cv=cv, scoring=scoring, n_jobs=-1)
             score = float(np.mean(cv_results["test_score"]))
         evaluation_end_time = time.time()
