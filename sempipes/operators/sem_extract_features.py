@@ -254,14 +254,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         if self.output_columns == {}:
             # Ask LLm which features to generate given input columns
-            print(f"--- gyyre.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
+            print(f"--- sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
 
             self._build_output_columns_to_generate_llm(df)
 
         else:
             # Use user-given columns
             print(
-                f"--- gyyre.sem_extract_features('{self.input_columns}', '{self.output_columns}', '{self.nl_prompt}')"
+                f"--- sempipes.sem_extract_features('{self.input_columns}', '{self.output_columns}', '{self.nl_prompt}')"
             )
 
             for new_feature, prompt in self.output_columns.items():
@@ -284,7 +284,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         results = batch_generate_results(prompts, batch_size=100)
 
         # Parse new results
-        generated_columns: dict = {}
+        generated_columns = {}
         for result in results:
             raw_result = unwrap_json(result)
 
