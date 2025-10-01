@@ -7,6 +7,7 @@ from sempipes.operators.operators import SemChoices
 from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.operators.sem_extract_features import SemExractFeaturesLLM
 from sempipes.operators.sem_select_llm import SemSelectLLM
+from sempipes.operators.with_sem_agg_join_features import with_sem_agg_join_features
 from sempipes.operators.with_sem_features_caafe import WithSemFeaturesCaafe
 from sempipes.operators.sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 from sempipes.operators.sem_fillna_llm import SemFillNAWithLLLM
@@ -103,6 +104,7 @@ def sem_extract_features(
 
 
 DataOp.with_sem_features = with_sem_features
+DataOp.with_sem_agg_join_features = with_sem_agg_join_features
 DataOp.sem_fillna = sem_fillna
 DataOp.sem_select = sem_select
 DataOp.sem_extract_features = sem_extract_features

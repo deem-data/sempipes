@@ -254,7 +254,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
                     {
                         "role": "user",
                         "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
+                        + f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
                     },
                 ]
 

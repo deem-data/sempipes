@@ -118,6 +118,18 @@ class WithSemFeaturesOperator(ABC):
         """Return an estimator that computes features on a pandas df."""
 
 
+class WithSemAggJoinFeaturesOperator(ABC):
+    @abstractmethod
+    def generate_agg_join_features_estimator(
+        self,
+        left_join_key: str,
+        right_join_key: str,
+        nl_prompt: str,
+        how_many: int,
+    ) -> EstimatorTransformer:
+        """Return an estimator that computes features via a left join aggregation query on two pandas dataframes."""
+
+
 class SemExtractFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_extractor(
