@@ -30,25 +30,6 @@ def _dataframe_mini_summary(df: pd.DataFrame, sample_size: int = 10) -> str:
     return "\n".join(summary_lines)
 
 
-def _stack_with_source(left: pd.DataFrame, right: pd.DataFrame) -> pd.DataFrame:
-    stacked = pd.concat({"left": left, "right": right}, names=["source"], sort=False)
-    stacked.attrs["restore"] = {"left": list(left.columns), "right": list(right.columns)}
-    return stacked
-
-
-def _restore_original(stacked: pd.DataFrame, source_key: str) -> pd.DataFrame:
-    if "source" not in stacked.index.names:
-        raise ValueError("Expected a MultiIndex with level named 'source'.")
-
-    meta = stacked.attrs.get("restore", {})
-    if source_key not in meta:
-        raise ValueError(f"Missing restoration metadata for key: {source_key}")
-
-    cols = meta[source_key]
-    restored = stacked.xs(source_key, level="source").reindex(columns=cols)
-    return restored
-
-
 _SYSTEM_PROMPT = "You are an expert data scientist assistant helping data scientists write a data preprocessing pipeline for a predictive model. "
 
 _MAX_RETRIES = 5
@@ -132,8 +113,8 @@ class LLMCodeGenSemAggJoinFeaturesEstimator(EstimatorTransformer):
         self.generated_code_: str | None = None
 
     def fit(self, stacked_inputs, y=None) -> "LLMCodeGenSemAggJoinFeaturesEstimator":  # pylint: disable=unused-argument
-        samples = _restore_original(stacked_inputs, source_key="left")
-        data_to_aggregate = _restore_original(stacked_inputs, source_key="right")
+        samples = stacked_inputs["samples"]
+        data_to_aggregate = stacked_inputs["data_to_aggregate"]
 
         prompt = _build_prompt(
             samples,
@@ -172,8 +153,8 @@ class LLMCodeGenSemAggJoinFeaturesEstimator(EstimatorTransformer):
 
     def transform(self, stacked_inputs) -> pd.DataFrame:
         check_is_fitted(self, "generated_code_")
-        samples = _restore_original(stacked_inputs, source_key="left")
-        data_to_aggregate = _restore_original(stacked_inputs, source_key="right")
+        samples = stacked_inputs["samples"]
+        data_to_aggregate = stacked_inputs["data_to_aggregate"]
 
         num_samples_before = len(samples)
 
@@ -199,8 +180,10 @@ def with_sem_agg_join_features(  # pylint: disable=too-many-positional-arguments
     how_many: int = 10,
 ) -> DataOp:
     left_data_op = self
-    # This is a hack to get around the fact that skrub does not support multi-input estimators
-    stacked = skrub.deferred(_stack_with_source)(left_data_op, right_data_op).skb.set_name(f"stacked_{name}_inputs")
+
+    inputs = skrub.as_data_op({"samples": left_data_op, "data_to_aggregate": right_data_op}).skb.set_name(
+        f"{name}__inputs"
+    )
 
     agg_joiner = LLMCodeGenSemAggJoinFeaturesOperator().generate_agg_join_features_estimator(
         left_join_key=left_on,
@@ -209,7 +192,7 @@ def with_sem_agg_join_features(  # pylint: disable=too-many-positional-arguments
         how_many=how_many,
     )
 
-    return stacked.skb.apply(agg_joiner, how="no_wrap").skb.set_name(name)
+    return inputs.skb.apply(agg_joiner).skb.set_name(name)
 
 
 class LLMCodeGenSemAggJoinFeaturesOperator(WithSemAggJoinFeaturesOperator):
