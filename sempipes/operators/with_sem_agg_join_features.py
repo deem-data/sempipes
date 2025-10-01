@@ -189,17 +189,6 @@ class LLMCodeGenSemAggJoinFeaturesEstimator(EstimatorTransformer):
         return result_df
 
 
-def _prepare_unstack(df):
-    return len(df), df.index
-
-
-def _unstack(df, n_and_original_index):
-    n, original_index = n_and_original_index
-    result_df = df.head(n)
-    result_df.index = original_index
-    return result_df
-
-
 def with_sem_agg_join_features(  # pylint: disable=too-many-positional-arguments
     self: DataOp,
     right_data_op: DataOp,
@@ -212,7 +201,6 @@ def with_sem_agg_join_features(  # pylint: disable=too-many-positional-arguments
     left_data_op = self
     # This is a hack to get around the fact that skrub does not support multi-input estimators
     stacked = skrub.deferred(_stack_with_source)(left_data_op, right_data_op).skb.set_name(f"stacked_{name}_inputs")
-    len_and_index_left_df = skrub.deferred(_prepare_unstack)(left_data_op).skb.set_name(f"prepare_unstack_{name}")
 
     agg_joiner = LLMCodeGenSemAggJoinFeaturesOperator().generate_agg_join_features_estimator(
         left_join_key=left_on,
@@ -221,10 +209,7 @@ def with_sem_agg_join_features(  # pylint: disable=too-many-positional-arguments
         how_many=how_many,
     )
 
-    result = stacked.skb.apply(agg_joiner).skb.set_name(name)
-    # This is required as the stacking is also applied at transform time, so we need to undo it
-    unstacked_result = skrub.deferred(_unstack)(result, len_and_index_left_df).skb.set_name(f"unstacked_{name}")
-    return unstacked_result
+    return stacked.skb.apply(agg_joiner, how="no_wrap").skb.set_name(name)
 
 
 class LLMCodeGenSemAggJoinFeaturesOperator(WithSemAggJoinFeaturesOperator):
