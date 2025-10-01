@@ -18,6 +18,8 @@ repos:
           - jupyter==1.1.1
           - lightgbm==4.6.0
           - xgboost==3.0.5
+          - torch==2.8.0
+          - transformers==4.57.1
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:

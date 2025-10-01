@@ -8,23 +8,26 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
+from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.llm.llm import (
-    batch_generate_json,
+    batch_generate_json_retries,
     generate_json_from_messages,
+    generate_python_code_from_messages,
     get_generic_message,
 )
 from sempipes.operators.operators import EstimatorTransformer, SemExtractFeaturesOperator
 
+_MAX_RETRIES = 5
 _SYSTEM_PROMPT = """
 You are an expert data scientist, assisting feature extraction from the multi-modal data such as text/images/audio.
 """
 
 
 # class syntax
-class Modality(Enum):
-    TEXT = 1
-    AUDIO = 2
-    IMAGE = 3
+class Modality(str, Enum):
+    TEXT = "text"
+    AUDIO = "audio"
+    IMAGE = "image"
 
 
 def _create_file_url(local_path: str) -> tuple[str, str]:
@@ -95,16 +98,18 @@ def _get_feature_suggestion_message(
     response_example = """
     Please respond with a JSON object per each feature to extract. JSON object should contain the following keys: `feature_name` - name of the new feature to generate, `feature_prompt` - prompt to generate this feature using an LLM, and `input_columns` - list of columns to use as input to generate this feature. 
     
-    Example response for a column `image_column`:
+    Example response for columns ["description", "image"]:
     ```json
     [
         {
             "feature_name": "image_brightness",
             "feature_prompt": "Generate a categorical feature that represents color of the product on the image.",
-            "input_columns": ["image_column"]
+            "input_columns": ["description"]
         }
     ]
     ```
+
+    Answer ONLY with a JSON object like in the example.
     """
 
     content: list[dict] = [
@@ -147,7 +152,7 @@ def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) ->
     Please respond with a JSON object with feature names as keys and generated feature values as values. 
     JSON object should contain the following keys: {columns_to_generate}. 
 
-    Answer with only the JSON, without any additional text, explanations, or formatting.
+    Answer with only the JSON, without any additional text, explanations, comments, or formatting.
     
     Example response:
     ```json
@@ -156,6 +161,71 @@ def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) ->
     """
 
     return task_prompt, response_example
+
+
+def _get_code_feature_generation_message(
+    columns_to_generate: list[str], modality_per_column: dict[str, Modality], features_to_extract: list[dict]
+) -> str:
+    task_prompt = f"""
+Your goal is to help a data scientist generate Python code for the feature generation/extraction from multi-modal data. You need to extract information from text, image, or audio data. 
+You can use any models from `transformers` library that can be used zero-shot, without additional fine-tuning. You are allowed to leverage modality-specific models for each modality.
+
+You are provided the name of the features to extract, how to extract them, and from which columns within a pandas DataFrame `df`.
+
+Generate Python code with method `extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, object]]) -> pd.DataFrame` for feature extraction using `transformers`, `torch` libraries. 
+`extract_features` takes original DataFrame `df` and a list with features to generate `features_to_extract` where each entry is a dictionary with name of the feature to generate 'feature_name', how to generate the feature 'feature_prompt', and which columns to use 'input_columns'.
+`extract_features` returns original dataframe with newly generated columns: {columns_to_generate}.
+
+Data types of the columns that should be used for the feature generation: {json.dumps(modality_per_column, indent=2)}
+
+"""
+    code_example = f"""
+Code formatting for each added column:
+```python
+import torch
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSeq2SeqLM,
+    AutoModelForQuestionAnswering,
+    AutoModelForTokenClassification,
+    pipeline,
+)
+
+features_to_extract = {features_to_extract}
+
+def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, object]]) -> pd.DataFrame:
+    # Extract features using transformers and other libraries
+
+    ...
+
+    # Add features to the original df as new columns
+    return df
+```end
+
+"""
+    post_meassage = """
+The returned DataFrame `df` should contain the following columns: {columns_to_generate}.
+Each codeblock ends with ```end and starts with "```python"
+Codeblock:
+"""
+    return task_prompt + code_example + post_meassage
+
+
+def _try_to_execute(
+    df: pd.DataFrame, code_to_execute: str, generated_columns: list[str], features_to_extract: list[dict[str, object]]
+) -> None:
+    df_sample = df.head(50).copy(deep=True)
+
+    feature_extraction_func = safe_exec(code_to_execute, "extract_features")
+    extracted_sample = feature_extraction_func(df_sample, features_to_extract)
+
+    expected_columns = generated_columns + list(df.columns)
+
+    assert all(
+        expected_column in extracted_sample.columns for expected_column in expected_columns
+    ), f"The returned DataFrame does not contain all required columns. Expected: {expected_columns}. Actual: {list(extracted_sample.columns)} "
+
+    print("\t> Code executed successfully on a sample dataframe.")
 
 
 def _get_modality(column: pd.Series) -> Modality:
@@ -177,10 +247,13 @@ def _get_modality(column: pd.Series) -> Modality:
 
 
 class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
-    def __init__(self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None) -> None:
+    def __init__(
+        self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None, generate_via_code: bool
+    ) -> None:
         self.nl_prompt = nl_prompt
         self.input_columns = input_columns
         self.output_columns = {} if output_columns is None else output_columns
+        self.generate_via_code = generate_via_code
         self.modality_per_column: dict[str, Modality] = {}
         self.generated_features_: list[dict[str, object]] = []
 
@@ -243,6 +316,10 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         # Validate that generated dicts have correct keys for later generation
         for feature in json.loads(generated_output):
             if list(feature.keys()) == ["feature_name", "feature_prompt", "input_columns"]:
+                # Avoid LLMs suggesting columns that are not in input_columns
+                if len(set(feature["input_columns"]) - set(df.columns)) != 0:
+                    feature["input_columns"] = self.input_columns
+
                 self.generated_features_.append(feature)
                 self.output_columns[feature["feature_name"]] = feature["feature_prompt"]
             else:
@@ -253,7 +330,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         self.modality_per_column = {column: _get_modality(df[column]) for column in self.input_columns}
 
         if self.output_columns == {}:
-            # Ask LLm which features to generate given input columns
+            # Ask LLM which features to generate given input columns
             print(f"--- sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
 
             self._build_output_columns_to_generate_llm(df)
@@ -272,16 +349,66 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         print(f"\t> Generated possible columns: { self.generated_features_}")
         return self
 
-    def transform(self, df):
-        check_is_fitted(self, "generated_features_")
+    def extract_features_with_code(self, df):
+        # Construct prompts with multi-modal data
+        prompt = _get_code_feature_generation_message(
+            columns_to_generate=list(self.output_columns.keys()),
+            modality_per_column=self.modality_per_column,
+            features_to_extract=self.generated_features_,
+        )
 
+        # Generate code for multi-modal data
+        messages = []
+        generated_code = []
+        for attempt in range(1, _MAX_RETRIES + 1):
+            code = ""
+
+            try:
+                if attempt == 1:
+                    messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+
+                code = generate_python_code_from_messages(messages)
+                code_to_execute = "\n".join(generated_code)
+                code_to_execute += "\n\n" + code
+
+                # Try to extract actual features
+                _try_to_execute(
+                    df,
+                    code_to_execute,
+                    generated_columns=list(self.output_columns.keys()),
+                    features_to_extract=self.generated_features_,
+                )
+
+                generated_code.append(code)
+                break
+            except Exception as e:  # pylint: disable=broad-except
+                print(f"\t> An error occurred in attempt {attempt}:", e)
+                messages += [
+                    {"role": "assistant", "content": code},
+                    {
+                        "role": "user",
+                        "content": f"Code execution failed with error: {type(e)} {e}.\n "
+                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
+                    },
+                ]
+
+        # Extract actual features
+        code_to_execute = "\n".join(generated_code)
+        feature_extraction_func = safe_exec(code_to_execute, "extract_features")
+        df = feature_extraction_func(df, self.generated_features_)
+
+        print(f"\t> Generated columns: {list(df.columns)}. \n Code: {code_to_execute}")
+
+        return df
+
+    def extract_features_with_llm(self, df):
         # Construct prompts with multi-modal data
         prompts = []
         for _, row in df.iterrows():
             prompt = self._build_mm_generation_prompt(row=row)
             prompts.append(get_generic_message(_SYSTEM_PROMPT, prompt))
 
-        encoded_results = batch_generate_json(prompts)
+        encoded_results = batch_generate_json_retries(prompts)
         generated_columns = {}
 
         for encoded_result in encoded_results:
@@ -307,12 +434,32 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         return df
 
+    def transform(self, df):
+        check_is_fitted(self, "generated_features_")
+
+        if self.generate_via_code:
+            df = self.extract_features_with_code(df=df)
+
+        else:
+            df = self.extract_features_with_llm(df=df)
+
+        return df
+
 
 class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
     def generate_features_extractor(
-        self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None
+        self,
+        nl_prompt: str,
+        input_columns: list[str],
+        output_columns: dict[str, str] | None,
+        generate_via_code: bool = False,
     ) -> EstimatorTransformer:
-        return LLMFeatureExtractor(nl_prompt=nl_prompt, input_columns=input_columns, output_columns=output_columns)
+        return LLMFeatureExtractor(
+            nl_prompt=nl_prompt,
+            input_columns=input_columns,
+            output_columns=output_columns,
+            generate_via_code=generate_via_code,
+        )
 
 
 def sem_extract_features(
@@ -320,6 +467,11 @@ def sem_extract_features(
     nl_prompt: str,
     input_columns: list[str],
     output_columns: dict[str, str] | None = None,
+    **kwargs,
 ) -> DataOp:
-    feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(nl_prompt, input_columns, output_columns)
+    generate_via_code = kwargs["generate_via_code"] if "generate_via_code" in kwargs else False
+
+    feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(
+        nl_prompt, input_columns, output_columns, generate_via_code
+    )
     return self.skb.apply(feature_extractor)
