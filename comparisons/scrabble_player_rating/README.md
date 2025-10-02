@@ -13,6 +13,17 @@
 
 ### Preliminary results
 
+#### Copilot with context
+
+It failed twice before producing working code: (1) KeyError: "Column(s) ['move_score'] do not exist"; (2) TypeError: OneHotEncoder.init() got an unexpected keyword argument 'sparse'
+
+RMSE on split 0: 240.1909288384617
+RMSE on split 1: 180.45831506877656
+RMSE on split 2: 203.16180623362172
+RMSE on split 3: 177.06742644034625
+RMSE on split 4: 168.2350395474886
+
+Mean final score:  193.82270322573896 25.889402831817236
 
 #### AIDE
 
