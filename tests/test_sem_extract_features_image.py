@@ -1,6 +1,3 @@
-import os
-
-import kagglehub  # pylint: disable=import-error
 import pandas as pd
 import skrub
 from sklearn.model_selection import cross_validate
@@ -9,14 +6,8 @@ import sempipes  # pylint: disable=unused-import
 
 
 def test_sem_extract_features_image():
-    # Fetch a dataset
-    dataset_path = kagglehub.dataset_download("paramaggarwal/fashion-product-images-dataset")
-    styles_csv_path = os.path.join(dataset_path, "fashion-dataset", "styles.csv")
+    styles = pd.read_csv("tests/data/fashion-dataset/styles.csv", on_bad_lines="skip")
 
-    styles = pd.read_csv(styles_csv_path, on_bad_lines="skip")[:200]
-
-    # Extract the whole dataset
-    styles["full_path"] = [os.path.join(dataset_path, "fashion-dataset", "images", f"{id}.jpg") for id in styles["id"]]
     X_columns = ["gender", "season", "year", "productDisplayName", "baseColour", "usage"]
     y_column = "masterCategory"
 
