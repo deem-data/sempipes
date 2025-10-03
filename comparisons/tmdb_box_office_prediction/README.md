@@ -12,6 +12,16 @@
 
 ### Preliminary results
 
+#### Copilot
+
+RMSLE on split 0: 2.319964225830093
+RMSLE on split 1: 2.3173161589719506
+RMSLE on split 2: 2.498929222736798
+RMSLE on split 3: 2.419895734397335
+RMSLE on split 4: 2.587022864398839
+
+Mean final score:  2.428625641267003 0.10421668694681777
+
 #### AIDE 
 
 ```commandline

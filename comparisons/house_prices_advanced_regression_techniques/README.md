@@ -13,6 +13,17 @@
 
 ### Preliminary results
 
+#### Copilot with context 
+It first generated a wrong sparse argument in line 46 OneHotEncoder, corrected after asking.
+
+RMSLE on 0: 32804.77419374438
+RMSLE on 1: 41126.85623298342
+RMSLE on 2: 46165.98274671137
+RMSLE on 3: 50303.72048999809
+RMSLE on 4: 30243.722471885936
+
+Mean final score:  40129.011227064635 7646.290738176375
+
 #### AIDE
 
 RMSLE on split 0: 0.1882568531459395
