@@ -15,6 +15,7 @@ plotly = "^6.3.0"
 graphviz = "^0.21"
 litellm = "^1.76.1"
 networkx = {version = "^3.5", python = ">=3.11,<3.13"}
+python-dotenv = "^1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"

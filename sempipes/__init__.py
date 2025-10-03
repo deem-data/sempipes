@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import skrub
 from sklearn.base import BaseEstimator
 from skrub import selectors
@@ -113,6 +114,8 @@ def sem_deduplicate(
     )
     return self.skb.apply(deduplication_estimator)
 
+
+load_dotenv()
 
 DataOp.with_sem_features = with_sem_features
 DataOp.with_sem_agg_join_features = with_sem_agg_join_features
