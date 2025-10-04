@@ -280,3 +280,14 @@ class WithSemFeaturesCaafe(WithSemFeaturesOperator):
             _prefitted_state=_prefitted_state,
             _memory=_memory,
         )
+
+
+def with_sem_features(
+    self: DataOp,
+    nl_prompt: str,
+    name: str,
+    how_many: int = 10,
+) -> DataOp:
+    data_op = self
+    feature_gen_estimator = WithSemFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
+    return self.skb.apply(feature_gen_estimator).skb.set_name(name)

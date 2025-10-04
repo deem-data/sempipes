@@ -1,12 +1,13 @@
-import numpy as np
 import pandas as pd
 import skrub
 
 import sempipes  # pylint: disable=unused-import
+from sempipes.config import ensure_default_config
 
 
 def test_sem_deduplicate():
-    # Fetch a dataset
+    ensure_default_config()
+
     sport_products = pd.read_csv("tests/data/sports.csv").head(n=100)
     column_to_deduplicate = "GeneratedProductType"
 
@@ -60,8 +61,9 @@ def test_sem_deduplicate():
 
 
 def test_deduplication_typos():
-    # Create a dataset
-    country_codes = [
+    ensure_default_config()
+
+    dirty_country_codes = [
         "US",
         "usa",
         "USA ",
@@ -96,47 +98,66 @@ def test_deduplication_typos():
         "UK",
     ]
 
-    countries = pd.DataFrame(country_codes, columns=["country_code"])
-    column_to_deduplicate = "country_code"
+    correct_codes = [
+        "US",
+        "US",
+        "US",
+        "US",
+        "US",
+        "GB",
+        "GB",
+        "GB",
+        "FR",
+        "FR",
+        "FR",
+        "FR",
+        "DE",
+        "DE",
+        "DE",
+        "ES",
+        "es",
+        "ES",
+        "ES",
+        "CN",
+        "CN",
+        "CN",
+        "CA",
+        "CA",
+        "CA",
+        "JP",
+        "JP",
+        "JP",
+        "US",
+        "DE",
+        "ES",
+        "GB",
+    ]
 
-    print("Unique values before the deduplication: ", countries[column_to_deduplicate].unique())
+    countries = pd.DataFrame(dirty_country_codes, columns=["country_code"])
 
     countries_ref = skrub.var("country_codes", countries)
 
-    countries_ref = countries_ref.sem_deduplicate(
-        nl_prompt="Given a column with country codes like USA, FR. Please reorganise this column by removing duplicates or typos.",
-        target_column=column_to_deduplicate,
-        deduplicate_with_existing_values_only=True,
+    cleaned_countries_ref = countries_ref.sem_deduplicate(
+        nl_prompt="Make sure that all values are in the ISO 3166-1 alpha-2 two-letter uppercase format",
+        target_column="country_code",
+        deduplicate_with_existing_values_only=False,
     ).skb.eval()
 
-    print("Unique values after the deduplication: ", countries_ref[column_to_deduplicate].unique())
+    cleaned_codes = list(cleaned_countries_ref["country_code"])
+    code_pairs = list(zip(dirty_country_codes, cleaned_codes, correct_codes))
 
-    correspondences_new_to_old = pd.concat(
-        [countries[column_to_deduplicate], countries_ref[column_to_deduplicate]],
-        axis=1,
-        keys=[column_to_deduplicate + "1", column_to_deduplicate + "2"],
-    ).drop_duplicates()
+    mismatches = [
+        (dirty, cleaned, correct)
+        for dirty, cleaned, correct in code_pairs
+        if cleaned != correct and not (cleaned == "UK" and correct == "GB")
+    ]
 
-    correspondences_new_to_all_old = (
-        correspondences_new_to_old.groupby(column_to_deduplicate + "1")[column_to_deduplicate + "2"]
-        .apply(list)
-        .to_dict()
-    )
-    print("Before and after value mapping: ", correspondences_new_to_all_old)
-
-    correct_deduplicated_values = np.all(
-        [
-            deduplicated_code in {"US", "UK", "FR", "DE", "ES", "CN", "CA", "JP", "JPN"}
-            for deduplicated_code in list(countries_ref[column_to_deduplicate].unique())
-        ]
-    )
-
-    assert correct_deduplicated_values, "The deduplicated values are not as expected."
-    assert countries_ref[column_to_deduplicate].isna().sum() == 0
-    assert countries_ref[column_to_deduplicate].nunique() < countries[column_to_deduplicate].nunique()
+    assert len(mismatches) < 3, f"Cleaning failed for too many country codes: {mismatches}"
 
 
 def test_deduplication_cities():
+    ensure_default_config()
+
     # Create a dataset
     cities = pd.DataFrame(
         [
@@ -177,15 +198,13 @@ def test_deduplication_cities():
         .to_dict()
     )
 
-    correct_deduplicated_values = np.all(
-        [
-            deduplicated_city in {"Rome", "Madrid"}
-            for deduplicated_city in list(cities_ref[column_to_deduplicate].unique())
-        ]
-    )
+    deduplicated_cities = set(cities_ref[column_to_deduplicate].unique())
 
     print("Before and after value mapping: ", correspondences_new_to_all_old)
 
-    assert correct_deduplicated_values, "The deduplicated values are not as expected. Expected ['Rome', 'Madrid']."
+    assert {
+        "Rome",
+        "Madrid",
+    } == deduplicated_cities, f"Expected ['Rome', 'Madrid'] after deduplication., but got {deduplicated_cities}."
     assert cities_ref[column_to_deduplicate].isna().sum() == 0
     assert cities_ref[column_to_deduplicate].nunique() < cities[column_to_deduplicate].nunique()

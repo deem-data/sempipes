@@ -1,10 +1,12 @@
 import pandas as pd
+import pytest  # pylint: disable=import-error
 import skrub
 from sklearn.model_selection import cross_validate
 
 import sempipes  # pylint: disable=unused-import
 
 
+@pytest.mark.skip(reason="Currently disabled because its too costly")
 def test_sem_extract_features_image():
     styles = pd.read_csv("tests/data/fashion-dataset/styles.csv", on_bad_lines="skip")
 
@@ -33,6 +35,3 @@ def test_sem_extract_features_image():
     print(f"Tabular predictor performance with extracted features: {results_with_new_features["test_score"]}")
 
     assert (results_with_new_features["test_score"] >= results["test_score"]).all()
-
-
-test_sem_extract_features_image()

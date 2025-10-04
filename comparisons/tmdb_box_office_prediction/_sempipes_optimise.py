@@ -2,17 +2,11 @@ import sempipes
 from comparisons.tmdb_box_office_prediction._sempipes_impl import sempipes_pipeline
 from sempipes.optimisers import optimise_olopro
 
-sempipes.set_config(
-    sempipes.Config(
-        llm_for_code_generation=sempipes.LLM(
-            name="openai/gpt-5-mini",
-            parameters={},
-        ),
-        llm_for_batch_processing=sempipes.LLM(
-            name="ollama/gemma3:1b",
-            parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
-        ),
-    )
+sempipes.update_config(
+    llm_for_code_generation=sempipes.LLM(
+        name="gemini/gemini-2.5-pro",
+        parameters={"temperature": 0.0},
+    ),
 )
 
 predictions = sempipes_pipeline("comparisons/tmdb_box_office_prediction/validation.csv")

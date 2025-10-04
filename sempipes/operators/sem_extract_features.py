@@ -6,12 +6,12 @@ from enum import Enum
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
+from skrub import DataOp
 
 from sempipes.llm.llm import (
-    batch_generate_results,
+    batch_generate_json,
     generate_json_from_messages,
     get_generic_message,
-    unwrap_json,
 )
 from sempipes.operators.operators import EstimatorTransformer, SemExtractFeaturesOperator
 
@@ -281,22 +281,22 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             prompt = self._build_mm_generation_prompt(row=row)
             prompts.append(get_generic_message(_SYSTEM_PROMPT, prompt))
 
-        results = batch_generate_results(prompts, batch_size=100)
-
-        # Parse new results
+        encoded_results = batch_generate_json(prompts)
         generated_columns = {}
-        for result in results:
-            raw_result = unwrap_json(result)
+
+        for encoded_result in encoded_results:
+            parsed_result = json.loads(encoded_result)
+            assert isinstance(parsed_result, dict), f"Expected a dict encoded in JSON, but got: {encoded_result}"
 
             try:
-                for column_name, cell_value in json.loads(raw_result).items():
+                for column_name, cell_value in parsed_result.items():
                     generated_columns[column_name] = (
                         [cell_value]
                         if generated_columns.get(column_name) is None
                         else generated_columns[column_name] + [cell_value]
                     )
             except Exception as e:
-                print(f"Error processing response: {raw_result}")
+                print(f"Error processing response: {encoded_result}")
                 raise e
 
         # Assign new results back
@@ -308,8 +308,18 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         return df
 
 
-class SemExractFeaturesLLM(SemExtractFeaturesOperator):
+class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
     def generate_features_extractor(
         self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None
     ) -> EstimatorTransformer:
         return LLMFeatureExtractor(nl_prompt=nl_prompt, input_columns=input_columns, output_columns=output_columns)
+
+
+def sem_extract_features(
+    self: DataOp,
+    nl_prompt: str,
+    input_columns: list[str],
+    output_columns: dict[str, str] | None = None,
+) -> DataOp:
+    feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(nl_prompt, input_columns, output_columns)
+    return self.skb.apply(feature_extractor)

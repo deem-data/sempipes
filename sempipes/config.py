@@ -20,6 +20,7 @@ class Config:
         name="ollama/gpt-oss:20b",
         parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
     )
+    batch_size_for_batch_processing: int = 20
 
 
 # Holds the current config; ContextVar makes it safe for threads/async tasks
@@ -31,6 +32,27 @@ def get_config() -> Config:
     return _CONFIG.get()
 
 
-def set_config(cfg: Config) -> None:
+def _set_config(cfg: Config) -> None:
     """Set the process-wide default config (for the current thread/async task)."""
     _CONFIG.set(cfg)
+
+
+def ensure_default_config() -> None:
+    """Ensure that the default config is set (useful for tests)."""
+    _set_config(Config())
+
+
+def update_config(**kwargs) -> None:
+    """Update specific attributes of the current config by creating a new Config instance."""
+    current_config = get_config()
+
+    # Create a new config with updated attributes
+    updated_config = Config(
+        llm_for_code_generation=kwargs.get("llm_for_code_generation", current_config.llm_for_code_generation),
+        llm_for_batch_processing=kwargs.get("llm_for_batch_processing", current_config.llm_for_batch_processing),
+        batch_size_for_batch_processing=kwargs.get(
+            "batch_size_for_batch_processing", current_config.batch_size_for_batch_processing
+        ),
+    )
+
+    _set_config(updated_config)

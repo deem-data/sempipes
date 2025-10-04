@@ -4,6 +4,7 @@ from typing import Self
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
+from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.llm.llm import generate_python_code_from_messages
@@ -31,7 +32,8 @@ _SYSTEM_PROMPT = (
 def _try_to_execute(df: pd.DataFrame, target_column: str, code_to_execute: str) -> None:
     df_sample = df.head(50).copy(deep=True)
 
-    deduplicated_sample_column = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df_sample[[target_column]]})
+    deduplication_func = safe_exec(code_to_execute, "deduplicate_column")
+    deduplicated_sample_column = deduplication_func(df_sample)
 
     assert (
         deduplicated_sample_column.isna().sum() == df_sample[target_column].isna().sum()
@@ -72,10 +74,10 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         in a dataframe. The column has the following unique values with following counts: 
         {value_counts}. {existing_values_prompt}
         
-        You need to assist the data scientists with writing a Python method `deduplicate_column(df: pandas.DataFrame, column_name: str) -> pandas.DataFrame` to deduplicate data in the column `column_name` from the pandas DataFrame `df`. 
-        `deduplicate_column(df: pandas.DataFrame, column_name: str) -> pandas.DataFrame` should returned a modified dataframe without duplicates.
+        You need to assist the data scientists with writing a Python method `deduplicate_column(df: pandas.DataFrame) -> pandas.DataFrame` to deduplicate data in the column '{target_column}' from the pandas DataFrame `df`. 
+        `deduplicate_column(df: pandas.DataFrame) -> pandas.DataFrame` should return a modified dataframe without duplicates.
         Deduplication or near-deduplication can include finding semantic similarity, typos, or translation from one language to another.
-        The generated deduplication code can build a correspondence dictionary on how to deduplicate, union, and group values for a better consistency and generalizability, use similarity, n-grams, tf-idf, or call external libraries for the deduplication.
+        The generated deduplication code can build a correspondence dictionary on how to deduplicate, union, and group values for better consistency and generalizability, use similarity, n-grams, tf-idf, or call external libraries for the deduplication.
         Do not use pandas.drop_duplicates() and do not change the size of the input dataframe.
         
         The data scientist wants you to take special care to the following: 
@@ -89,7 +91,7 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         Example 1: In a column 'categories', value counts are {"sports shoes": 10, "sneakers": 5, "kicks": 1, "running shoes": 3}. All shoes are for sports and can be deduplicated into "sports shoes".
         Example 1 output:
         ```python
-        def deduplicate_column(df, column_name):
+        def deduplicate_column(df):
             _deduplication_correspondences = {
                 'sports shoes': 'sports shoes', 
                 'sneakers': 'sports shoes', 
@@ -98,14 +100,12 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
             }
             df.loc[:, column_name] = df[:, column_name].replace(_deduplication_correspondences)
             return df
-        
-        df = deduplicate_column(df, column_name='categories')
         ```end
 
         Example 2: In a column 'product_name', value counts are {"Airpods": 3, "Kabellose Ohrhörer": 1, "Wireless Earbuds":10, "Écouteurs Sans": 1, "Auriculares Básicos": 1}. All values are wireless earbuds and can be deduplicated by translating into "Wireless Earbuds".
         Example 2 output:
         ```python
-        def deduplicate_column(df, column_name):
+        def deduplicate_column(df):
             _deduplication_correspondences = {
                 'Airpods': 'Wireless Earbuds', 
                 'Kabellose Ohrhörer': 'Wireless Earbuds', 
@@ -115,14 +115,12 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
             }
             df.loc[:, column_name] = df[:, column_name].replace(_deduplication_correspondences)
             return df
-        
-        df = deduplicate_column(df, column_name='product_name')
         ```end
 
         Example 3: In a column 'country_code', value counts are {'DE': 2, 'US': 1, 'USA': 1, 'CAN': 1, 'cA ': 1, 'CA': 1, ' Cn': 1, 'CHN': 1, 'CN': 1, 'usa': 1, 'GER': 1, 'deu': 1, 'FRN': 1, 'FRA ': 1, 'fra': 1, 'FR': 1, 'GB': 1, 'UK ': 1, 'uk': 1, 'U-S': 1, ' UAS': 1, 'USA ': 1, 'UK': 1}. The values can be deduplicated by removing types and multi-lingual instances from the data.
         Example 3 output:
         ```python
-        def deduplicate_column(df, column_name):
+        def deduplicate_column(df):
             normalization_map = {
                 "UAS": "US", "U-S": "US", "USA": "US",
                 "GB": "UK",  # unify GB/UK
@@ -136,8 +134,6 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
             df[:, column_name] = df[:, column_name].replace(normalization_map)
 
             return df
-        
-        df = deduplicate_column(df, column_name='country_code')
         ```end
 
         Code formatting for your answer:
@@ -157,21 +153,20 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         target_column_type = str(df[self.target_column].dtype)
         self.value_counts_ = json.dumps(df[self.target_column].value_counts().to_dict())
 
-        # New code
         messages = []
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
 
             try:
-                prompt = prompt = self._build_prompt(
-                    self.target_column,
-                    target_column_type,
-                    self.deduplicate_with_existing_values_only,
-                    self.value_counts_,
-                    self.nl_prompt,
-                )
-
                 if attempt == 1:
+                    prompt = self._build_prompt(
+                        self.target_column,
+                        target_column_type,
+                        self.deduplicate_with_existing_values_only,
+                        self.value_counts_,
+                        self.nl_prompt,
+                    )
+
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
 
                 code = generate_python_code_from_messages(messages)
@@ -199,9 +194,16 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         check_is_fitted(self, ("generated_code_", "value_counts_"))
 
         code_to_execute = "\n".join(self.generated_code_)
-
-        deduplicated_column = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df[[self.target_column]]})
-
-        df[self.target_column] = deduplicated_column[self.target_column].tolist()  # list(clean_deduplicated_column)
+        deduplication_func = safe_exec(code_to_execute, "deduplicate_column")
+        df = deduplication_func(df)
 
         return df
+
+
+def sem_deduplicate(
+    self: DataOp, target_column: str, nl_prompt: str, deduplicate_with_existing_values_only: bool
+) -> DataOp:
+    deduplication_estimator = SemDeduplicateWithLLM().generate_deduplication_estimator(
+        target_column, nl_prompt, deduplicate_with_existing_values_only
+    )
+    return self.skb.apply(deduplication_estimator)

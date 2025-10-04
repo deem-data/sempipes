@@ -1,8 +1,10 @@
 import inspect
 import traceback
 
+import skrub
 from pandas import DataFrame
 from sklearn.base import BaseEstimator
+from skrub import DataOp, selectors
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.inspection.runtime_summary import available_packages
@@ -163,3 +165,43 @@ class SemChooseLLM(SemChooseOperator):
     
         __generated_sempipes_choices = skrub.choose_from([<Your suggested parameter values>])
         """
+
+
+def sem_choose(name, **kwargs) -> SemChoices:
+    return SemChoices(name=name, params_and_prompts=kwargs)
+
+
+def apply_with_sem_choose(
+    self: DataOp,
+    estimator: BaseEstimator,
+    choices: SemChoices,
+    *,
+    y=None,
+    cols=selectors.all(),
+    exclude_cols=None,
+    how: str = "auto",
+    allow_reject: bool = False,
+    unsupervised: bool = False,
+):
+    SemChooseLLM().set_params_on_estimator(estimator, choices)
+
+    estimator_application = self.apply(
+        estimator,
+        y=y,
+        cols=cols,
+        exclude_cols=exclude_cols,
+        how=how,
+        allow_reject=allow_reject,
+        unsupervised=unsupervised,
+    )
+
+    choices_storage = skrub.var(f"sempipes__choices__{choices.name}__choices", choices)
+    estimator_application = estimator_application.skb.set_name(f"sempipes__choices__{choices.name}__estimator")
+
+    def store_sem_choices(estimator_for_choices, _choices_to_keep):
+        # The purpose of this function is just to capture the choice variable in the computational graph
+        return estimator_for_choices
+
+    estimator_application = skrub.deferred(store_sem_choices)(estimator_application, choices_storage)
+
+    return estimator_application

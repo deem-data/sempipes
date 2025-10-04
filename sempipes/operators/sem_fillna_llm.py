@@ -37,7 +37,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
     def _build_prompt(
         target_column,
         target_column_type,
-        candidate_columns,
+        serialised_row,
         nl_prompt,
         target_column_unique_values,
         impute_existing_values_only,
@@ -53,7 +53,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
 
         return f"""
         The data scientist wants to fill missing values in the column '{target_column}' of type '{target_column_type}' in a dataframe. 
-        The dataframe has the following columns available with these values to help with this task: {candidate_columns}. You need to assist the data scientist with filling the missing values in the target column.
+        The dataframe has the following columns available with these values to help with this task: {serialised_row}. You need to assist the data scientist with filling the missing values in the target column.
         {values_instruction}
         
         The data scientist wants you to take special care to the following: 
@@ -87,21 +87,23 @@ class LLMImputer(BaseEstimator, TransformerMixin):
         # Build prompts for each row to impute
         prompts = []
         for __, row in rows_to_impute.iterrows():
-            candidate_columns = {column: row[column] for column in df.columns if column != self.target_column}
+            serialised_row = {column: row[column] for column in df.columns if column != self.target_column}
             prompt = self._build_prompt(
                 self.target_column,
                 self.target_column_type_,
-                candidate_columns,
+                serialised_row,
                 self.nl_prompt,
                 self.target_column_unique_values_,
                 self.impute_with_existing_values_only,
             )
             prompts.append(get_cleaning_message(prompt))
 
-        # TODO find a way to set the batch size
-        results = batch_generate_results(prompts, batch_size=10)
+        results = batch_generate_results(prompts)
 
-        df.loc[indices_to_impute, self.target_column] = results
+        # TODO This should be done somewhere else
+        converted_results = [result.strip() for result in results]
+        # TODO This will probably not work for non-string types
+        df.loc[indices_to_impute, self.target_column] = converted_results
 
         print(f"\t> Imputed {len(results)} values...")
 

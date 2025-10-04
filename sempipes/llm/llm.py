@@ -1,4 +1,5 @@
 from litellm import batch_completion, completion
+from tqdm import tqdm
 
 from sempipes.config import get_config
 from sempipes.llm.utils import unwrap_json, unwrap_python
@@ -48,22 +49,29 @@ def generate_json_from_messages(messages: list[dict]) -> str:
     return unwrap_json(raw_code)
 
 
+def batch_generate_json(
+    prompts: list[str],
+) -> list[str | None]:
+    raw_results = batch_generate_results(prompts)
+    return [unwrap_json(raw_result) if raw_result is not None else None for raw_result in raw_results]
+
+
 def batch_generate_results(
     prompts: list[str],
-    batch_size: int,
 ) -> list[str | None]:
     """
     Calls litellm.batch_completion with one message-list per prompt.
     Returns a list of raw strings aligned with `prompts`.
     """
-    assert batch_size is not None and batch_size > 0, "batch_size must be a positive integer"
 
-    batch_llm = get_config().llm_for_batch_processing
-    print(f"\t> Querying '{batch_llm.name}' with {len(prompts)} requests...'")
+    config = get_config()
+    batch_llm = config.llm_for_batch_processing
+    batch_size = config.batch_size_for_batch_processing
+    print(f"\t> Querying '{batch_llm.name}' with {len(prompts)} requests in batches of size {batch_size}...'")
 
     outputs = []
 
-    for start_index in range(0, len(prompts), batch_size):
+    for start_index in tqdm(range(0, len(prompts), batch_size)):
         message_batch = prompts[start_index : start_index + batch_size]
 
         responses = batch_completion(

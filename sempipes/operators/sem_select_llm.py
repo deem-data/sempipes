@@ -1,5 +1,6 @@
 from typing import Any
 
+from skrub import DataOp
 from skrub import _dataframe as sbd
 from skrub.selectors._base import Filter
 
@@ -80,3 +81,11 @@ class SemSelectLLM(SemSelectOperator):
         nl_prompt: str,
     ) -> Filter:
         return Filter(_sem_select, args=(nl_prompt,), name="sem_select")
+
+
+def sem_select(
+    self: DataOp,
+    nl_prompt: str,
+) -> DataOp:
+    selector = SemSelectLLM().generate_column_selector(nl_prompt)
+    return self.skb.select(selector)
