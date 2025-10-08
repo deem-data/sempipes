@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import train_test_split
 
 # Load the data
-adata_full = anndata.read_h5ad("comparisons/cell_typing/data/ImmuneAtlas_raw.h5ad")
+adata_full = anndata.read_h5ad("comparisons/single_cell_analysis/data/ImmuneAtlas_raw.h5ad")
 
 # Preprocessing data
 sc.pp.normalize_total(adata_full, target_sum=1e4)

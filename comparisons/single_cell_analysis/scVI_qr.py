@@ -37,7 +37,7 @@ def preprocess_rna(
 
 
 def train_qr_scVI(adata_ref, adata_query, batch_key, cell_type):
-    scvi.model.SCVI.setup_anndata(adata_ref, batch_key=batch_key)
+    scvi.model.SCVI.setup_anndata(adata_ref, layer="counts", batch_key=batch_key)
     model = scvi.model.SCVI(adata_ref, n_layers=8, n_latent=30, gene_likelihood="nb")
 
     model.train(max_epochs=100)
@@ -73,12 +73,12 @@ def train_qr_scVI(adata_ref, adata_query, batch_key, cell_type):
     return acc, f1_macro
 
 
-adata_path = "comparisons/cell_typing/data/ImmuneAtlas_raw.h5ad"
+adata_path = "comparisons/single_cell_analysis/data/ImmuneAtlas.h5ad"
 batch_key = "assay"
 cell_type = "cell_type"
 
 adata = sc.read(adata_path)
-adata = preprocess_rna(adata=adata, is_hvg=True, batch_key=batch_key)
+# adata = preprocess_rna(adata=adata, is_hvg=True, batch_key=batch_key)
 
 
 adata_ref = adata[adata.obs[batch_key] != "10x 5' v2",].copy()

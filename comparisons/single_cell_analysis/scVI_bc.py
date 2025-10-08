@@ -13,6 +13,9 @@ def preprocess_rna(
     is_hvg=True,
     batch_key="batchlb",
 ):
+    
+    adata.layers["counts"] = adata.X
+
     if min_features is None:
         min_features = 600
     if n_top_features is None:
@@ -30,6 +33,8 @@ def preprocess_rna(
         sc.pp.highly_variable_genes(adata, n_top_genes=n_top_features, batch_key=batch_key, inplace=True, subset=True)
 
     print("Processed dataset shape: {}".format(adata.shape))
+
+    
     return adata
 
 
@@ -37,7 +42,7 @@ def run_scVI(adata, batch_key, cell_type):
     scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=batch_key)
     model = scvi.model.SCVI(adata, n_layers=8, n_latent=30, gene_likelihood="nb")
 
-    model.train(accelerator="gpu")
+    model.train(max_epochs=100)
 
     SCVI_LATENT_KEY = "X_scVI"
     adata.obsm[SCVI_LATENT_KEY] = model.get_latent_representation()
@@ -53,7 +58,11 @@ def evaluate_model(adata, batch_key, cell_type_label):
         clisi_knn=True,
     )
     _BATCH_METRICS = BatchCorrection(
-        graph_connectivity=True, kbet_per_label=True, ilisi_knn=True, pcr_comparison=True, silhouette_batch=True
+        graph_connectivity=True, 
+        kbet_per_label=True, 
+        ilisi_knn=True, 
+        pcr_comparison=True, 
+        bras=True
     )
 
     names_obs = ["X_scVI"]
@@ -73,17 +82,16 @@ def evaluate_model(adata, batch_key, cell_type_label):
     return results
 
 
-adata_path = "comparisons/cell_typing/data/ImmuneAtlas_raw.h5ad"
+adata_path = "comparisons/single_cell_analysis/data/ImmuneAtlas.h5ad"
 epochs = 100
 batch_key = "assay"
 cell_type = "cell_type"
 
 adata = sc.read(adata_path)
-adata = preprocess_rna(adata=adata, is_hvg=True, batch_key=batch_key)
 
 adata = run_scVI(adata, batch_key=batch_key, cell_type=cell_type)
 results = evaluate_model(adata=adata, batch_key=batch_key, cell_type_label=cell_type)
 
 print(results)
 
-results.to_csv("comparisons/cell_typing/results_unscaled_scvi.csv")
+results.to_csv("comparisons/single_cell_analysis/results_unscaled_scvi.csv")

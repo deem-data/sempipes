@@ -27,10 +27,11 @@ def train_qr(adata_ref, adata_query, batch_key, cell_type):
     return acc, f1_macro
 
 
-adata_path_ref = "comparisons/cell_typing/data/ImmuneAtlas_raw_train.h5ad"
-adata_path_query = "comparisons/cell_typing/data/ImmuneAtlas_raw_test.h5ad"
-adata_ref = sc.read(adata_path_ref)
-adata_query = sc.read(adata_path_query)
+adata_full = sc.read("comparisons/single_cell_analysis/data/ImmuneAtlas_raw.h5ad")
+
+adata_ref = adata_full[adata_full.obs["assay"] != "10x 5' v2",].copy()
+adata_query = adata_full[adata_full.obs["assay"] == "10x 5' v2",].copy()
+
 batch_key = "batchlb"
 cell_type = "cell_type"
 
