@@ -1,0 +1,1 @@
+aide data_dir="data/theory" goal="Predict the gdp of each country"  eval="root mean squared log error"

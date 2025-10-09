@@ -1,0 +1,1 @@
+aide data_dir="data/olga" goal="Predict the cell type of each cell in the assay which has been sequenced with the 10x 5' v2 technology"  eval="accuracy and macro F1"
