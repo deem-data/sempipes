@@ -12,13 +12,14 @@ Accuracy: 0.8438367307876352
 #### scVI
 
 ```commandline
+After 5 runs AVG: Accuracy 0.819, macro F1 0.77
+After 5 runs ATD: Accuracy 0.003, macro F1 0.008
+
 ```
 
 #### PCA
 
 ```commandline
-After 5 runs AVG: Accuracy 0.93, macro F1 0.626
-After 5 runs ATD: Accuracy 0.0, macro F1 0.0
 ```
 
 #### SemPipes
