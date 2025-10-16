@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 from litellm import batch_completion, completion
 from tqdm import tqdm
@@ -62,7 +61,7 @@ def batch_generate_json(
 
 
 def batch_generate_json_retries(
-    prompts: Any,
+    prompts: list,
 ) -> list[str | None] | list[None]:
     results: list[str | None] = [None] * len(prompts)
     to_retry_indices = list(range(len(prompts)))
