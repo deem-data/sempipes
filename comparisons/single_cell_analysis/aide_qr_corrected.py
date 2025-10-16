@@ -29,7 +29,7 @@ for run in range(5):
     y_test = adata_test.obs["cell_type"]
 
     # Initialize and train the Random Forest model with increased number of trees
-    rf_classifier = RandomForestClassifier(n_estimators=500, random_state=42)
+    rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
     rf_classifier.fit(X_train, y_train)
 
     # Predict on test set

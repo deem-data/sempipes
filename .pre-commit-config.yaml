@@ -1,3 +1,4 @@
+exclude: ^comparisons/single_cell_analysis/aide_qr.py$
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.2
