@@ -9,7 +9,8 @@
 ### Kaggle baseline:
 
  - https://www.kaggle.com/code/archfu/notebook95778def47
-
+ -  https://www.kaggle.com/code/dway88/feature-eng-feature-importance-random-forest
+ - 
 ### Preliminary results
 
 #### Copilot
@@ -98,4 +99,15 @@ RMSLE on split 3: 2.2577813610215705
 RMSLE on split 4: 2.366580317844579
 
 Mean final score:  2.208131836570182 0.15710550666230977
+```
+
+Kaggle 2
+```commandline
+RMSLE on split 0: 2.080288206673187
+RMSLE on split 1: 2.0516200198513816
+RMSLE on split 2: 2.368225270402235
+RMSLE on split 3: 2.2406475699121695
+RMSLE on split 4: 2.367719034182676
+
+Mean final score:  2.22170002020433 0.13570167173246156
 ```
