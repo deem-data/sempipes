@@ -61,18 +61,18 @@ def batch_generate_json(
 
 
 def batch_generate_json_retries(
-    prompts: list,
+    prompts: list,  # TODO set a proper type for this
 ) -> list[str | None] | list[None]:
     results: list[str | None] = [None] * len(prompts)
-    to_retry_indices = list(range(len(prompts)))
+    indices_to_retry = list(range(len(prompts)))
     attempts = 0
 
-    while to_retry_indices and attempts < _MAX_RETRIES:
-        retry_prompts = [prompts[i] for i in to_retry_indices]
+    while indices_to_retry and attempts < _MAX_RETRIES:
+        retry_prompts = [prompts[i] for i in indices_to_retry]
         raw_results = batch_generate_results_retries(retry_prompts)
 
         next_retry_indices = []
-        for idx, raw_result in zip(to_retry_indices, raw_results):
+        for idx, raw_result in zip(indices_to_retry, raw_results):
             try:
                 if raw_result is not None:
                     unwrapped_result = unwrap_json(raw_result)
@@ -97,7 +97,7 @@ def batch_generate_json_retries(
                 prompts[idx] = error_prompt
                 next_retry_indices.append(idx)
 
-        to_retry_indices = next_retry_indices
+        indices_to_retry = next_retry_indices
         attempts += 1
 
     return results

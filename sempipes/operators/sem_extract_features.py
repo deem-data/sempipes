@@ -451,14 +451,14 @@ class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
         self,
         nl_prompt: str,
         input_columns: list[str],
-        output_columns: dict[str, str] | None,
-        generate_via_code: bool = False,
+        output_columns: dict[str, str] | None = None,
+        **kwargs,
     ) -> EstimatorTransformer:
         return LLMFeatureExtractor(
             nl_prompt=nl_prompt,
             input_columns=input_columns,
             output_columns=output_columns,
-            generate_via_code=generate_via_code,
+            generate_via_code=kwargs.get("generate_via_code", False),
         )
 
 
@@ -469,9 +469,7 @@ def sem_extract_features(
     output_columns: dict[str, str] | None = None,
     **kwargs,
 ) -> DataOp:
-    generate_via_code = kwargs["generate_via_code"] if "generate_via_code" in kwargs else False
-
     feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(
-        nl_prompt, input_columns, output_columns, generate_via_code
+        nl_prompt, input_columns, output_columns, **kwargs
     )
     return self.skb.apply(feature_extractor)

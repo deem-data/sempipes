@@ -27,7 +27,6 @@ def sempipes_pipeline(data_file):
     revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
     revenue = revenue.skb.set_description("the international box office revenue for a movie")
 
-
     movie_stats = movie_stats.assign(spoken_languages_str=movie_stats["spoken_languages"].apply(json.dumps))
     movie_stats = movie_stats.assign(cast_str=movie_stats["cast"].apply(json.dumps))
     movie_stats = movie_stats.sem_extract_features(
