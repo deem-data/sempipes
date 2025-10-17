@@ -1,18 +1,40 @@
 import ast
 import builtins
 import collections
+import dataclasses
 import datetime
 import json
 import re
+import typing
 from collections.abc import Iterable
 from typing import Any
 
 import numpy
 import pandas as pd
+import PIL
 import sklearn
 import skrub
+import torch
+import transformers
 
-_ALLOWED_MODULES = ["numpy", "pandas", "sklearn", "skrub", "re", "json", "ast", "datetime", "collections", "math"]
+_ALLOWED_MODULES = [
+    "numpy",
+    "pandas",
+    "sklearn",
+    "skrub",
+    "re",
+    "json",
+    "ast",
+    "datetime",
+    "collections",
+    "math",
+    "transformers",
+    "torch",
+    "json",
+    "dataclasses",
+    "typing",
+    "PIL",
+]
 
 
 def _make_safe_import(allowed_modules: Iterable[str]):
@@ -57,8 +79,10 @@ def safe_exec(
         "max": max,
         "abs": abs,
         "sorted": sorted,
+        "object": object,
         "Exception": Exception,
         "BaseException": BaseException,
+        "zip": zip,
     }
 
     safe_globals = {
@@ -70,10 +94,15 @@ def safe_exec(
         "pandas": pd,
         "pd": pd,
         "re": re,
-        "json": json,
         "ast": ast,
         "datetime": datetime,
         "collections": collections,
+        "transformers": transformers,
+        "torch": torch,
+        "json": json,
+        "dataclasses": dataclasses,
+        "typing": typing,
+        "PIL": PIL,
     }
 
     # We need a single dict to allow function definitions inside the code

@@ -137,6 +137,7 @@ class SemExtractFeaturesOperator(ABC):
         nl_prompt: str,
         input_columns: list[str],
         output_columns: dict[str, str] | None,
+        **kwargs,
     ) -> EstimatorTransformer:
         """Return an estimator that extracts features from the image/text on a pandas df."""
 
