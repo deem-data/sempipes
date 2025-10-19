@@ -8,7 +8,7 @@
 
 ### Kaggle baseline:
 
- - https://www.kaggle.com/competitions/scrabble-player-rating
+ - https://www.kaggle.com/code/mikepenkov/rating-scrabble-players-with-xgb-regression
 
 
 ### Preliminary results
