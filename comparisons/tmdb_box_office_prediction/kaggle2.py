@@ -255,6 +255,7 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     train_cats(df_raw)
 
     df_trn, y_trn, nas = proc_df(df_raw, "revenue")
+    print(df_trn.columns)
     m = RandomForestRegressor(n_jobs=-1)
     m.fit(df_trn, y_trn)
     m.score(df_trn, y_trn)

@@ -93,6 +93,7 @@ Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care to the following: {nl_prompt}.
 
+Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
 
 Code formatting for each added column:
 ```python
@@ -140,7 +141,6 @@ def _add_memorized_history(
     target_metric: str,
 ) -> None:
     if memory is not None and len(memory) > 0:
-        # TODO this might not work for neg_rmse for example
         current_score = None
 
         for memory_line in memory:
@@ -169,17 +169,18 @@ def _add_memorized_history(
             ]
 
 
-def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> None:
+def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> tuple[list[str], list[str]]:
     df_sample = df.head(100).copy(deep=True)
     columns_before = df_sample.columns
     df_sample_processed = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df_sample})
     columns_after = df_sample_processed.columns
-    new_columns = sorted(set(columns_after) - set(columns_before))
-    removed_columns = sorted(set(columns_before) - set(columns_after))
+    new_columns = list(sorted(set(columns_after) - set(columns_before)))
+    removed_columns = list(sorted(set(columns_before) - set(columns_after)))
     print(
         f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
         f"removed {len(removed_columns)} feature columns: {removed_columns}"
     )
+    return new_columns, removed_columns
 
 
 # pylint: disable=too-many-ancestors
@@ -188,17 +189,21 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         self,
         nl_prompt: str,
         how_many: int,
+        eval_mode: str = skrub.eval_mode(),
         _pipeline_summary: PipelineSummary | None | DataOp = None,
         _prefitted_state: dict[str, Any] | DataOp | None = None,
         _memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.how_many = how_many
+        self.eval_mode = eval_mode
         self._pipeline_summary = _pipeline_summary
         self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
 
         self.generated_code_: list[str] = []
+        self.new_columns_: list[str] = []
+        self.removed_columns_: list[str] = []
 
     def empty_state(self):
         return {"generated_code": []}
@@ -212,17 +217,16 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
-        # prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
+        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self._prefitted_state is not None:
-            # print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
+            print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
-        # print(
-        #     f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many})"
-        #     f"{_pipeline_summary_info(self._pipeline_summary)}"
-        # )
+        print(
+            f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
+        )
 
         target_metric = "accuracy"
         if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
@@ -232,7 +236,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
 
-            try:
+            try:  # pylint: disable=too-many-try-statements
                 prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._pipeline_summary)
 
                 if attempt == 1:
@@ -243,9 +247,12 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
                 code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 
-                _try_to_execute(df, code_to_execute)
+                new_columns, removed_columns = _try_to_execute(df, code_to_execute)
 
                 self.generated_code_.append(code)
+                self.new_columns_ = new_columns
+                self.removed_columns_ = removed_columns
+
                 break
             except Exception as e:  # pylint: disable=broad-except
                 print(f"\t> An error occurred in attempt {attempt}:", e)
@@ -261,9 +268,18 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         return self
 
     def transform(self, df):
-        check_is_fitted(self, "generated_code_")
+        check_is_fitted(self, ("generated_code_", "new_columns_", "removed_columns_"))
         code_to_execute = "\n".join(self.generated_code_)
         df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+
+        for column in self.new_columns_:
+            assert column in df.columns, f"Expected new column '{column}' not found in transformed dataframe"
+
+        for column in self.removed_columns_:
+            assert (
+                column not in df.columns
+            ), f"Expected removed column '{column}' still present in transformed dataframe"
+
         return df
 
 
@@ -290,4 +306,4 @@ def with_sem_features(
 ) -> DataOp:
     data_op = self
     feature_gen_estimator = WithSemFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
-    return self.skb.apply(feature_gen_estimator).skb.set_name(name)
+    return self.skb.apply(feature_gen_estimator, how="no_wrap").skb.set_name(name)

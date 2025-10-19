@@ -83,6 +83,10 @@ def safe_exec(
         "Exception": Exception,
         "BaseException": BaseException,
         "zip": zip,
+        "next": next,
+        "ValueError": ValueError,
+        "TypeError": TypeError,
+        "enumerate": enumerate,
     }
 
     safe_globals = {

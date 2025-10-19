@@ -83,8 +83,7 @@ def optimise_sem_choices(
 def _evolve_operator(pipeline, operator_name, env):
     operator_to_recompute = find_node_by_name(pipeline, operator_name)
     operator_to_recompute.skb.eval(env)
-
-    fitted = operator_to_recompute._skrub_impl.estimator_.transformer_
+    fitted = operator_to_recompute._skrub_impl.estimator_
     operator_state = fitted.state_after_fit()
     operator_memory_update = fitted.memory_update_from_latest_fit()
     return operator_state, operator_memory_update

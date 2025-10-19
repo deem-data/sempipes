@@ -33,3 +33,4 @@ target/
 */build/
 
 .history
+/catboost_info/
