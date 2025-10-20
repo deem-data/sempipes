@@ -5,10 +5,12 @@ import skrub
 from skrub import DataOp
 from skrub._data_ops._evaluation import choice_graph, find_node_by_name
 
+from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.operators.operators import OptimisableMixin
 from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.optimisers.search_policy import Outcome, SearchPolicy, TreeSearch
+from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json
 
 
 def _env_for_fit(dag_sink, operator_name, search_node, pipeline_summary):
@@ -155,5 +157,20 @@ def optimise_olopro(  # pylint: disable=too-many-positional-arguments, too-many-
 
         print(f"\tOLOPRO> Score changed from {search_node.parent_score} to {score}")
         search.record_outcome(search_node, operator_state, score, operator_memory_update)
+
+    trajectory = Trajectory(
+        sempipes_config=get_config(),
+        optimizer_args={
+            "operator_name": operator_name,
+            "num_trials": num_trials,
+            "scoring": scoring,
+            "cv": cv,
+            "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,
+        },
+        outcomes=search.get_outcomes(),
+    )
+
+    trajectory_output_path = save_trajectory_as_json(trajectory)
+    print(f"\tOLOPRO> Saved trajectory to {trajectory_output_path}")
 
     return search.get_outcomes()

@@ -1,3 +1,4 @@
+.sempipes_trajectories/
 .env
 dist/
 Cargo.lock

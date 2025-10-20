@@ -1,7 +1,7 @@
 import warnings
 
 import sempipes
-from comparisons.tmdb_box_office_prediction._sempipes_impl2 import sempipes_pipeline2
+from comparisons.house_prices_advanced_regression_techniques._sempipes_impl2 import sempipes_pipeline2
 from sempipes.optimisers import optimise_olopro
 
 warnings.filterwarnings("ignore")
@@ -10,14 +10,14 @@ sempipes.update_config(
     llm_for_code_generation=sempipes.LLM(
         name="openai/gpt-4.1",
         parameters={"temperature": 0.8},
-    )
+    ),
 )
 
-predictions = sempipes_pipeline2("comparisons/tmdb_box_office_prediction/validation.csv", pipeline_seed=42)
+pipeline = sempipes_pipeline2("comparisons/house_prices_advanced_regression_techniques/validation.csv")
 
 outcomes = optimise_olopro(
-    predictions,
-    "additional_movie_features",
+    pipeline,
+    "house_features",
     num_trials=24,
     scoring="neg_root_mean_squared_log_error",
     cv=5,
