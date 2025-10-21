@@ -15,6 +15,7 @@ import PIL
 import sklearn
 import skrub
 import torch
+import tqdm
 import transformers
 
 _ALLOWED_MODULES = [
@@ -36,6 +37,7 @@ _ALLOWED_MODULES = [
     "PIL",
     "random",
     "time",
+    "tqdm",
 ]
 
 
@@ -61,6 +63,9 @@ def safe_exec(
 
     safe_builtins = {
         "__import__": _make_safe_import(_ALLOWED_MODULES),
+        "__build_class__": builtins.__build_class__,
+        "__name__": "__main__",
+        "super": super,
         "int": int,
         "float": float,
         "str": str,
@@ -110,6 +115,7 @@ def safe_exec(
         "dataclasses": dataclasses,
         "typing": typing,
         "PIL": PIL,
+        "tqdm": tqdm,
     }
 
     # We need a single dict to allow function definitions inside the code
