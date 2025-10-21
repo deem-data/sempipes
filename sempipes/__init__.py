@@ -1,8 +1,10 @@
 from dotenv import load_dotenv
 from skrub import DataOp
+import skrub
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 from sempipes.operators.operators import SemChoices
 
+from sempipes.operators.sem_augment import sem_augment
 from sempipes.operators.sem_deduplicate import sem_deduplicate
 from sempipes.operators.sem_choose_llm import sem_choose, apply_with_sem_choose
 from sempipes.operators.sem_extract_features import sem_extract_features
@@ -20,6 +22,7 @@ DataOp.with_sem_features = with_sem_features
 DataOp.with_sem_agg_join_features = with_sem_agg_join_features
 DataOp.sem_fillna = sem_fillna
 DataOp.sem_select = sem_select
+DataOp.sem_augment = sem_augment
 DataOp.sem_extract_features = sem_extract_features
 DataOp.sem_deduplicate = sem_deduplicate
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
