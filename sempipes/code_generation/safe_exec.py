@@ -36,7 +36,6 @@ _ALLOWED_MODULES = [
     "PIL",
     "random",
     "time",
-    "lightgbm",
 ]
 
 

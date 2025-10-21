@@ -25,7 +25,6 @@ DataOp.sem_select = sem_select
 DataOp.sem_augment = sem_augment
 DataOp.sem_extract_features = sem_extract_features
 DataOp.sem_deduplicate = sem_deduplicate
-DataOp.sem_augment = sem_augment
 SkrubNamespace.apply_with_sem_choose = apply_with_sem_choose
 
 __all__ = ["sem_choose", "get_config", "update_config", "LLM"]

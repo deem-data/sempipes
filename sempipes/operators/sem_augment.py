@@ -247,7 +247,6 @@ def sem_augment(
     number_of_rows_to_generate: int,
     **kwargs,
 ) -> DataOp:
-    generate_via_code = kwargs["generate_via_code"] if "generate_via_code" in kwargs else True
     data_augmentor = SemAugmentData().generate_data_generator(
         nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate, **kwargs
     )
