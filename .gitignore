@@ -35,3 +35,6 @@ target/
 
 .history
 /catboost_info/
+
+comparisons/single_cell_analysis/data/*.h5ad
+lightning_logs/
