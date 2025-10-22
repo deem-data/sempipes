@@ -153,12 +153,12 @@ class SemFillNAOperator(ABC):
         """Return an estimator that imputes missing values for the target column on a pandas df."""
 
 
-class SemDeduplicateOperator(ABC):
+class SemRefineOperator(ABC):
     @abstractmethod
-    def generate_deduplication_estimator(
-        self, target_column: str, nl_prompt: str, deduplicate_with_existing_values_only: bool
+    def generate_refinement_estimator(
+        self, target_column: str, nl_prompt: str, refine_with_existing_values_only: bool
     ) -> EstimatorTransformer:
-        """Return an estimator that deduplicates values in the target column on a pandas df."""
+        """Return an estimator that refines values in the target column on a pandas df."""
 
 
 class SemAugmentDataOperator(ABC):
