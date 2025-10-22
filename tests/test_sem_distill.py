@@ -31,7 +31,7 @@ def test_sem_distill_via_code():
     print(f"Salaries {salaries_X.shape} R2 before distill: {r2_before_distill}")
     salaries_distilled = salaries.sem_distill(
         nl_prompt="Distill data to improve 'current_annual_salary' prediction. Use advanced methods for the distillation.",
-        number_of_rows_to_distill=5000,
+        number_of_rows=5000,
     )
     salaries_X_distilled = salaries_distilled.drop(columns="current_annual_salary", errors="ignore").skb.mark_as_X()
     salaries_y_distilled = salaries_distilled["current_annual_salary"].skb.mark_as_y()

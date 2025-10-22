@@ -27,27 +27,27 @@ def _get_samples_from_df(df: pd.DataFrame, number_of_samples: int = 10) -> str:
 
 def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> None:
     df_sample = df.head(100).copy(deep=True)
-    number_of_rows_to_distill = 50
+    number_of_rows = 50
     columns_before = df_sample.columns
 
     distillation_func = safe_exec(code_to_execute, "distill_data")
-    df_sample_processed = distillation_func(df_sample, number_of_rows_to_distill)
+    df_sample_processed = distillation_func(df_sample, number_of_rows)
     columns_after = df_sample_processed.columns
 
     if sorted(set(columns_before)) != sorted(set(columns_after)):
         raise ValueError("\t> Code execution changed columns.")
-    if df_sample_processed.shape[0] != number_of_rows_to_distill:
+    if df_sample_processed.shape[0] != number_of_rows:
         raise ValueError(
-            f"\t> Code execution generated a wrong number of rows: {df_sample_processed.shape[0]} instead of the expected {number_of_rows_to_distill} rows. Return a variable distilled in-place and named `df`."
+            f"\t> Code execution generated a wrong number of rows: {df_sample_processed.shape[0]} instead of the expected {number_of_rows} rows. Return a variable distilled in-place and named `df`."
         )
 
     print(f" Generated {df_sample_processed.shape[0]} rows from a pd.DataFrame with {df_sample.shape[0]} rows.")
 
 
 class CodeDataDistiller(BaseEstimator, TransformerMixin):
-    def __init__(self, nl_prompt: str, number_of_rows_to_distill: int):
+    def __init__(self, nl_prompt: str, number_of_rows: int):
         self.nl_prompt = nl_prompt
-        self.number_of_rows_to_distill = number_of_rows_to_distill
+        self.number_of_rows = number_of_rows
         self.generated_code_: list[str] = []
 
     @staticmethod
@@ -86,7 +86,7 @@ Codeblock:
 """
 
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
-        print(f"--- sempipes.sem_distill('{self.nl_prompt}', {self.number_of_rows_to_distill})")
+        print(f"--- sempipes.sem_distill('{self.nl_prompt}', {self.number_of_rows})")
         messages = []
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
@@ -121,7 +121,7 @@ Codeblock:
                 ]
         code_to_execute = "\n".join(self.generated_code_)
         distill_func = safe_exec(code_to_execute, "distill_data")
-        df_distilled = distill_func(X, self.number_of_rows_to_distill)
+        df_distilled = distill_func(X, self.number_of_rows)
 
         print(f"\t> Generated code: {code_to_execute}")
 
@@ -132,12 +132,10 @@ Codeblock:
 
 
 class SemDistillData(SemDistillDataOperator):
-    def generate_data_distiller(self, nl_prompt: str, number_of_rows_to_distill: int):
-        return CodeDataDistiller(nl_prompt=nl_prompt, number_of_rows_to_distill=number_of_rows_to_distill)
+    def generate_data_distiller(self, nl_prompt: str, number_of_rows: int):
+        return CodeDataDistiller(nl_prompt=nl_prompt, number_of_rows=number_of_rows)
 
 
-def sem_distill(self: DataOp, nl_prompt: str, number_of_rows_to_distill: int) -> DataOp:
-    data_distiller = SemDistillData().generate_data_distiller(
-        nl_prompt=nl_prompt, number_of_rows_to_distill=number_of_rows_to_distill
-    )
+def sem_distill(self: DataOp, nl_prompt: str, number_of_rows: int) -> DataOp:
+    data_distiller = SemDistillData().generate_data_distiller(nl_prompt=nl_prompt, number_of_rows=number_of_rows)
     return self.skb.apply(data_distiller, how="no_wrap")

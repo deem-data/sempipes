@@ -174,5 +174,5 @@ class SemAugmentDataOperator(ABC):
 
 class SemDistillDataOperator(ABC):
     @abstractmethod
-    def generate_data_distiller(self, nl_prompt: str, number_of_rows_to_distill: int) -> TransformerMixin:
+    def generate_data_distiller(self, nl_prompt: str, number_of_rows: int) -> TransformerMixin:
         """Return an estimator that distills the data."""
