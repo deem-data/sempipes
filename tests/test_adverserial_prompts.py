@@ -28,10 +28,10 @@ def test_deduplication_cities_to_birds():
 
     cities_ref = skrub.var("cities", cities)
 
-    cities_ref = cities_ref.sem_deduplicate(
+    cities_ref = cities_ref.sem_refine(
         nl_prompt="Given a column with bird names, please reorganise this column, each cell should be a valid duck name.",
         target_column=column_to_deduplicate,
-        deduplicate_with_existing_values_only=False,
+        refine_with_existing_values_only=False,
     ).skb.eval()
 
     print("Unique values after the deduplication: ", cities_ref[column_to_deduplicate].unique())
