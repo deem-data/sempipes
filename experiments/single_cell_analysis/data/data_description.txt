@@ -1,0 +1,7 @@
+.obs["cell_type"]: Identifies cell types of each cell.	
+
+.obs["batchlb"]: Identifies single cell sequencing technology.
+	
+.X: Contains unnormalized single-cell data where columns are genes and rows are cells.
+
+.layers['counts']: Contains raw gene counts for each cell.

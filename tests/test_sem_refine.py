@@ -5,34 +5,32 @@ import sempipes  # pylint: disable=unused-import
 from sempipes.config import ensure_default_config
 
 
-def test_sem_deduplicate():
+def test_sem_refine():
     ensure_default_config()
 
     sport_products = pd.read_csv("tests/data/sports.csv").head(n=100)
-    column_to_deduplicate = "GeneratedProductType"
+    column_to_refine = "ProductType"
 
-    print("Unique values before the deduplication: ", sport_products[column_to_deduplicate].unique())
+    print("Unique values before the refinement: ", sport_products[column_to_refine].unique())
 
     sport_products_ref = skrub.var("sport_products", sport_products)
 
-    sport_products_ref = sport_products_ref.sem_deduplicate(
+    sport_products_ref = sport_products_ref.sem_refine(
         nl_prompt="Given a column with product types, please reorganise this column by removing duplicates or grouping similar items. For example, 'soccer ball' and 'football' can be grouped into 'sports ball'.",
-        target_column=column_to_deduplicate,
-        deduplicate_with_existing_values_only=False,
+        target_column=column_to_refine,
+        refine_with_existing_values_only=False,
     ).skb.eval()
 
-    print("Unique values after the deduplication: ", sport_products_ref[column_to_deduplicate].unique())
+    print("Unique values after the refinement: ", sport_products_ref[column_to_refine].unique())
 
     correspondences_new_to_old = pd.concat(
-        [sport_products[column_to_deduplicate], sport_products_ref[column_to_deduplicate]],
+        [sport_products[column_to_refine], sport_products_ref[column_to_refine]],
         axis=1,
-        keys=[column_to_deduplicate + "1", column_to_deduplicate + "2"],
+        keys=[column_to_refine + "1", column_to_refine + "2"],
     ).drop_duplicates()
 
     correspondences_new_to_all_old = (
-        correspondences_new_to_old.groupby(column_to_deduplicate + "1")[column_to_deduplicate + "2"]
-        .apply(list)
-        .to_dict()
+        correspondences_new_to_old.groupby(column_to_refine + "1")[column_to_refine + "2"].apply(list).to_dict()
     )
 
     print("Before and after value mapping: ", correspondences_new_to_all_old)
@@ -45,22 +43,22 @@ def test_sem_deduplicate():
         "sports ball": ["sports ball"],
     }
 
-    correct_deduplicated_values = True
-    for deduplicated_item in correspondences_new_to_all_old:
+    correct_refined_values = True
+    for refined_item in correspondences_new_to_all_old:
         if (
-            deduplicated_item in expected_deplications
-            and expected_deplications[deduplicated_item] != correspondences_new_to_all_old[deduplicated_item]
+            refined_item in expected_deplications
+            and expected_deplications[refined_item] != correspondences_new_to_all_old[refined_item]
         ):
-            correct_deduplicated_values = False
+            correct_refined_values = False
             print(
-                f"Deduplication for item {deduplicated_item} is not as expected. Expected {expected_deplications[deduplicated_item]}, got {correspondences_new_to_all_old[deduplicated_item]}."
+                f"Refinement for item {refined_item} is not as expected. Expected {expected_deplications[refined_item]}, got {correspondences_new_to_all_old[refined_item]}."
             )
 
-    assert correct_deduplicated_values, "The deduplicated values are not as expected."
-    assert sport_products_ref[column_to_deduplicate].isna().sum() == 0
+    assert correct_refined_values, "The refined values are not as expected."
+    assert sport_products_ref[column_to_refine].isna().sum() == 0
 
 
-def test_deduplication_typos():
+def test_refinement_typos():
     ensure_default_config()
 
     dirty_country_codes = [
@@ -96,6 +94,7 @@ def test_deduplication_typos():
         "DE",
         "ESP",
         "UK",
+        "Hamburg",  # outlier and should be fixed to DE
     ]
 
     correct_codes = [
@@ -131,16 +130,17 @@ def test_deduplication_typos():
         "DE",
         "ES",
         "GB",
+        "DE",
     ]
 
     countries = pd.DataFrame(dirty_country_codes, columns=["country_code"])
 
     countries_ref = skrub.var("country_codes", countries)
 
-    cleaned_countries_ref = countries_ref.sem_deduplicate(
+    cleaned_countries_ref = countries_ref.sem_refine(
         nl_prompt="Make sure that all values are in the ISO 3166-1 alpha-2 two-letter uppercase format",
         target_column="country_code",
-        deduplicate_with_existing_values_only=False,
+        refine_with_existing_values_only=False,
     ).skb.eval()
 
     cleaned_codes = list(cleaned_countries_ref["country_code"])
@@ -155,7 +155,7 @@ def test_deduplication_typos():
     assert len(mismatches) < 3, f"Cleaning failed for too many country codes: {mismatches}"
 
 
-def test_deduplication_cities():
+def test_refinement_cities():
     ensure_default_config()
 
     # Create a dataset
@@ -172,39 +172,37 @@ def test_deduplication_cities():
         ],
         columns=["city"],
     )
-    column_to_deduplicate = "city"
+    column_to_refine = "city"
 
-    print("Unique values before the deduplication: ", cities[column_to_deduplicate].unique())
+    print("Unique values before the refinement: ", cities[column_to_refine].unique())
 
     cities_ref = skrub.var("cities", cities)
 
-    cities_ref = cities_ref.sem_deduplicate(
+    cities_ref = cities_ref.sem_refine(
         nl_prompt="Given a column with city names, please reorganise this column by removing duplicates or typos. Remove country names.",
-        target_column=column_to_deduplicate,
-        deduplicate_with_existing_values_only=False,
+        target_column=column_to_refine,
+        refine_with_existing_values_only=False,
     ).skb.eval()
 
-    print("Unique values after the deduplication: ", cities_ref[column_to_deduplicate].unique())
+    print("Unique values after the refinement: ", cities_ref[column_to_refine].unique())
 
     correspondences_new_to_old = pd.concat(
-        [cities[column_to_deduplicate], cities_ref[column_to_deduplicate]],
+        [cities[column_to_refine], cities_ref[column_to_refine]],
         axis=1,
-        keys=[column_to_deduplicate + "1", column_to_deduplicate + "2"],
+        keys=[column_to_refine + "1", column_to_refine + "2"],
     ).drop_duplicates()
 
     correspondences_new_to_all_old = (
-        correspondences_new_to_old.groupby(column_to_deduplicate + "1")[column_to_deduplicate + "2"]
-        .apply(list)
-        .to_dict()
+        correspondences_new_to_old.groupby(column_to_refine + "1")[column_to_refine + "2"].apply(list).to_dict()
     )
 
-    deduplicated_cities = set(cities_ref[column_to_deduplicate].unique())
+    refined_cities = set(cities_ref[column_to_refine].unique())
 
     print("Before and after value mapping: ", correspondences_new_to_all_old)
 
     assert {
         "Rome",
         "Madrid",
-    } == deduplicated_cities, f"Expected ['Rome', 'Madrid'] after deduplication., but got {deduplicated_cities}."
-    assert cities_ref[column_to_deduplicate].isna().sum() == 0
-    assert cities_ref[column_to_deduplicate].nunique() < cities[column_to_deduplicate].nunique()
+    } == refined_cities, f"Expected ['Rome', 'Madrid'] after refinement, but got {refined_cities}."
+    assert cities_ref[column_to_refine].isna().sum() == 0
+    assert cities_ref[column_to_refine].nunique() < cities[column_to_refine].nunique()
