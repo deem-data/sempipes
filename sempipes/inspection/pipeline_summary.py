@@ -1,3 +1,5 @@
+import inspect
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -15,21 +17,23 @@ class PipelineSummary:  # pylint: disable=too-many-instance-attributes
     task_type: str | None = None
     model: str | None = None
     model_name: str | None = None
-    model_steps: str | None = None
     model_definition: str | None = None
     target_name: str | None = None
     target_metric: str | None = None
     target_description: str | None = None
     target_definition: str | None = None
-    target_steps: str | None = None
     target_unique_values_from_preview: list[Any] | None = None
     dataset_description: str | None = None
+    source_code: str | None = None
     available_packages: dict[str, str] | None = None
 
 
-def summarise_pipeline(dag_sink_node: DataOp) -> PipelineSummary:
+def summarise_pipeline(dag_sink_node: DataOp, pipeline_definition: Callable[..., DataOp] | None) -> PipelineSummary:
     summary = PipelineSummary()
     summary.available_packages = available_packages()
+    if pipeline_definition is not None:
+        summary.source_code = inspect.getsource(pipeline_definition)
+
     _summarise_dag(dag_sink_node, summary)
     return summary
 
@@ -47,7 +51,6 @@ def _summarise_dag(dag_sink_node: DataOp, summary: PipelineSummary) -> None:
     model_node = find_node(dag_sink_node, predicate=is_model)
     if model_node is not None:
         estimator = model_node._skrub_impl.estimator
-        summary.model_steps = model_node.skb.describe_steps()
         summary.model_definition = model_node._skrub_impl.creation_stack_description()
         summary.model = f"{estimator.__class__.__module__}.{estimator.__class__.__qualname__}"
         if isinstance(estimator, ClassifierMixin):
@@ -57,7 +60,6 @@ def _summarise_dag(dag_sink_node: DataOp, summary: PipelineSummary) -> None:
 
     y_op = find_y(dag_sink_node)
     if y_op is not None:
-        summary.target_steps = y_op.skb.describe_steps()
         if hasattr(y_op, "_skrub_impl"):
             summary.target_definition = y_op._skrub_impl.creation_stack_description()
             if y_op.skb.name is not None:

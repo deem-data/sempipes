@@ -3,13 +3,17 @@ from __future__ import annotations
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 
+from dataclasses_json import dataclass_json
 
+
+@dataclass_json
 @dataclass(frozen=True)
 class LLM:
     name: str
     parameters: dict = field(default_factory=dict)
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class Config:
     llm_for_code_generation: LLM = LLM(
