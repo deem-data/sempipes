@@ -170,3 +170,9 @@ class SemAugmentDataOperator(ABC):
         **kwargs,
     ) -> EstimatorTransformer:
         """Return an estimator that generates a new set of the data."""
+
+
+class SemDistillDataOperator(ABC):
+    @abstractmethod
+    def generate_data_distiller(self, nl_prompt: str, number_of_rows: int) -> TransformerMixin:
+        """Return an estimator that distills the data."""
