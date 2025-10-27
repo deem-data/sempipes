@@ -40,6 +40,7 @@ def _get_prompt(
     usefulness = ""
     model_reference = "classifier"
     target_metric = "accuracy"
+    source_code_hint = ""
 
     if pipeline_summary is not None:
         task_type = pipeline_summary.task_type
@@ -58,6 +59,16 @@ def _get_prompt(
 
         if pipeline_summary.target_metric:
             target_metric = pipeline_summary.target_metric
+
+        if pipeline_summary.source_code:
+            source_code_hint = f"""
+            The features that you have to generate a part of a skrub machine learning pipeline with the following source code:
+            ---
+            {pipeline_summary.source_code}
+            ---
+            Make sure to generate features that work well with this pipeline and are compatible with the code and 
+            type of operations applied.
+            """
 
         if task_type and target_name:
             action = "predict"
@@ -92,6 +103,8 @@ evaluation metric is {target_metric}. The best performing code will be selected.
 Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care to the following: {nl_prompt}.
+
+{source_code_hint}
 
 Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
 

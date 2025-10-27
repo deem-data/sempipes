@@ -1,3 +1,3 @@
-from .olopro import optimise_olopro
+from .colopro import optimise_colopro
 
-__all__ = ["optimise_olopro"]
+__all__ = ["optimise_colopro"]

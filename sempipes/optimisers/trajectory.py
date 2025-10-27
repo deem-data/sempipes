@@ -1,14 +1,17 @@
 import json
 import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from dataclasses_json import dataclass_json
 
 from sempipes.config import Config
 from sempipes.optimisers.search_policy import Outcome
 
 
+@dataclass_json
 @dataclass
 class Trajectory:
     sempipes_config: Config
@@ -25,6 +28,14 @@ def save_trajectory_as_json(trajectory: Trajectory) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(asdict(trajectory), f, indent=2, ensure_ascii=False)
+        json.dump(trajectory.to_json(), f, indent=2, ensure_ascii=False)  # type: ignore
 
     return output_path
+
+
+def load_trajectory_from_json(json_path: Path) -> Trajectory:
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # pylint: disable=no-member
+    return Trajectory.from_json(data)  # type: ignore

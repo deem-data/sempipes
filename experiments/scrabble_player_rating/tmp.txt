@@ -1,0 +1,458 @@
+# (avg_time_per_turn: Average time spent on each turn)
+# Usefulness: Captures player pacing/strategy, can indicate playing strength or time management.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'turn_number': [14.0, 14.0, 14.0]
+df["avg_time_per_turn"] = df["game_duration_seconds"] / df["turn_number"]
+
+# (avg_points_per_second: Average points scored per second)
+# Usefulness: Directly relates points output to time spent, which can reflect skill and efficiency.
+# Input samples: 'score': [429, 440, 119], 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["avg_points_per_second"] = df["score"] / df["game_duration_seconds"]
+
+# (is_rated_game: 1 if rating_mode is RATED, else 0)
+# Usefulness: Indicates whether the game affects rating, which may affect player focus and effort.
+# Input samples: 'rating_mode': ['CASUAL', 'RATED', 'CASUAL']
+df["is_rated_game"] = (df["rating_mode"] == "RATED").astype(int)
+
+# (is_standard_end: 1 if game_end_reason is STANDARD, else 0)
+# Usefulness: Separates standard finishes from resignations/timeouts, which may impact rating relevance.
+# Input samples: 'game_end_reason': ['STANDARD', 'STANDARD', 'RESIGNED']
+df["is_standard_end"] = (df["game_end_reason"] == "STANDARD").astype(int)
+
+# (is_regular_time_control: 1 if time_control_name is 'regular', else 0)
+# Usefulness: Distinguishes standard controls from others (e.g. blitz), relevant for rating or skill inference.
+# Input samples: 'time_control_name': ['regular', 'regular', 'regular']
+df["is_regular_time_control"] = (df["time_control_name"] == "regular").astype(int)
+
+# (score_per_turn: Average score per turn)
+# Usefulness: Proxy for move quality; more points per turn may indicate stronger player.
+# Input samples: 'score': [429, 440, 119], 'turn_number': [14.0, 14.0, 14.0]
+df["score_per_turn"] = df["score"] / df["turn_number"]
+
+# (turns_per_minute: Turns played per minute)
+# Usefulness: Indicates pace and possibly experience; faster turn rates can be correlated with skill/confidence.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["turns_per_minute"] = df["turn_number"] / (df["game_duration_seconds"] / 60.0)
+
+# (score_vs_expected: Score minus mean_score)
+# Usefulness: Measures performance above or below player's average; can indicate streaks or outliers which may affect rating volatility.
+# Input samples: 'score': [429, 440, 119], 'mean_score': [365.1, 348.17, 393.47]
+df["score_vs_expected"] = df["score"] - df["mean_score"]
+
+# (relative_score_diff: Score difference as a ratio of both players' total points)
+# Usefulness: Normalizes margin of victory for different scoring environments, yielding generalizable indicator.
+# Input samples: 'score_diff': [94, 122, -359], 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["relative_score_diff"] = df["score_diff"] / (df["score"] + df["other_mean_score"]).replace(0, np.nan)
+
+# (early_finish: 1 if game completed in less than 60% of initial time)
+# Usefulness: Fast finishes may indicate resignations, blowouts, or confident play.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'initial_time_seconds': [1200, 900, 3600]
+df["early_finish"] = (df["game_duration_seconds"] < 0.6 * df["initial_time_seconds"]).astype(int)
+
+# (overtime_used_ratio: Ratio of overtime minutes used to allowed overtime)
+# Usefulness: High values may indicate time pressure, perhaps affecting play and outcomes.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'initial_time_seconds': [1200, 900, 3600], 'max_overtime_minutes': [1, 5, 1]
+df["overtime_used_ratio"] = (np.maximum(df["game_duration_seconds"] - df["initial_time_seconds"], 0) / (df["max_overtime_minutes"] * 60)).replace([np.inf, -np.inf], 0).fillna(0)
+
+# (negative_score_diff: 1 if player lost, 0 if won/tied)
+# Usefulness: Binary indicator of loss, capturing the psychological/competitive aspect which can impact ratings.
+# Input samples: 'score_diff': [94, 122, -359]
+df["negative_score_diff"] = (df["score_diff"] < 0).astype(int)
+
+# (points_mean_missing: 1 if points_mean is missing, else 0)
+# Usefulness: Explicitly flags missing values for model; missingness may carry predictive information.
+# Input samples: 'points_mean': [np.nan, np.nan, np.nan]
+df["points_mean_missing"] = df["points_mean"].isna().astype(int)
+
+# (is_csw21_lexicon: 1 if lexicon is 'CSW21', else 0)
+# Usefulness: Different lexicons may be associated with different player pools/skill levels.
+# Input samples: 'lexicon': ['NWL20', 'CSW21', 'CSW21']
+df["is_csw21_lexicon"] = (df["lexicon"] == "CSW21").astype(int)
+
+# (score_vs_other_mean: Score minus average opponent mean score)
+# Usefulness: Measures game performance relative to typical opponent level, adding context to "raw" score.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_vs_other_mean"] = df["score"] - df["other_mean_score"]
+
+# (score_proportion: Score as proportion of total points scored in game)
+# Usefulness: Normalizes scoring performance, especially useful in high/low scoring games for rating differentiation.
+# Input samples: 'score': [429, 440, 119], 'score_diff': [94, 122, -359]
+df["score_proportion"] = (df["score"] + np.maximum(df["score_diff"], 0)) / (2 * df["score"] + np.abs(df["score_diff"]))
+# (points_mean_imputed: points_mean with missing values filled with mean of other available values)
+# Usefulness: Reduces missing data bias and provides a proxy for average points per turn in absence of direct observation.
+# Input samples: 'points_mean': [np.nan, np.nan, np.nan]
+points_mean_mean = df["points_mean"].mean(skipna=True)
+df["points_mean_imputed"] = df["points_mean"].fillna(points_mean_mean)
+
+# (score_pct_of_mean: Player's score as percent of their mean_score)
+# Usefulness: Measures player performance deviation from historical norm, helpful for detecting streaks or slumps.
+# Input samples: 'score': [429, 440, 119], 'mean_score': [365.1, 348.17, 393.47]
+df["score_pct_of_mean"] = df["score"] / df["mean_score"]
+
+# (points_per_turn: points_mean divided by turn_number, with NaN protection)
+# Usefulness: Normalizes average points over turns; helps when points_mean is available.
+# Input samples: 'points_mean': [np.nan, np.nan, np.nan], 'turn_number': [14.0, 14.0, 14.0]
+df["points_per_turn"] = df["points_mean"].fillna(0) / df["turn_number"].replace(0, np.nan)
+
+# (score_advantage_ratio: Ratio of score_diff to player's score)
+# Usefulness: Highlights magnitude of player's win/loss in context of their total score.
+# Input samples: 'score_diff': [94, 122, -359], 'score': [429, 440, 119]
+df["score_advantage_ratio"] = df["score_diff"] / df["score"].replace(0, np.nan)
+
+# (is_first_player: Whether the player started the game)
+# Usefulness: Opening advantage can be significant in Scrabble; may correlate with rating.
+# Input samples: 'first_num': [0, 0, 0]
+df["is_first_player"] = df["first_num"]
+
+# (average_move_length_per_game: len_move per turn)
+# Usefulness: May reflect play style or game openness, potentially correlated with player type/skill.
+# Input samples: 'len_move': [3.86, 4.36, 2.93], 'turn_number': [14.0, 14.0, 14.0]
+df["average_move_length_per_game"] = df["len_move"] / df["turn_number"].replace(0, np.nan)
+
+# (score_deficit: Negative of score_diff; 0 if player won)
+# Usefulness: Focuses on loss margin; outsized losses may impact future rating estimates.
+# Input samples: 'score_diff': [94, 122, -359]
+df["score_deficit"] = np.where(df["score_diff"] < 0, -df["score_diff"], 0)
+
+# (has_overtime: 1 if max_overtime_minutes > 1, else 0)
+# Usefulness: Longer overtime can indicate different pacing/pressure; may select for more competitive games.
+# Input samples: 'max_overtime_minutes': [1, 5, 1]
+df["has_overtime"] = (df["max_overtime_minutes"] > 1).astype(int)
+
+# (score_opponent_ratio: Player score divided by (player score + opponent mean score))
+# Usefulness: Normalizes performance against expectation set by opponent's average level.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_opponent_ratio"] = df["score"] / (df["score"] + df["other_mean_score"])
+
+# (time_per_point: Seconds per point scored)
+# Usefulness: Inverse of points per second; slow, methodical play may indicate higher skill.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'score': [429, 440, 119]
+df["time_per_point"] = df["game_duration_seconds"] / df["score"].replace(0, np.nan)
+
+# (is_nwl20_lexicon: 1 if lexicon is NWL20, else 0)
+# Usefulness: Lexicon can signal regional play or distinct communities, useful for rating context.
+# Input samples: 'lexicon': ['NWL20', 'CSW21', 'CSW21']
+df["is_nwl20_lexicon"] = (df["lexicon"] == "NWL20").astype(int)
+
+# (is_casual_game: 1 if rating_mode is CASUAL, else 0)
+# Usefulness: Opposite of is_rated_game; helpful for model to distinguish game contexts explicitly.
+# Input samples: 'rating_mode': ['CASUAL', 'RATED', 'CASUAL']
+df["is_casual_game"] = (df["rating_mode"] == "CASUAL").astype(int)
+
+# (is_ecwl_lexicon: 1 if lexicon is ECWL, else 0)
+# Usefulness: Adds additional lexicon signal; player pool may be distinct.
+# Input samples: 'lexicon': ['NWL20', 'CSW21', 'CSW21']
+df["is_ecwl_lexicon"] = (df["lexicon"] == "ECWL").astype(int)
+
+# (large_win: 1 if score_diff > 100, else 0)
+# Usefulness: Winning by a large margin may reflect skill gap, correlating to higher rating.
+# Input samples: 'score_diff': [94, 122, -359]
+df["large_win"] = (df["score_diff"] > 100).astype(int)
+
+# (game_duration_minutes: Game duration in minutes)
+# Usefulness: Normalizes time features and may be easier for the model to interpret than seconds.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["game_duration_minutes"] = df["game_duration_seconds"] / 60.0
+# (score_normalized: z-score of player's score across dataset)
+# Usefulness: Identifies outlier games, contextualizing player's performance relative to population.
+# Input samples: 'score': [429, 440, 119]
+df["score_normalized"] = (df["score"] - df["score"].mean()) / df["score"].std(ddof=0)
+
+# (mean_score_normalized: z-score of mean_score across dataset)
+# Usefulness: Captures whether player is generally above/below average, which may be predictive of rating.
+# Input samples: 'mean_score': [365.1, 348.17, 393.47]
+df["mean_score_normalized"] = (df["mean_score"] - df["mean_score"].mean()) / df["mean_score"].std(ddof=0)
+
+# (duration_pct_of_initial: Duration of game as percentage of initial allotted time)
+# Usefulness: Indicates how much of the allotted time is typically used by the player.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'initial_time_seconds': [1200, 900, 3600]
+df["duration_pct_of_initial"] = df["game_duration_seconds"] / df["initial_time_seconds"]
+
+# (turn_number_normalized: z-score of turn_number)
+# Usefulness: Adjusts for games of varying length, allowing model to see unusual turn counts.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0]
+df["turn_number_normalized"] = (df["turn_number"] - df["turn_number"].mean()) / df["turn_number"].std(ddof=0)
+
+# (move_length_normalized: z-score of len_move)
+# Usefulness: Highlights players or games with unusually short/long average moves, which may be skill dependent.
+# Input samples: 'len_move': [3.86, 4.36, 2.93]
+df["move_length_normalized"] = (df["len_move"] - df["len_move"].mean()) / df["len_move"].std(ddof=0)
+
+# (max_overtime_flag: 1 if max_overtime_minutes is max in dataset, else 0)
+# Usefulness: Unusual overtime settings may affect game dynamics and ratings.
+# Input samples: 'max_overtime_minutes': [1, 5, 1]
+df["max_overtime_flag"] = (df["max_overtime_minutes"] == df["max_overtime_minutes"].max()).astype(int)
+
+# (score_diff_abs: Absolute value of score_diff)
+# Usefulness: Encodes margin of victory/loss regardless of winner, always meaningful for rating.
+# Input samples: 'score_diff': [94, 122, -359]
+df["score_diff_abs"] = df["score_diff"].abs()
+
+# (above_average_score: 1 if score above mean_score, else 0)
+# Usefulness: Binary performance flag for in-game over/under-performance.
+# Input samples: 'score': [429, 440, 119], 'mean_score': [365.1, 348.17, 393.47]
+df["above_average_score"] = (df["score"] > df["mean_score"]).astype(int)
+
+# (lost_large: 1 if score_diff < -100, else 0)
+# Usefulness: Indicates outsized losses, which may correlate to volatility in rating.
+# Input samples: 'score_diff': [94, 122, -359]
+df["lost_large"] = (df["score_diff"] < -100).astype(int)
+
+# (game_end_not_standard: 1 if game_end_reason != STANDARD, else 0)
+# Usefulness: Provides explicit flag for non-standard finishes, which may affect rating differently.
+# Input samples: 'game_end_reason': ['STANDARD', 'STANDARD', 'RESIGNED']
+df["game_end_not_standard"] = (df["game_end_reason"] != "STANDARD").astype(int)
+
+# (score_vs_diffmean: Score minus diff_mean_score)
+# Usefulness: Magnifies games where player greatly over/underperformed relative to both their and their opponent's averages.
+# Input samples: 'score': [429, 440, 119], 'diff_mean_score': [-28.27, -45.21, 0.1]
+df["score_vs_diffmean"] = df["score"] - df["diff_mean_score"]
+
+# (score_diff_sign: -1 for loss, 0 for draw, 1 for win)
+# Usefulness: Encodes win/loss/tie information for simpler modeling.
+# Input samples: 'score_diff': [94, 122, -359]
+df["score_diff_sign"] = np.sign(df["score_diff"]).astype(int)
+
+# (casual_standard_combined: 1 if game is both CASUAL and STANDARD, else 0)
+# Usefulness: Identifies non-competitive but standard finish games for special treatment.
+# Input samples: 'rating_mode': ['CASUAL', 'RATED', 'CASUAL'], 'game_end_reason': ['STANDARD', 'STANDARD', 'RESIGNED']
+df["casual_standard_combined"] = ((df["rating_mode"] == "CASUAL") & (df["game_end_reason"] == "STANDARD")).astype(int)
+
+# (score_turnratio: Score divided by (turn_number*100), normalizes for length of game)
+# Usefulness: Helps compare scoring output over different game lengths.
+# Input samples: 'score': [429, 440, 119], 'turn_number': [14.0, 14.0, 14.0]
+df["score_turnratio"] = df["score"] / (df["turn_number"] * 100)
+
+# (turns_vs_expected: Turn number minus dataset mean)
+# Usefulness: Captures deviation from typical game length.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0]
+df["turns_vs_expected"] = df["turn_number"] - df["turn_number"].mean()
+# (other_mean_score_normalized: z-score of other_mean_score)
+# Usefulness: Contextualizes opponent's average strength, aiding model's understanding of game context.
+# Input samples: 'other_mean_score': [393.38, 393.38, 393.38]
+df["other_mean_score_normalized"] = (df["other_mean_score"] - df["other_mean_score"].mean()) / df["other_mean_score"].std(ddof=0)
+
+# (diff_mean_score_normalized: z-score of diff_mean_score)
+# Usefulness: Normalizes player's advantage/disadvantage for comparability across dataset.
+# Input samples: 'diff_mean_score': [-28.27, -45.21, 0.1]
+df["diff_mean_score_normalized"] = (df["diff_mean_score"] - df["diff_mean_score"].mean()) / df["diff_mean_score"].std(ddof=0)
+
+# (turns_to_duration_ratio: Ratio of turns to game duration)
+# Usefulness: Captures granularity of play, may distinguish fast/slow or high/low scoring styles.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["turns_to_duration_ratio"] = df["turn_number"] / df["game_duration_seconds"].replace(0, np.nan)
+
+# (score_efficiency: Score divided by duration_pct_of_initial)
+# Usefulness: Measures scoring speed relative to time used; high values could flag efficient players.
+# Input samples: 'score': [429, 440, 119], 'duration_pct_of_initial': [0.562, 0.547, 0.097]
+df["score_efficiency"] = df["score"] / df["duration_pct_of_initial"].replace(0, np.nan)
+
+# (turn_density: Turns per minute of initial time)
+# Usefulness: Captures intended game pace by settings, independent of actual play.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'initial_time_seconds': [1200, 900, 3600]
+df["turn_density"] = df["turn_number"] / (df["initial_time_seconds"] / 60)
+
+# (score_minmax_scaled: Score min-max scaled to [0,1])
+# Usefulness: Provides normalized score for tree-based models.
+# Input samples: 'score': [429, 440, 119]
+score_min = df["score"].min()
+score_max = df["score"].max()
+df["score_minmax_scaled"] = (df["score"] - score_min) / (score_max - score_min)
+
+# (score_diff_over_mean: Score difference over mean_score)
+# Usefulness: Flags outlier performances considering player's average.
+# Input samples: 'score_diff': [94, 122, -359], 'mean_score': [365.1, 348.17, 393.47]
+df["score_diff_over_mean"] = df["score_diff"] / df["mean_score"].replace(0, np.nan)
+
+# (game_short: 1 if number of turns fewer than median, else 0)
+# Usefulness: Binary flag for short games, may indicate resignations or high efficiency.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0]
+df["game_short"] = (df["turn_number"] < df["turn_number"].median()).astype(int)
+
+# (move_length_high: 1 if len_move above 75th percentile, else 0)
+# Usefulness: Identifies unusually long moves, which could signal skill or desperation.
+# Input samples: 'len_move': [3.86, 4.36, 2.93]
+move_length_75 = df["len_move"].quantile(0.75)
+df["move_length_high"] = (df["len_move"] > move_length_75).astype(int)
+
+# (time_exceeded: 1 if game_duration_seconds > initial_time_seconds, else 0)
+# Usefulness: Flags games where overtime was triggered.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'initial_time_seconds': [1200, 900, 3600]
+df["time_exceeded"] = (df["game_duration_seconds"] > df["initial_time_seconds"]).astype(int)
+
+# (is_regular_and_standard: 1 if both time_control_name is regular and game_end_reason is STANDARD)
+# Usefulness: Explicitly encodes standard/regular competitive conditions.
+# Input samples: 'time_control_name': ['regular', 'regular', 'regular'], 'game_end_reason': ['STANDARD', 'STANDARD', 'RESIGNED']
+df["is_regular_and_standard"] = ((df["time_control_name"] == "regular") & (df["game_end_reason"] == "STANDARD")).astype(int)
+
+# (score_vs_points_min: Player's score minus points_min, fillna for missing points_min)
+# Usefulness: Measures how much player exceeded their lowest scoring play, indicating consistency.
+# Input samples: 'score': [429, 440, 119], 'points_min': [np.nan, np.nan, np.nan]
+df["score_vs_points_min"] = df["score"] - df.get("points_min", pd.Series(np.nan, index=df.index)).fillna(0)
+
+# (has_max_overtime: 1 if max_overtime_minutes equals 10, else 0)
+# Usefulness: Flag for games with very high overtime allowance, different dynamics.
+# Input samples: 'max_overtime_minutes': [1, 5, 1]
+df["has_max_overtime"] = (df["max_overtime_minutes"] == 10).astype(int)
+
+# (score_per_minute: Score per minute of actual duration)
+# Usefulness: Alternative efficiency metric to avg_points_per_second, may be more interpretable.
+# Input samples: 'score': [429, 440, 119], 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["score_per_minute"] = df["score"] / (df["game_duration_seconds"] / 60)
+
+# (score_diff_pct_total: Score_diff as percent of total points in game)
+# Usefulness: Normalizes win margin for modeling, regardless of absolute score scale.
+# Input samples: 'score_diff': [94, 122, -359], 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_diff_pct_total"] = df["score_diff"] / (df["score"] + df["other_mean_score"]).replace(0, np.nan) * 100
+
+# (move_length_vs_mean: Difference between len_move and its dataset mean)
+# Usefulness: Flags unusually long or short average moves.
+# Input samples: 'len_move': [3.86, 4.36, 2.93]
+df["move_length_vs_mean"] = df["len_move"] - df["len_move"].mean()
+# (score_vs_points_max: Player's score minus points_max, fillna for missing points_max)
+# Usefulness: Measures how much player exceeded their highest single play, a proxy for consistency.
+# Input samples: 'score': [429, 440, 119], 'points_max': [np.nan, np.nan, np.nan]
+df["score_vs_points_max"] = df["score"] - df.get("points_max", pd.Series(np.nan, index=df.index)).fillna(0)
+
+# (points_max_minus_min: Difference between points_max and points_min, fillna protection)
+# Usefulness: Captures range in player performance in a game, indicative of volatility.
+# Input samples: 'points_max': [np.nan, np.nan, np.nan], 'points_min': [np.nan, np.nan, np.nan]
+df["points_max_minus_min"] = df.get("points_max", pd.Series(np.nan, index=df.index)).fillna(0) - df.get("points_min", pd.Series(np.nan, index=df.index)).fillna(0)
+
+# (score_vs_points_mean: Player's score minus points_mean, fillna for missing points_mean)
+# Usefulness: Provides a measure of overall performance above average play quality.
+# Input samples: 'score': [429, 440, 119], 'points_mean': [np.nan, np.nan, np.nan]
+df["score_vs_points_mean"] = df["score"] - df["points_mean"].fillna(0)
+
+# (log_score: Natural logarithm of score plus one)
+# Usefulness: Reduces skew, stabilizes variance for regression models, especially with long-tailed scores.
+# Input samples: 'score': [429, 440, 119]
+df["log_score"] = np.log1p(df["score"])
+
+# (log_game_duration: Natural logarithm of game_duration_seconds plus one)
+# Usefulness: Reduces skew, stabilizes variance in game duration for downstream models.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86]
+df["log_game_duration"] = np.log1p(df["game_duration_seconds"])
+
+# (turns_over_duration_pct: Turns divided by duration_pct_of_initial)
+# Usefulness: Indicates turn density relative to expected game time, could correlate with playing style.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'duration_pct_of_initial': [0.562, 0.547, 0.097]
+df["turns_over_duration_pct"] = df["turn_number"] / df["duration_pct_of_initial"].replace(0, np.nan)
+
+# (is_fast_game: 1 if duration_pct_of_initial < 0.5, else 0)
+# Usefulness: Encodes games completed rapidly, potentially due to early resignation or dominant play.
+# Input samples: 'duration_pct_of_initial': [0.562, 0.547, 0.097]
+df["is_fast_game"] = (df["duration_pct_of_initial"] < 0.5).astype(int)
+
+# (score_minus_score_diff: Player's score minus score_diff)
+# Usefulness: Estimates opponent's score for context, without using their actual value directly.
+# Input samples: 'score': [429, 440, 119], 'score_diff': [94, 122, -359]
+df["score_minus_score_diff"] = df["score"] - df["score_diff"]
+
+# (score_plus_score_diff: Player's score plus score_diff)
+# Usefulness: Sums to double the player’s score if they won, else gives opponent’s score, enabling quick comparisons.
+# Input samples: 'score': [429, 440, 119], 'score_diff': [94, 122, -359]
+df["score_plus_score_diff"] = df["score"] + df["score_diff"]
+
+# (score_diff_over_turns: Score difference per turn played)
+# Usefulness: Win/loss margin normalized by game length; can highlight close or blowout matches.
+# Input samples: 'score_diff': [94, 122, -359], 'turn_number': [14.0, 14.0, 14.0]
+df["score_diff_over_turns"] = df["score_diff"] / df["turn_number"].replace(0, np.nan)
+
+# (turn_number_over_mean: Turn number divided by dataset mean)
+# Usefulness: Normalizes number of turns for seasonality/variance in game length.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0]
+df["turn_number_over_mean"] = df["turn_number"] / df["turn_number"].mean()
+
+# (score_over_other_mean: Player's score divided by opponent's mean score)
+# Usefulness: Encodes relative performance versus typical opponent output.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_over_other_mean"] = df["score"] / df["other_mean_score"].replace(0, np.nan)
+
+# (score_vs_initial_time: Score divided by initial_time_seconds)
+# Usefulness: Measures points output relative to game configuration, useful for cross-control comparability.
+# Input samples: 'score': [429, 440, 119], 'initial_time_seconds': [1200, 900, 3600]
+df["score_vs_initial_time"] = df["score"] / df["initial_time_seconds"].replace(0, np.nan)
+
+# (is_nonstandard_lexicon: 1 if lexicon not in CSW21 or NWL20, else 0)
+# Usefulness: Flags unusual lexicons (e.g. ECWL), which may be associated with different player pools.
+# Input samples: 'lexicon': ['NWL20', 'CSW21', 'CSW21']
+df["is_nonstandard_lexicon"] = ~df["lexicon"].isin(["CSW21", "NWL20"]).astype(int)
+
+# (score_diff_to_other_mean: Score difference divided by opponent mean score)
+# Usefulness: Scales win/loss magnitude by expected output of opponent.
+# Input samples: 'score_diff': [94, 122, -359], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_diff_to_other_mean"] = df["score_diff"] / df["other_mean_score"].replace(0, np.nan)
+# (score_plus_other_mean: Player's score plus opponent's mean score)
+# Usefulness: Sums offensive output and opponent's expected strength, giving context for the absolute score.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_plus_other_mean"] = df["score"] + df["other_mean_score"]
+
+# (score_minus_other_mean: Player's score minus opponent's mean score)
+# Usefulness: Flags outlier victories or defeats relative to opponent’s average level.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_minus_other_mean"] = df["score"] - df["other_mean_score"]
+
+# (score_to_opponent_percent: Player's score as percent of opponent's mean score)
+# Usefulness: Offers relative performance per match.
+# Input samples: 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_to_opponent_percent"] = df["score"] / df["other_mean_score"].replace(0, np.nan) * 100
+
+# (score_diff_to_total_score: Proportion of score_diff to total score by both players)
+# Usefulness: Normalizes result margin, especially in high/low scoring games.
+# Input samples: 'score_diff': [94, 122, -359], 'score': [429, 440, 119], 'other_mean_score': [393.38, 393.38, 393.38]
+df["score_diff_to_total_score"] = df["score_diff"] / (df["score"] + df["other_mean_score"]).replace(0, np.nan)
+
+# (turns_to_initial_time: Number of turns per minute of initial allotted time)
+# Usefulness: Encodes how quickly the player plays compared to what was available.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'initial_time_seconds': [1200, 900, 3600]
+df["turns_to_initial_time"] = df["turn_number"] / (df["initial_time_seconds"] / 60)
+
+# (mean_score_to_other_mean: Ratio of player's mean_score to opponent's mean score)
+# Usefulness: Puts player's overall level in direct relation to their likely competition.
+# Input samples: 'mean_score': [365.1, 348.17, 393.47], 'other_mean_score': [393.38, 393.38, 393.38]
+df["mean_score_to_other_mean"] = df["mean_score"] / df["other_mean_score"].replace(0, np.nan)
+
+# (score_variance_est: Proxy for variance: abs(score - mean_score))
+# Usefulness: Measures volatility of performance; higher variance may signal streaky or inconsistent players.
+# Input samples: 'score': [429, 440, 119], 'mean_score': [365.1, 348.17, 393.47]
+df["score_variance_est"] = (df["score"] - df["mean_score"]).abs()
+
+# (points_mean_over_score: Ratio of points_mean to total score, fillna)
+# Usefulness: Measures how much of scoring is due to average play, accounting for missing points_mean.
+# Input samples: 'points_mean': [np.nan, np.nan, np.nan], 'score': [429, 440, 119]
+df["points_mean_over_score"] = df["points_mean"].fillna(0) / df["score"].replace(0, np.nan)
+
+# (score_times_turns: Product of score and turn_number)
+# Usefulness: Encodes high-scoring, long games; can flag both volume and consistent performance.
+# Input samples: 'score': [429, 440, 119], 'turn_number': [14.0, 14.0, 14.0]
+df["score_times_turns"] = df["score"] * df["turn_number"]
+
+# (mean_score_diff_sign: Sign of diff_mean_score; 1 if player better than opponent average, -1 if worse, 0 if equal)
+# Usefulness: Binary indicator for direction of average-performance advantage.
+# Input samples: 'diff_mean_score': [-28.27, -45.21, 0.1]
+df["mean_score_diff_sign"] = np.sign(df["diff_mean_score"]).astype(int)
+
+# (points_mean_nonzero: 1 if points_mean is not NaN and > 0, else 0)
+# Usefulness: Flags games with valid, non-zero points_mean for downstream model.
+# Input samples: 'points_mean': [np.nan, np.nan, np.nan]
+df["points_mean_nonzero"] = ((~df["points_mean"].isna()) & (df["points_mean"] > 0)).astype(int)
+
+# (is_overtime_game: 1 if game_duration_seconds > initial_time_seconds, else 0)
+# Usefulness: Explicit indicator for games that required overtime.
+# Input samples: 'game_duration_seconds': [674.84, 492.27, 350.86], 'initial_time_seconds': [1200, 900, 3600]
+df["is_overtime_game"] = (df["game_duration_seconds"] > df["initial_time_seconds"]).astype(int)
+
+# (score_diff_times_turns: Product of score_diff and turn_number)
+# Usefulness: Joint indicator of win/loss magnitude and game length.
+# Input samples: 'score_diff': [94, 122, -359], 'turn_number': [14.0, 14.0, 14.0]
+df["score_diff_times_turns"] = df["score_diff"] * df["turn_number"]
+
+# (score_minus_mean_score: Player's score minus their mean score)
+# Usefulness: Direct performance deviation from expectation.
+# Input samples: 'score': [429, 440, 119], 'mean_score': [365.1, 348.17, 393.47]
+df["score_minus_mean_score"] = df["score"] - df["mean_score"]
+
+# (turn_number_times_win: Product of turn_number and Win indicator)
+# Usefulness: Encodes relationship between game length and winning; may be different for strong vs. weak players.
+# Input samples: 'turn_number': [14.0, 14.0, 14.0], 'Win': [1, 1, 0]
+df["turn_number_times_win"] = df["turn_number"] * df["Win"]

@@ -19,6 +19,7 @@ python-dotenv = "^1.1.1"
 tqdm = "^4.67.1"
 torch = {version = "^2.8.0", source = "pypi"}
 transformers = "^4.57.1"
+dataclasses-json = "^0.6.7"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"
@@ -50,7 +51,7 @@ line-length = 120
 indent-width = 4
 target-version = "py312"
 exclude = [
-    "comparisons/tmdb_box_office_prediction/kaggle3.py",
+    "experiments/tmdb_box_office_prediction/kaggle3.py",
 ]
 
 [tool.ruff.lint]

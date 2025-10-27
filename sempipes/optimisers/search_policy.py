@@ -5,29 +5,35 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
+from dataclasses_json import dataclass_json
 from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 
+_ROOT_TRIAL = 0
 
+
+@dataclass_json
 @dataclass
 class SearchNode:
-    parent: SearchNode | None
+    trial: int
+    parent_trial: int | None
     memory: list[dict[str, Any]]
     predefined_state: dict[str, Any] | None
     parent_score: float | None
 
 
+@dataclass_json
 @dataclass
 class Outcome:
+    search_node: SearchNode
     state: dict[str, Any]
     score: float
-    search_node: SearchNode
     memory_update: str
 
 
 class SearchPolicy(ABC):
     @abstractmethod
-    def create_root_node(self, dag_sink: DataOp, operator_name: str):
+    def create_root_node(self, dag_sink: DataOp, operator_name: str) -> SearchNode:
         pass
 
     @abstractmethod
@@ -41,11 +47,11 @@ class SearchPolicy(ABC):
         pass
 
     @abstractmethod
-    def create_next_search_node(self):
+    def create_next_search_node(self, trial: int) -> SearchNode:
         pass
 
     @abstractmethod
-    def get_outcomes(self):
+    def get_outcomes(self) -> list[Outcome]:
         pass
 
 
@@ -61,7 +67,8 @@ class TreeSearch(SearchPolicy):
 
         print("\tTREE_SEARCH> Creating root node")
         root_node = SearchNode(
-            parent=None,
+            trial=_ROOT_TRIAL,
+            parent_trial=None,
             memory=[],
             predefined_state=empty_state,
             parent_score=None,
@@ -85,32 +92,33 @@ class TreeSearch(SearchPolicy):
         )
         self.outcomes.append(outcome)
 
-    def create_next_search_node(self):
+    def create_next_search_node(self, trial) -> SearchNode:
         assert self.root_node is not None
-        nodes_with_children = {id(outcome.search_node.parent) for outcome in self.outcomes}
+        nodes_with_children = {outcome.search_node.parent_trial for outcome in self.outcomes}
         unprocessed_draft_nodes = [
             outcome.search_node
             for outcome in self.outcomes
-            if id(outcome.search_node) not in nodes_with_children and outcome.search_node.parent is self.root_node
+            if outcome.search_node.trial not in nodes_with_children and outcome.search_node.parent_trial is _ROOT_TRIAL
         ]
         num_unprocessed_draft_nodes = len(unprocessed_draft_nodes)
 
         if num_unprocessed_draft_nodes < self.min_num_drafts:  # pylint: disable=no-else-return
             print("\tTREE_SEARCH> Drafting new node")
-            return self._draft()
+            return self._draft(trial)
         else:
-            next_search_node = self._improve_best()
+            next_search_node = self._improve_best(trial)
             print(f"\tTREE_SEARCH> Trying to improve node with score {next_search_node.parent_score}")
             return next_search_node
 
-    def _draft(self):
+    def _draft(self, trial: int) -> SearchNode:
         root_outcome = next(filter(lambda outcome: outcome.search_node is self.root_node, self.outcomes), None)
         assert root_outcome is not None
 
         updated_memory = copy.deepcopy(root_outcome.search_node.memory)
         updated_memory.append({"update": root_outcome.memory_update, "score": root_outcome.score})
         draft_node = SearchNode(
-            parent=root_outcome.search_node,
+            trial=trial,
+            parent_trial=root_outcome.search_node.trial,
             memory=updated_memory,
             predefined_state=None,
             parent_score=root_outcome.score,
@@ -118,13 +126,14 @@ class TreeSearch(SearchPolicy):
 
         return draft_node
 
-    def _improve_best(self):
+    def _improve_best(self, trial: int) -> SearchNode:
         best_outcome = max(self.outcomes, key=lambda outcome: outcome.score)
 
         updated_memory = copy.deepcopy(best_outcome.search_node.memory)
         updated_memory.append({"update": best_outcome.memory_update, "score": best_outcome.score})
         improve_node = SearchNode(
-            parent=best_outcome.search_node,
+            trial=trial,
+            parent_trial=best_outcome.search_node.trial,
             memory=updated_memory,
             predefined_state=None,
             parent_score=best_outcome.score,
