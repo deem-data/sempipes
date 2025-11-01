@@ -1,5 +1,5 @@
 # This code is based on Apache-licensed code from https://github.com/noahho/CAAFE/
-# TODO This class needs some serious cleanup / refactoring
+# TODO This class needs some serious refactoring
 from typing import Any
 
 import pandas as pd
@@ -14,7 +14,7 @@ from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import (
     ContextAwareMixin,
     OptimisableMixin,
-    WithSemFeaturesOperator,
+    SemGenFeaturesOperator,
 )
 
 _MAX_RETRIES = 5
@@ -233,12 +233,12 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self._prefitted_state is not None:
-            print(f"--- Using provided state for sempipes.with_sem_features('{prompt_preview}...', {self.how_many})")
+            print(f"--- Using provided state for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
         print(
-            f"--- Fitting sempipes.with_sem_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
+            f"--- Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
         )
 
         target_metric = "accuracy"
@@ -296,7 +296,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         return df
 
 
-class WithSemFeaturesCaafe(WithSemFeaturesOperator):
+class SemGenFeaturesCaafe(SemGenFeaturesOperator):
     def generate_features_estimator(self, data_op: DataOp, nl_prompt: str, name: str, how_many: int):
         _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
         _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
@@ -311,12 +311,12 @@ class WithSemFeaturesCaafe(WithSemFeaturesOperator):
         )
 
 
-def with_sem_features(
+def sem_gen_features(
     self: DataOp,
     nl_prompt: str,
     name: str,
     how_many: int = 10,
 ) -> DataOp:
     data_op = self
-    feature_gen_estimator = WithSemFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
+    feature_gen_estimator = SemGenFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
     return self.skb.apply(feature_gen_estimator, how="no_wrap").skb.set_name(name)

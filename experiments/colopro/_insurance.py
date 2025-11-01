@@ -76,7 +76,7 @@ def _pipeline(data) -> skrub.DataOp:
     records = records.skb.mark_as_X()
     labels = labels.skb.mark_as_y()
 
-    records_with_additional_features = records.with_sem_features(
+    records_with_additional_features = records.sem_gen_features(
         nl_prompt="""
             Compute additional features that could help predict whether a person will apply for an insurance policy based on their demographics, and other relevant data. Consider factors such as age, income, and previous insurance history to derive meaningful features that enhance the predictive power of the model.
         """,

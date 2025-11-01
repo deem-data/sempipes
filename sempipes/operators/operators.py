@@ -106,7 +106,7 @@ class SemSelectOperator(ABC):
         """Generate a column selector for dataframes."""
 
 
-class WithSemFeaturesOperator(ABC):
+class SemGenFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_estimator(
         self,
@@ -118,7 +118,7 @@ class WithSemFeaturesOperator(ABC):
         """Return an estimator that computes features on a pandas df."""
 
 
-class WithSemAggJoinFeaturesOperator(ABC):
+class SemAggFeaturesOperator(ABC):
     @abstractmethod
     def generate_agg_join_features_estimator(
         self,

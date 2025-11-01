@@ -74,7 +74,7 @@ def _pipeline(data) -> DataOp:
     revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
     revenue = revenue.skb.set_description("the international box office revenue for a movie")
 
-    movie_stats = movie_stats.with_sem_features(
+    movie_stats = movie_stats.sem_gen_features(
         nl_prompt="""
             Create additional features that could help predict the box office revenue of a movie.
             Consider aspects like genre, production details, cast, crew, and any other relevant information
