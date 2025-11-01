@@ -78,5 +78,10 @@ def sempipes_pipeline(data_file):
     }
     model = lgb.LGBMRegressor(**params)  # type: ignore
     predictions = X.skb.apply(model, y=y_log)
-    predictions = predictions.skb.apply_func(np.expm1)
-    return predictions
+
+    def exp_if_transform(outputs, mode=skrub.eval_mode()):
+        if mode in {"transform", "predict"}:
+            return np.expm1(outputs)
+        return outputs
+
+    return predictions.skb.apply_func(exp_if_transform)

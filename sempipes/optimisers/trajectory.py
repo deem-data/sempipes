@@ -19,10 +19,15 @@ class Trajectory:
     outcomes: list[Outcome]
 
 
-def save_trajectory_as_json(trajectory: Trajectory) -> Path:
+def save_trajectory_as_json(trajectory: Trajectory, run_name: str | None = None) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     unique_id = str(uuid.uuid4())[:8]
-    filename = f"colopro_{timestamp}_{unique_id}.json"
+
+    run_prefix = "colopro"
+    if run_name:
+        run_prefix = run_name
+
+    filename = f"{run_prefix}_{timestamp}_{unique_id}.json"
 
     output_path = Path(".sempipes_trajectories") / filename
     output_path.parent.mkdir(parents=True, exist_ok=True)

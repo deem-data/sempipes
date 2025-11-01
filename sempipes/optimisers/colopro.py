@@ -10,7 +10,8 @@ from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.operators.operators import OptimisableMixin
 from sempipes.operators.sem_choose_llm import SemChooseLLM
-from sempipes.optimisers.search_policy import Outcome, SearchPolicy, TreeSearch
+from sempipes.optimisers.montecarlo_tree_search import MonteCarloTreeSearch
+from sempipes.optimisers.search_policy import Outcome, SearchNode, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json
 
 
@@ -101,11 +102,12 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     dag_sink: DataOp,
     operator_name: str,
     num_trials: int,
-    search: SearchPolicy = TreeSearch(),
+    search: SearchPolicy = MonteCarloTreeSearch(nodes_per_expansion=2, c=0.05),
     scoring: str = "accuracy",
     cv=3,
     num_hpo_iterations_per_trial: int = 10,
     pipeline_definition: Callable[..., DataOp] | None = None,
+    run_name: str | None = None,
 ) -> list[Outcome]:
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
@@ -114,6 +116,8 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
 
     print("\tOLOPRO> Computing pipeline summary for context-aware optimisation ---")
     pipeline_summary = summarise_pipeline(dag_sink, pipeline_definition)
+
+    search_node_queue: list[SearchNode] = []
 
     for trial in range(num_trials):
         print(f"\tOLOPRO> Processing trial {trial}")
@@ -124,9 +128,15 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             operator_state = search_node.predefined_state
             operator_memory_update = OptimisableMixin.EMPTY_MEMORY_UPDATE
         else:
+            if len(search_node_queue) == 0:
+                next_search_nodes = search.create_next_search_nodes()
+                print(f"\tOLOPRO> Generating {len(next_search_nodes)} new search node(s)")
+                search_node_queue.extend(next_search_nodes)
+
+            search_node = search_node_queue.pop(0)
+            search_node.trial = trial
             print(f'\tOLOPRO> Evolving operator "{operator_name}" via OPRO')
             evolution_start_time = time.time()
-            search_node = search.create_next_search_node(trial)
             pipeline = dag_sink.skb.clone()
             env = _env_for_fit(dag_sink, operator_name, search_node, pipeline_summary)
             operator_state, operator_memory_update = _evolve_operator(pipeline, operator_name, env)
@@ -172,7 +182,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
         outcomes=search.get_outcomes(),
     )
 
-    trajectory_output_path = save_trajectory_as_json(trajectory)
+    trajectory_output_path = save_trajectory_as_json(trajectory, run_name=run_name)
     print(f"\tOLOPRO> Saved trajectory to {trajectory_output_path}")
 
     return search.get_outcomes()

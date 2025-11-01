@@ -94,6 +94,7 @@ def safe_exec(
         "next": next,
         "ValueError": ValueError,
         "TypeError": TypeError,
+        "SyntaxError": SyntaxError,
         "enumerate": enumerate,
     }
 
