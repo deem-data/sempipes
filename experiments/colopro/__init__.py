@@ -8,7 +8,6 @@ from sempipes.optimisers.search_policy import SearchPolicy
 @dataclass(frozen=True)
 class Setup:
     search: SearchPolicy
-    sample_size: int
     num_trials: int
     llm_for_code_generation: LLM
 

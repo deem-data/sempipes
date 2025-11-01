@@ -4,6 +4,7 @@ import warnings
 import sempipes
 from experiments.colopro import Setup, TestPipeline
 from experiments.colopro._boxoffice import BoxOfficePipeline
+from experiments.colopro._fraudbaskets import FraudBasketsPipeline
 from experiments.colopro._insurance import HealthInsurancePipeline
 from experiments.colopro._midwest import MidwestSurveyPipeline
 from sempipes.optimisers import MonteCarloTreeSearch
@@ -24,7 +25,6 @@ if __name__ == "__main__":
         # search=TreeSearch(min_num_drafts=2),
         # search=EvolutionarySearch(population_size=6),
         search=MonteCarloTreeSearch(nodes_per_expansion=2, c=0.05),
-        sample_size=500,
         num_trials=24,
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -37,6 +37,7 @@ if __name__ == "__main__":
         MidwestSurveyPipeline(),
         BoxOfficePipeline(),
         HealthInsurancePipeline(),
+        FraudBasketsPipeline(),
     ]
 
     results = []

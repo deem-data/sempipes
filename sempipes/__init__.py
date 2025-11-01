@@ -10,7 +10,7 @@ from sempipes.operators.sem_choose_llm import sem_choose, apply_with_sem_choose
 from sempipes.operators.sem_distill import sem_distill
 from sempipes.operators.sem_extract_features import sem_extract_features
 from sempipes.operators.sem_select_llm import sem_select
-from sempipes.operators.with_sem_agg_join_features import with_sem_agg_join_features
+from sempipes.operators.sem_agg_features import sem_agg_features
 from sempipes.operators.with_sem_features_caafe import with_sem_features
 from sempipes.operators import sem_fillna
 from sempipes.config import get_config, LLM, update_config
@@ -20,7 +20,7 @@ load_dotenv()
 
 # Monkey-patch skrub DataOp to include our semantic operators
 DataOp.with_sem_features = with_sem_features
-DataOp.with_sem_agg_join_features = with_sem_agg_join_features
+DataOp.sem_agg_features = sem_agg_features
 DataOp.sem_fillna = sem_fillna
 DataOp.sem_select = sem_select
 DataOp.sem_augment = sem_augment

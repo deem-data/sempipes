@@ -44,4 +44,4 @@ def test_demo__optimise_sem_choose_notebook():
 
 
 def test_demo__sem_agg_join_features_notebook():
-    _run_notebook("demo__sem_agg_join_features.ipynb")
+    _run_notebook("demo__sem_agg_features.ipynb")
