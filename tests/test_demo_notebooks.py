@@ -10,10 +10,6 @@ def _run_notebook(path):
             name="gemini/gemini-2.5-pro",
             parameters={"temperature": 0.0},
         ),
-        llm_for_batch_processing=sempipes.LLM(
-            name="ollama/gemma3:1b",
-            parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
-        ),
     )
 
     print(f"Testing notebook: {path}...")

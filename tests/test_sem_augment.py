@@ -3,19 +3,11 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import r2_score
 
 import sempipes
+from sempipes.config import ensure_default_config
 
 
 def test_sem_augment_via_code():
-    sempipes.update_config(
-        llm_for_code_generation=sempipes.LLM(
-            name="openai/gpt-4.1",
-            parameters={"temperature": 0.0},
-        ),
-        llm_for_batch_processing=sempipes.LLM(
-            name="ollama/gpt-oss:20b",
-            parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
-        ),
-    )
+    ensure_default_config()
 
     # Fetch a dataset
     salaries_df = skrub.datasets.fetch_employee_salaries(split="train").employee_salaries

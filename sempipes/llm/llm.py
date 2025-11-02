@@ -1,6 +1,6 @@
 import json
 
-from litellm import batch_completion, completion
+from litellm import APIConnectionError, batch_completion, completion
 from tqdm import tqdm
 
 from sempipes.config import get_config
@@ -129,6 +129,10 @@ def batch_generate_results(
 
         for response in responses:
             try:
+                if isinstance(response, APIConnectionError):
+                    print(">" * 80)
+                    print(response)
+                    print(">" * 80)
                 content = response.choices[0].message["content"]
                 outputs.append(content)
             except Exception as e:

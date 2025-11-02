@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest  # pylint: disable=import-error
 import skrub
 
 import sempipes  # pylint: disable=unused-import
@@ -50,7 +49,6 @@ def test_sem_extract_features_image_code():
     assert score_before <= score_with_features
 
 
-@pytest.mark.skip(reason="Currently disabled because its too costly")
 def test_sem_extract_features_image():
     styles_df = pd.read_csv("tests/data/fashion-dataset/styles.csv", on_bad_lines="skip")
     styles = skrub.var("styles", styles_df)
