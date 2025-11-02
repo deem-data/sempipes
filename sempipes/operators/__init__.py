@@ -1,5 +1,5 @@
 from skrub import DataOp
-from sempipes.operators.sem_fillna_llm import SemFillNAWithLLLM
+from sempipes.operators.sem_fillna_llm import SemFillNAWithLLM
 from sempipes.operators.sem_fillna_llm_plus_model import SemFillNALLLMPlusModel
 
 
@@ -13,7 +13,7 @@ def sem_fillna(
     data_op = self
 
     if "with_llm_only" in kwargs and kwargs["with_llm_only"]:
-        imputation_estimator = SemFillNAWithLLLM().generate_imputation_estimator(
+        imputation_estimator = SemFillNAWithLLM().generate_imputation_estimator(
             data_op, target_column, nl_prompt, impute_with_existing_values_only
         )
     else:

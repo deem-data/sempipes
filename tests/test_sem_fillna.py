@@ -1,16 +1,11 @@
 import skrub
 
-import sempipes  # pylint: disable=cyclic-import
+import sempipes  # pylint: disable=unused-import
+from sempipes.config import ensure_default_config
 
 
 def test_sem_fillna():
-    sempipes.update_config(
-        llm_for_batch_processing=sempipes.LLM(
-            name="ollama/gemma3:4b",
-            parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
-        ),
-        batch_size_for_batch_processing=5,
-    )
+    ensure_default_config()
 
     # Fetch a dataset
     dataset = skrub.datasets.fetch_employee_salaries(split="train")

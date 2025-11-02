@@ -5,7 +5,7 @@ from sempipes.llm.llm import batch_generate_results, get_cleaning_message
 from sempipes.operators.operators import SemFillNAOperator
 
 
-class SemFillNAWithLLLM(SemFillNAOperator):
+class SemFillNAWithLLM(SemFillNAOperator):
     def generate_imputation_estimator(
         self,
         data_op,
