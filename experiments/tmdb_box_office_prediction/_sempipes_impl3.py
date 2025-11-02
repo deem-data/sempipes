@@ -208,7 +208,7 @@ def sempipes_pipeline3(data_file: str):
     revenue = revenue.skb.set_description("the international box office revenue for a movie")
     y_log = revenue.skb.apply_func(np.log1p)
 
-    movie_stats = movie_stats.with_sem_features(
+    movie_stats = movie_stats.sem_gen_features(
         nl_prompt="""
         Create additional features that could help predict the box office revenue of a movie. Here are detailed instructions:
 

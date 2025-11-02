@@ -84,7 +84,7 @@ def sempipes_pipeline(data_file):
         YrSold=lambda df: df["YrSold"].where(df["YrSold"] >= df["YearBuilt"], 2009),
     )
 
-    data = data.with_sem_features(
+    data = data.sem_gen_features(
         nl_prompt="""
         Compute additional features from the house attributes, e.g. counting the total number of bath rooms, bed rooms,
         computing the age of the house and the overall square of the house etc. Also consider meaningful combinations of 
@@ -94,7 +94,7 @@ def sempipes_pipeline(data_file):
         how_many=10,
     )
 
-    data = data.with_sem_features(
+    data = data.sem_gen_features(
         nl_prompt="""
         Replace the categorical features (that have string values) with an ordinal variant (e.g., with an integer range of
         numbers) if there is a meaningful order in the values. Do this so that it becomes easier for tree-based models

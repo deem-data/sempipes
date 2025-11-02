@@ -44,7 +44,7 @@ def sempipes_pipeline(data_file):
     y = X["rating"].skb.mark_as_y().skb.subsample(n=100)
     X = X.drop(columns=["rating"])
 
-    X = X.with_sem_features(
+    X = X.sem_gen_features(
         nl_prompt="""
         Create additional features that could help predict the rating of a player. Such features could relate to how
         the player scores when they go first in a round and to which games they won, how often they won games, etc.

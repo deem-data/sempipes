@@ -13,7 +13,7 @@ from sempipes.operators.operators import (
     ContextAwareMixin,
     EstimatorTransformer,
     OptimisableMixin,
-    WithSemAggJoinFeaturesOperator,
+    SemAggFeaturesOperator,
 )
 
 
@@ -311,7 +311,7 @@ def sem_agg_features(  # pylint: disable=too-many-positional-arguments
     return inputs.skb.apply(agg_joiner).skb.set_name(name)
 
 
-class LLMCodeGenSemAggJoinFeaturesOperator(WithSemAggJoinFeaturesOperator):
+class LLMCodeGenSemAggJoinFeaturesOperator(SemAggFeaturesOperator):
     def generate_agg_join_features_estimator(
         self,
         left_join_key: str,

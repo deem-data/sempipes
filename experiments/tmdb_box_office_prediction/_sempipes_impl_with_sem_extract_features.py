@@ -38,7 +38,7 @@ def sempipes_pipeline(data_file):
         input_columns=["overview", "spoken_languages_str"],
     )
 
-    movie_stats = movie_stats.with_sem_features(
+    movie_stats = movie_stats.sem_gen_features(
         nl_prompt="""
             Create additional features that could help predict the box office revenue of a movie.
             Consider aspects like genre, production details, cast, crew, and any other relevant information

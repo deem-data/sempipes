@@ -137,7 +137,7 @@ def sempipes_pipeline2(data_file):
     ]
     X_d = X_d[Xvariaveis]
 
-    X_d = X_d.with_sem_features(
+    X_d = X_d.sem_gen_features(
         nl_prompt="""
         Create additional features that could help predict the rating of a player. The two players for a game can be found by checking the rows with the same game_id.
         

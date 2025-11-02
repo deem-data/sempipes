@@ -80,7 +80,7 @@ def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
     responses = responses.skb.mark_as_X()
     labels = labels.skb.mark_as_y()
 
-    responses_with_additional_features = responses.with_sem_features(
+    responses_with_additional_features = responses.sem_gen_features(
         nl_prompt="""
             Compute additional demographics-related features, use your intrinsic knowledge about the US. 
             Take into account how the identification with the country or regions of it changed over the generations.         

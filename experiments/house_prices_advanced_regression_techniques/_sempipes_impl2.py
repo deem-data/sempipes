@@ -99,7 +99,7 @@ def sempipes_pipeline2(data_file):
     )
     data = data.drop(["SalePrice"], axis=1).skb.mark_as_X().skb.set_description(data_description)
 
-    data = data.with_sem_features(
+    data = data.sem_gen_features(
         nl_prompt="""
         Create additional features that could help predict the sale price of a house.
         Consider aspects like location, size, condition, and any other relevant information.
