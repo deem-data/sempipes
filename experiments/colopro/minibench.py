@@ -4,6 +4,7 @@ import warnings
 import sempipes
 from experiments.colopro import Setup, TestPipeline
 from experiments.colopro._boxoffice import BoxOfficePipeline
+from experiments.colopro._churn import ChurnPipeline
 from experiments.colopro._fraudbaskets import FraudBasketsPipeline
 from experiments.colopro._insurance import HealthInsurancePipeline
 from experiments.colopro._midwest import MidwestSurveyPipeline
@@ -38,6 +39,7 @@ if __name__ == "__main__":
         BoxOfficePipeline(),
         HealthInsurancePipeline(),
         FraudBasketsPipeline(),
+        ChurnPipeline(),
     ]
 
     results = []

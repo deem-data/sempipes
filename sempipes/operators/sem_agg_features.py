@@ -140,7 +140,7 @@ def _try_to_execute(generated_code, left_df, left_join_key, right_df, right_join
     right_sample = right_df[right_df[right_join_key].isin(left_keys)]
     test_result = agg_join_func(left_join_key, left_sample, right_join_key, right_sample)
 
-    if right_join_key in test_result.columns:
+    if right_join_key != left_join_key and right_join_key in test_result.columns:
         test_result = test_result.drop(columns=[right_join_key])
 
     assert isinstance(test_result, pd.DataFrame)
@@ -148,7 +148,7 @@ def _try_to_execute(generated_code, left_df, left_join_key, right_df, right_join
 
     assert set(left_sample.columns).issubset(
         set(test_result.columns)
-    ), "Not all columns from the left input are retained"
+    ), f"Not all columns {left_sample.columns} from the left input are retained: {test_result.columns}"
 
     return test_result
 
@@ -198,9 +198,7 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
         prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self._prefitted_state is not None:
-            print(
-                f"--- Using provided state for sempipes.with_sem_agg_features('{prompt_preview}...', {self.how_many})"
-            )
+            print(f"--- Using provided state for sempipes.sem_agg_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 

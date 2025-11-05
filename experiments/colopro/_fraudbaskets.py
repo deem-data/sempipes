@@ -55,7 +55,7 @@ class FraudBasketsPipeline(TestPipeline):
             search=setup.search,
             cv=5,
             pipeline_definition=_pipeline,
-            run_name="insurance",
+            run_name=self.name,
         )
 
         best_outcome = max(outcomes, key=lambda x: x.score)
