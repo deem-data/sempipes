@@ -102,7 +102,7 @@ def test_sem_extract_features_text_pipeline_code():
     split_with_features = task_with_features.skb.train_test_split(random_state=0)
     learner_with_features = task.skb.make_learner()
     learner_with_features.fit(split_with_features["train"])
-    score_with_features = learner.score(split_with_features["test"])
+    score_with_features = learner_with_features.score(split_with_features["test"])
     print(f"Tabular predictor performance with extracted features: {score_with_features}")
 
     assert score_before <= score_with_features
@@ -136,7 +136,7 @@ def test_sem_extract_features_text_pipeline():
     split_with_features = task_with_features.skb.train_test_split(random_state=0)
     learner_with_features = task.skb.make_learner()
     learner_with_features.fit(split_with_features["train"])
-    score_with_features = learner.score(split_with_features["test"])
+    score_with_features = learner_with_features.score(split_with_features["test"])
     print(f"Tabular predictor performance with extracted features: {score_with_features}")
 
     assert score_before < score_with_features
