@@ -12,6 +12,7 @@ from typing import Any
 import numpy
 import pandas as pd
 import PIL
+import scipy
 import sklearn
 import skrub
 import torch
@@ -38,6 +39,7 @@ _ALLOWED_MODULES = [
     "random",
     "time",
     "tqdm",
+    "scipy",
 ]
 
 
@@ -117,6 +119,7 @@ def safe_exec(
         "typing": typing,
         "PIL": PIL,
         "tqdm": tqdm,
+        "scipy": scipy,
     }
 
     # We need a single dict to allow function definitions inside the code
