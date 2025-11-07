@@ -3,12 +3,13 @@ import random
 import warnings
 
 import numpy as np
-import pandas as pd
 import torch
 from interpret.glassbox import ExplainableBoostingClassifier
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
+
+from experiments.micromodels import as_dataframe
 
 warnings.filterwarnings("ignore")
 
@@ -37,7 +38,7 @@ def bert_micromodel(responses, rationales):
     return max_scores
 
 
-all_data = pd.read_csv("experiments/micromodels/empathy.csv")
+all_data = as_dataframe("experiments/micromodels/empathy.json")  # pd.read_csv("experiments/micromodels/empathy.csv")
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
