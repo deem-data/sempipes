@@ -19,18 +19,18 @@ def _evaluate_pipeline(pipeline: TestPipeline, pipeline_setup: Setup) -> tuple[s
 
 
 if __name__ == "__main__":
-    degree_of_parallelism = 8
+    degree_of_parallelism = 18
     num_repetitions = 6
 
     setup = Setup(
         # search=TreeSearch(min_num_drafts=2),
         # search=EvolutionarySearch(population_size=6),
         search=MonteCarloTreeSearch(nodes_per_expansion=2, c=0.05),
-        num_trials=24,
+        num_trials=100,
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
             # name="openai/gpt-4.1",
-            parameters={"temperature": 0.3},
+            parameters={"temperature": 0.8},
         ),
     )
 

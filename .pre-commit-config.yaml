@@ -23,6 +23,8 @@ repos:
           - transformers==4.57.1
           - catboost==1.2.8
           - dataclasses-json==0.6.7
+          - interpret==0.2.7
+          - sentence-transformers==5.1.2
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:

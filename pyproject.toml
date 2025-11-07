@@ -41,6 +41,8 @@ scanpy = "^1.11.4"
 harmonypy = "^0.0.10"
 scib = "^1.1.7"
 scib-metrics = "^0.5.7"
+interpret = "^0.2.7"
+sentence-transformers = "^5.1.2"
 
 [build-system]
 requires = ["poetry-core"]
