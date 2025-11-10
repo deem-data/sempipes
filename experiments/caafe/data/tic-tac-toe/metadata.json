@@ -1,0 +1,16 @@
+{
+    "name": "tic-tac-toe",
+    "description": "\n**Tic-Tac-Toe Endgame database**  \nThis database encodes the complete set of possible board configurations at the end of tic-tac-toe games, where \"x\" is assumed to have played first.  The target concept is \"win for x\" (i.e., true when \"x\" has one of 8 possible ways to create a \"three-in-a-row\").  \n\n\n\n Attribute Information  \n\n     (x=player x has taken, o=player o has taken, b=blank)\n     1. top-left-square: {x,o,b}\n     2. top-middle-square: {x,o,b}\n     3. top-right-square: {x,o,b}\n     4. middle-left-square: {x,o,b}\n     5. middle-middle-square: {x,o,b}\n     6. middle-right-square: {x,o,b}\n     7. bottom-left-square: {x,o,b}\n     8. bottom-middle-square: {x,o,b}\n     9. bottom-right-square: {x,o,b}\n    10. Class: {positive,negative}",
+    "columns": [
+        "top-left-square",
+        "top-middle-square",
+        "top-right-square",
+        "middle-left-square",
+        "middle-middle-square",
+        "middle-right-square",
+        "bottom-left-square",
+        "bottom-middle-square",
+        "bottom-right-square",
+        "Class"
+    ]
+}

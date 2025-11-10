@@ -1,0 +1,14 @@
+{
+    "name": "airlines",
+    "description": "\nAirlines Dataset Inspired in the regression dataset from Elena Ikonomovska. The task is to predict whether a given flight will be delayed, given the information of the scheduled departure.",
+    "columns": [
+        "Airline",
+        "Flight",
+        "AirportFrom",
+        "AirportTo",
+        "DayOfWeek",
+        "Time",
+        "Length",
+        "Delay"
+    ]
+}
