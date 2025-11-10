@@ -46,15 +46,15 @@ def _build_code_prompt(nl_prompt: str, df: pd.DataFrame, columns: list[str], dat
     `clean_columns(df: pandas.DataFrame, columns: list[str]) -> pandas.DataFrame` that returns the dataframe with
     cleaned values for these columns.
     
-    The data scientist wants you to take special care to the following: {nl_prompt}.
+    The data scientist wants you to take special care of the following: {nl_prompt}.
 
-    Provide only a single python method`def clean_columns(df, columns):` and returns cleaned df.
+    Provide only a single Python method `def clean_columns(df, columns):` and returns a cleaned df.
 
     The preview of current column values is: {_build_df_sample(df)}.
 
     The descriptive statistics of the columns are: {data_description}.
 
-    The cleaning should not change the number of rows, the cleaned data frame should contain {df.shape[0]} rows.
+    The cleaning should not change the number of rows; the cleaned data frame should contain {df.shape[0]} rows.
     """
     prompt += """
     Example:

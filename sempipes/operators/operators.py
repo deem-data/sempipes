@@ -164,7 +164,7 @@ class SemRefineOperator(ABC):
 class SemCleanOperator(ABC):
     @abstractmethod
     def generate_cleaning_estimator(self, nl_prompt: str, columns: list[str]) -> EstimatorTransformer:
-        """Return an estimator that applies a classical tabular data cleaninig techniques the target columns on a pandas df."""
+        """Return an estimator that applies classical tabular data cleaning techniques to the selected columns of a pandas df."""
 
 
 class SemAugmentDataOperator(ABC):
