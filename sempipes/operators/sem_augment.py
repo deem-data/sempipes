@@ -87,7 +87,7 @@ Number of samples (rows) to augment: {int(number_of_rows_to_generate)}.
 You need to generate Python code for the in-place data augmentation of the dataframe `df` that returns the original dataframe `df` with appended augmented rows. 
 The generated code should be a Python method `augment_data(df: pandas.DataFrame) -> pandas.DataFrame` that takes as input a pandas DataFrame and returns the same pandas DataFrame `df` with appended {number_of_rows_to_generate} new augmented rows`. 
 
-The data scientist wants you to take special care to the following: {nl_prompt}.
+The data scientist wants you to take special care of the following: {nl_prompt}.
 
 Code formatting for each added column:
 ```python
@@ -186,7 +186,7 @@ The generated JSON array should be readable via `pandas.read_json(StringIO(_), o
 Generate data only for the existing columns: {df.columns.to_list()}.
 
 
-The data scientist wants you to take special care to the following: {nl_prompt}.
+The data scientist wants you to take special care of the following: {nl_prompt}.
 """
 
         prompt += """

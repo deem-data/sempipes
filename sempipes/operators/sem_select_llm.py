@@ -31,7 +31,7 @@ def _sem_select(column: Any, nl_prompt: str) -> bool:
         Your goal is to help a data scientist select relevant columns from a pandas dataframe for a machine learning script 
         which they are developing. You make your decision for each column individually. 
 
-        The data scientist wants you to take special care to the following: 
+        The data scientist wants you to take special care of the following: 
         {nl_prompt}
 
         Here is detailed information about a column for which you need to make a decision now:

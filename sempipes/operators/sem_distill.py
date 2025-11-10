@@ -65,7 +65,7 @@ The generated code should be a Python method `distill_data(df: pandas.DataFrame,
 Number of samples (rows) in training dataset: {int(len(df))}.
 Number of samples (rows) to distill: `number_of_rows`.
 
-The data scientist wants you to take special care to the following: {nl_prompt}.
+The data scientist wants you to take special care of the following: {nl_prompt}.
 
 You are allowed to use `torch`, `torchvision`, `transformers` libraries. Additionally, you can leverage methods as subsampling, SMOTE, gradient matching, gradient trajectory matching, feature space matching, generative models such as GANs or diffusion, coreset selection, and other advanced techniques.
 
