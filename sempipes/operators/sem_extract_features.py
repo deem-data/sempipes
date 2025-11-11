@@ -7,6 +7,8 @@ from typing import Any
 
 import pandas as pd
 import skrub
+import torch
+import transformers
 from sklearn.base import TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
@@ -188,6 +190,7 @@ Generate Python code with method `extract_features(df: pd.DataFrame, features_to
 Data types of the columns that should be used for the feature generation: {json.dumps(modality_per_column, indent=2)}
 
 In the code, try to use the least loaded GPU if multiple GPUs are available.
+Please use transformers=={transformers.__version__} and torch=={torch.__version__}.
 
 """
     code_example = f"""
@@ -279,6 +282,7 @@ def _get_modality(column: pd.Series) -> Modality:
 def _add_memorized_history(
     memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
+    output_columns: dict[str, str],
     generated_code: list[str],
     target_metric: str,
 ) -> None:
@@ -303,16 +307,20 @@ def _add_memorized_history(
                 current_score = memorized_score
             else:
                 add_feature_sentence = (
-                    f"The last code changes were discarded. Try to change model, approach, or even extract different features."
+                    f"The last code changes were discarded. Try to change model, approach, or even extract different features and corresponding prompts."
                     f"(Improvement: {improvement})"
                 )
+
+            output_columns_sentence = ""
+            if output_columns is not None:
+                output_columns_sentence = f"Features, prompts, and columns that were used to generate this feature extraction code: {output_columns}."
 
             messages += [
                 {"role": "assistant", "content": memorized_code},
                 {
                     "role": "user",
                     "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
-                    f".{add_feature_sentence}\nNext codeblock:\n",
+                    f"{add_feature_sentence} {output_columns_sentence} \nNext codeblock:\n",
                 },
             ]
 
@@ -412,8 +420,8 @@ class LLMFeatureExtractor(EstimatorTransformer, TransformerMixin, ContextAwareMi
 
     def empty_state(self):
         state = {}
-        if self.output_columns == {}:
-            state["features_to_generate"] = [
+        if self.output_columns_not_given:
+            state["generated_features"] = [
                 {"feature_name": "", "feature_prompt": self.nl_prompt, "input_columns": self.input_columns}
             ]
 
@@ -429,10 +437,8 @@ def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, objec
 
     def state_after_fit(self):
         state = {}
-        # if self.output_columns == {}:
-        #     state["generated_features"] = [
-        #         self.output_columns
-        #     ]
+        if self.output_columns_not_given:
+            state["generated_features"] = self.output_columns
 
         if self.generate_via_code:
             state["generated_code"] = self.generated_code_
@@ -441,19 +447,16 @@ def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, objec
     def memory_update_from_latest_fit(self):
         if self.generate_via_code:
             if self.generated_code_ is not None and len(self.generated_code_) > 0:
-                if self.output_columns_not_given:
-                    return f"Features suggested for the generation: {self.output_columns}. Generated code: {self.generated_code_[-1]}"
-                return f"Generated code: {self.generated_code_[-1]}"
+                return f"{self.generated_code_[-1]}"
         return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
         if self._prefitted_state is not None:
             print(f"--- Using provided state for sempipes.sem_extract_features('{self.nl_prompt[:20]}...')")
-            # if self.output_columns == {}:
-            #     self.generated_features_ = self._prefitted_state["generated_features"]
+            if self.output_columns_not_given and "generated_features" in self._prefitted_state:
+                self.generated_features_ = self._prefitted_state["generated_features"]
             if self.generate_via_code:
                 self.generated_code_ = self._prefitted_state["generated_code"]
-                # self.generated_features_ = self._prefitted_state["generated_features"]
             return self
 
         # Determine modalities of input columns
@@ -504,7 +507,13 @@ def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, objec
             try:
                 if attempt == 1:
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                    _add_memorized_history(self._memory, messages, generated_code, target_metric)
+                    _add_memorized_history(
+                        self._memory,
+                        messages,
+                        self.output_columns if self.output_columns_not_given else None,
+                        generated_code,
+                        target_metric,
+                    )
 
                 code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(generated_code)
@@ -532,13 +541,6 @@ def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, objec
                 ]
 
         self.generated_code_ = generated_code
-
-        # # Extract actual features
-        # code_to_execute = "\n".join(generated_code)
-        # feature_extraction_func = safe_exec(code_to_execute, "extract_features")
-        # df = feature_extraction_func(df, self.generated_features_)
-
-        print(f"\t> Generated code: {code_to_execute}")
 
     def extract_features_with_llm(self, df):
         # Construct prompts with multi-modal data

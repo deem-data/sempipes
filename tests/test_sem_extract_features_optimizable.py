@@ -39,16 +39,26 @@ def test_sem_extract_features_text():
         num_trials=3,
         scoring="accuracy",
         search=EvolutionarySearch(population_size=6),
-        cv=2,
+        cv=3,
         num_hpo_iterations_per_trial=1,
     )
 
     best_outcome = max(outcomes, key=lambda x: x.score)
 
+    print(f"Best outcome (train) score after optimization: {best_outcome.score}")
+
     print(f"Tabular predictor performance w/o extracted features: {score_before}")
     print(f"Tabular predictor performance with extracted features: {score_with_features}")
-    print(f"Best outcome score after optimisation: {best_outcome.score}")
-    assert score_before <= best_outcome.score
+
+    score_with_features_new = learner_with_features.score(split_with_features["test"])
+    print(f"Tabular predictor performance with extracted features (optimized) 2: {score_with_features_new}")
+
+    pipeline = task_with_features
+    learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
+    score_with_features_optimized = learner.score(split_with_features["test"])
+    print(f"Tabular predictor performance with extracted features (optimized): {score_with_features_optimized}")
+
+    assert score_before <= score_with_features_optimized
 
 
 test_sem_extract_features_text()
