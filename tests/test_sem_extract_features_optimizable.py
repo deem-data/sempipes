@@ -44,21 +44,14 @@ def test_sem_extract_features_text():
     )
 
     best_outcome = max(outcomes, key=lambda x: x.score)
-
     print(f"Best outcome (train) score after optimization: {best_outcome.score}")
+
+    pipeline = task_with_features
+    learner = pipeline.skb.make_learner(fitted=True, keep_subsampling=False)
+    score_with_features_optimized = learner.score(split_with_features["test"])
 
     print(f"Tabular predictor performance w/o extracted features: {score_before}")
     print(f"Tabular predictor performance with extracted features: {score_with_features}")
-
-    score_with_features_new = learner_with_features.score(split_with_features["test"])
-    print(f"Tabular predictor performance with extracted features (optimized) 2: {score_with_features_new}")
-
-    pipeline = task_with_features
-    learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-    score_with_features_optimized = learner.score(split_with_features["test"])
     print(f"Tabular predictor performance with extracted features (optimized): {score_with_features_optimized}")
 
-    assert score_before <= score_with_features_optimized
-
-
-test_sem_extract_features_text()
+    assert score_before <= score_with_features <= score_with_features_optimized

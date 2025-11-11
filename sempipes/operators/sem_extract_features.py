@@ -584,7 +584,7 @@ def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, objec
             feature_extraction_func = safe_exec(code_to_execute, "extract_features")
             df = feature_extraction_func(df, self.generated_features_)
 
-            print(f"\t> Generated columns: {list(df.columns)}. \n Code: {code_to_execute}")
+            print(f"\t> Generated columns: {list(df.columns)}.")
 
         else:
             df = self.extract_features_with_llm(df=df)
