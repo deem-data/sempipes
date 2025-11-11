@@ -134,6 +134,8 @@ class SemExtractFeaturesOperator(ABC):
     @abstractmethod
     def generate_features_extractor(
         self,
+        data_op: DataOp,
+        name: str,
         nl_prompt: str,
         input_columns: list[str],
         output_columns: dict[str, str] | None,

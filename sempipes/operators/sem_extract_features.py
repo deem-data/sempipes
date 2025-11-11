@@ -2,25 +2,32 @@ import base64
 import json
 import mimetypes
 from enum import Enum
+from random import randint
+from typing import Any
 
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+import skrub
+from sklearn.base import TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import (
     batch_generate_json_retries,
     generate_json_from_messages,
     generate_python_code_from_messages,
     get_generic_message,
 )
-from sempipes.operators.operators import EstimatorTransformer, SemExtractFeaturesOperator
+from sempipes.operators.operators import (
+    ContextAwareMixin,
+    EstimatorTransformer,
+    OptimisableMixin,
+    SemExtractFeaturesOperator,
+)
 
 _MAX_RETRIES = 5
-_SYSTEM_PROMPT = """
-You are an expert data scientist, assisting feature extraction from the multi-modal data such as text/images/audio.
-"""
+_SYSTEM_PROMPT = "You are an expert data scientist, assisting feature extraction from the multi-modal data such as text/images/audio."
 
 
 # class syntax
@@ -88,7 +95,7 @@ def _get_feature_suggestion_message(
     Your goal is to help a data scientist select which features can be generated from multi-modal data from a pandas dataframe for a machine learning script which they are developing. 
     You can make your decision for each column individually or for combinations of multiple columns. 
 
-    The data scientist wants you to take special care of the following: {nl_prompt}
+    Please to take special care of the following: {nl_prompt}
 
     The data scientist wants to generate new features based on the following columns in a dataframe: {input_columns}.
 
@@ -109,7 +116,9 @@ def _get_feature_suggestion_message(
     ]
     ```
 
-    Answer ONLY with a JSON object like in the example.
+    ANSWER ONLY WITH A JSON OBJECT LIKE IN THE EXAMPLE.
+
+    MAKE SURE THAT THE NEW FEATURES HAVE MEANINGFUL NAMES.
     """
 
     content: list[dict] = [
@@ -205,8 +214,12 @@ def pick_gpu_by_free_mem_torch():
     print(f"Chosen GPU: {{idx}}")
     return idx
 
-gpu_idx = pick_gpu_by_free_mem_torch()
-device = torch.device(f"cuda:{{gpu_idx}}") # Use the selected GPU for model inference
+if torch.cuda.device_count() > 1:
+    gpu_idx = pick_gpu_by_free_mem_torch()
+    device = torch.device(f"cuda:{{gpu_idx}}") # Use the selected GPU for model inference
+else:
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
+
 
 features_to_extract = {features_to_extract}
 
@@ -263,16 +276,72 @@ def _get_modality(column: pd.Series) -> Modality:
     return modality
 
 
-class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
+def _add_memorized_history(
+    memory: list[dict[str, Any]] | None,
+    messages: list[dict[str, str]],
+    generated_code: list[str],
+    target_metric: str,
+) -> None:
+    if memory is not None and len(memory) > 0:
+        current_score = None
+
+        for memory_line in memory:
+            memorized_code = memory_line["update"]
+            memorized_score = memory_line["score"]
+
+            if current_score is None:
+                improvement = abs(memorized_score)
+            else:
+                improvement = memorized_score - current_score
+
+            if improvement > 0.0:
+                generated_code.append(memorized_code)
+                add_feature_sentence = (
+                    "The code was executed and improved the downstream performance. "
+                    "You may reuse this feature extraction code and transformers model for the next version of the code."
+                )
+                current_score = memorized_score
+            else:
+                add_feature_sentence = (
+                    f"The last code changes were discarded. Try to change model, approach, or even extract different features."
+                    f"(Improvement: {improvement})"
+                )
+
+            messages += [
+                {"role": "assistant", "content": memorized_code},
+                {
+                    "role": "user",
+                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
+                    f".{add_feature_sentence}\nNext codeblock:\n",
+                },
+            ]
+
+
+# pylint: disable=too-many-ancestors, too-many-instance-attributes
+class LLMFeatureExtractor(EstimatorTransformer, TransformerMixin, ContextAwareMixin, OptimisableMixin):
     def __init__(
-        self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None, generate_via_code: bool
+        self,
+        nl_prompt: str,
+        input_columns: list[str],
+        output_columns: dict[str, str] | None,
+        generate_via_code: bool,
+        eval_mode: str = skrub.eval_mode(),
+        _pipeline_summary: PipelineSummary | None | DataOp = None,
+        _prefitted_state: dict[str, Any] | DataOp | None = None,
+        _memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.input_columns = input_columns
+        self.output_columns_not_given = output_columns is None
         self.output_columns = {} if output_columns is None else output_columns
         self.generate_via_code = generate_via_code
         self.modality_per_column: dict[str, Modality] = {}
         self.generated_features_: list[dict[str, object]] = []
+
+        self.eval_mode = eval_mode
+        self._pipeline_summary = _pipeline_summary
+        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
+        self._memory: list[dict[str, Any]] | DataOp | None = _memory
 
     def _build_mm_generation_prompt(self, row):
         audios, images = [], []
@@ -316,7 +385,6 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
     def _build_output_columns_to_generate_llm(self, df: pd.DataFrame):
         # Form prompts with examples
-        # TODO can be replaced with column descritions later
         samples_str, samples_image, samples_audio = _get_modality_prompts(
             df=df, modality_per_column=self.modality_per_column
         )
@@ -342,7 +410,52 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             else:
                 print("\t> Unable to parse some of the suggested features.")
 
+    def empty_state(self):
+        state = {}
+        if self.output_columns == {}:
+            state["features_to_generate"] = [
+                {"feature_name": "", "feature_prompt": self.nl_prompt, "input_columns": self.input_columns}
+            ]
+
+        if self.generate_via_code:
+            state["generated_code"] = [
+                """  
+def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, object]]) -> pd.DataFrame:
+    return df    
+"""
+            ]
+
+        return state
+
+    def state_after_fit(self):
+        state = {}
+        # if self.output_columns == {}:
+        #     state["generated_features"] = [
+        #         self.output_columns
+        #     ]
+
+        if self.generate_via_code:
+            state["generated_code"] = self.generated_code_
+        return state
+
+    def memory_update_from_latest_fit(self):
+        if self.generate_via_code:
+            if self.generated_code_ is not None and len(self.generated_code_) > 0:
+                if self.output_columns_not_given:
+                    return f"Features suggested for the generation: {self.output_columns}. Generated code: {self.generated_code_[-1]}"
+                return f"Generated code: {self.generated_code_[-1]}"
+        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
+        if self._prefitted_state is not None:
+            print(f"--- Using provided state for sempipes.sem_extract_features('{self.nl_prompt[:20]}...')")
+            # if self.output_columns == {}:
+            #     self.generated_features_ = self._prefitted_state["generated_features"]
+            if self.generate_via_code:
+                self.generated_code_ = self._prefitted_state["generated_code"]
+                # self.generated_features_ = self._prefitted_state["generated_features"]
+            return self
+
         # Determine modalities of input columns
         self.modality_per_column = {column: _get_modality(df[column]) for column in self.input_columns}
 
@@ -364,9 +477,17 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                 )
 
         print(f"\t> Generated possible columns: { self.generated_features_}")
+
+        if self.generate_via_code:  # Extract actual features via code generation
+            self.extract_features_with_code(df)
+
         return self
 
     def extract_features_with_code(self, df):
+        target_metric = "accuracy"
+        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
+            target_metric = self._pipeline_summary.target_metric
+
         # Construct prompts with multi-modal data
         prompt = _get_code_feature_generation_message(
             columns_to_generate=list(self.output_columns.keys()),
@@ -383,6 +504,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             try:
                 if attempt == 1:
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+                    _add_memorized_history(self._memory, messages, generated_code, target_metric)
 
                 code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(generated_code)
@@ -409,14 +531,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                     },
                 ]
 
-        # Extract actual features
-        code_to_execute = "\n".join(generated_code)
-        feature_extraction_func = safe_exec(code_to_execute, "extract_features")
-        df = feature_extraction_func(df, self.generated_features_)
+        self.generated_code_ = generated_code
 
-        print(f"\t> Generated columns: {list(df.columns)}. \n Code: {code_to_execute}")
+        # # Extract actual features
+        # code_to_execute = "\n".join(generated_code)
+        # feature_extraction_func = safe_exec(code_to_execute, "extract_features")
+        # df = feature_extraction_func(df, self.generated_features_)
 
-        return df
+        print(f"\t> Generated code: {code_to_execute}")
 
     def extract_features_with_llm(self, df):
         # Construct prompts with multi-modal data
@@ -455,7 +577,12 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         check_is_fitted(self, "generated_features_")
 
         if self.generate_via_code:
-            df = self.extract_features_with_code(df=df)
+            # Extract actual features
+            code_to_execute = "\n".join(self.generated_code_)
+            feature_extraction_func = safe_exec(code_to_execute, "extract_features")
+            df = feature_extraction_func(df, self.generated_features_)
+
+            print(f"\t> Generated columns: {list(df.columns)}. \n Code: {code_to_execute}")
 
         else:
             df = self.extract_features_with_llm(df=df)
@@ -466,16 +593,26 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
     def generate_features_extractor(
         self,
+        data_op: DataOp,
+        name: str,
         nl_prompt: str,
         input_columns: list[str],
         output_columns: dict[str, str] | None = None,
         **kwargs,
-    ) -> EstimatorTransformer:
+    ):
+        pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
+        prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
+        memory = skrub.var(f"sempipes_memory__{name}", [])
+        eval_mode = skrub.eval_mode()
         return LLMFeatureExtractor(
             nl_prompt=nl_prompt,
             input_columns=input_columns,
             output_columns=output_columns,
             generate_via_code=kwargs.get("generate_via_code", False),
+            eval_mode=eval_mode,
+            _pipeline_summary=pipeline_summary,
+            _prefitted_state=prefitted_state,
+            _memory=memory,
         )
 
 
@@ -483,10 +620,18 @@ def sem_extract_features(
     self: DataOp,
     nl_prompt: str,
     input_columns: list[str],
+    name: str = f"random_{randint(0, 10000)}_name",
     output_columns: dict[str, str] | None = None,
     **kwargs,
 ) -> DataOp:
+    data_op = self
+
     feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(
-        nl_prompt, input_columns, output_columns, **kwargs
+        data_op,
+        name,
+        nl_prompt,
+        input_columns,
+        output_columns,
+        **kwargs,
     )
-    return self.skb.apply(feature_extractor)
+    return self.skb.apply(feature_extractor, how="no_wrap").skb.set_name(name)
