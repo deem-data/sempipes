@@ -40,7 +40,7 @@ def _get_prompt(
     usefulness = ""
     model_reference = "classifier"
     target_metric = "accuracy"
-    #source_code_hint = ""
+    # source_code_hint = ""
 
     if pipeline_summary is not None:
         task_type = pipeline_summary.task_type

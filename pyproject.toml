@@ -82,4 +82,7 @@ line-ending = "auto"
 [tool.ruff.lint.per-file-ignores]
 "**/{docs}/*" = ["ALL"]
 "**__init__.py" = ["ALL"]
-"comparisons/single_cell_analysis/aide_qr.py" = ["ALL"]
+"experiments/single_cell_analysis/aide_qr.py" = ["ALL"]
+
+[tool.mypy]
+exclude = '(^|/)experiments'

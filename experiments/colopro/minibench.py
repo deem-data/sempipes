@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
     pipelines = [
         MidwestSurveyPipeline(),
-        #BoxOfficePipeline(),
-        #HealthInsurancePipeline(),
-        #FraudBasketsPipeline(),
-        #ChurnPipeline(),
+        # BoxOfficePipeline(),
+        # HealthInsurancePipeline(),
+        # FraudBasketsPipeline(),
+        # ChurnPipeline(),
     ]
 
     results = []
@@ -48,15 +48,15 @@ if __name__ == "__main__":
         for pipeline in pipelines:
             results.append(_evaluate_pipeline(pipeline, setup))
 
-    #executor = get_reusable_executor(max_workers=degree_of_parallelism, kill_workers=True)
-    #futures = [
+    # executor = get_reusable_executor(max_workers=degree_of_parallelism, kill_workers=True)
+    # futures = [
     #    executor.submit(_evaluate_pipeline, pipeline, setup) for _ in range(num_repetitions) for pipeline in pipelines
-    #]
+    # ]
 
-    #results.extend(f.result() for f in futures)
+    # results.extend(f.result() for f in futures)
 
     print("#" * 120)
     for name, score in results:
         print(name, score)
 
-    #executor.shutdown(wait=True)
+    # executor.shutdown(wait=True)

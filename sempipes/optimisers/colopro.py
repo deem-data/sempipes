@@ -10,7 +10,7 @@ from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.operators.operators import OptimisableMixin
 from sempipes.operators.sem_choose_llm import SemChooseLLM
-from sempipes.optimisers import TreeSearch
+from sempipes.optimisers.greedy_tree_search import TreeSearch
 from sempipes.optimisers.search_policy import Outcome, SearchNode, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json
 
@@ -80,7 +80,7 @@ def _needs_hpo(dag_sink):
     return len(pipeline_choices["choices"]) > 0
 
 
-def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many-locals
+def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many-locals, too-many-statements
     dag_sink: DataOp,
     operator_name: str,
     num_trials: int,

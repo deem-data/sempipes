@@ -1,22 +1,19 @@
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, roc_auc_score
-#from tabpfn import TabPFNClassifier
-#from tabpfn.constants import ModelVersion
+# from tabpfn import TabPFNClassifier
+# from tabpfn.constants import ModelVersion
 import warnings
+
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
 from experiments.caafe import scoring
 
 warnings.filterwarnings("ignore")
 
-datasets = [
-    "airlines",
-    "balance-scale",
-    "tic-tac-toe"
-]
+datasets = ["airlines", "balance-scale", "tic-tac-toe"]
 
-prompt_id = 'v3'
+prompt_id = "v3"
 
 for dataset_name in datasets:
     baselines_scores = []
@@ -24,8 +21,7 @@ for dataset_name in datasets:
 
     failures = 0
     for seed in range(0, 5):
-
-        data = pd.read_csv(f'experiments/caafe/data/{dataset_name}/data.csv')
+        data = pd.read_csv(f"experiments/caafe/data/{dataset_name}/data.csv")
         target_column = data.columns[-1]
 
         train, test = train_test_split(data, test_size=0.25, random_state=seed)
@@ -42,23 +38,22 @@ for dataset_name in datasets:
         X_test_baseline = X_test.copy(deep=True)
 
         baseline_clf = RandomForestClassifier(random_state=seed)
-        #baseline_clf = TabPFNClassifier.create_default_for_version(ModelVersion.V2)
+        # baseline_clf = TabPFNClassifier.create_default_for_version(ModelVersion.V2)
         baseline_clf.fit(X_train_baseline, y_train)
 
         baseline_y_pred = baseline_clf.predict_proba(X_test_baseline)
         baseline_score = scoring(y_test, baseline_y_pred)
         baselines_scores.append(baseline_score)
 
-        with open(f'experiments/caafe/data/{dataset_name}/{dataset_name}_{prompt_id}_{seed}_code.txt', "r",
-                  encoding="utf-8") as f:
+        with open(
+            f"experiments/caafe/data/{dataset_name}/{dataset_name}_{prompt_id}_{seed}_code.txt", "r", encoding="utf-8"
+        ) as f:
             code = f.read()
 
-
         def gen_features(code, data):
-            local_vars = {'df': data.copy()}
+            local_vars = {"df": data.copy()}
             exec(code, {}, local_vars)
-            return local_vars['df']
-
+            return local_vars["df"]
 
         try:
             X_train_caafe = gen_features(code, X_train)
@@ -67,7 +62,7 @@ for dataset_name in datasets:
             X_test_caafe = X_test_caafe.replace([np.inf, -np.inf, np.nan], 0)
 
             caafe_clf = RandomForestClassifier(random_state=seed)
-            #caafe_clf = TabPFNClassifier.create_default_for_version(ModelVersion.V2)
+            # caafe_clf = TabPFNClassifier.create_default_for_version(ModelVersion.V2)
             caafe_clf.fit(X_train_caafe, y_train)
 
             caafe_y_pred = caafe_clf.predict_proba(X_test_caafe)
@@ -76,7 +71,7 @@ for dataset_name in datasets:
             # print('#', dataset_name, seed, prompt_id, baseline_score, caafe_score)
             caafe_scores.append(caafe_score)
 
-        except Exception as e:
+        except Exception:
             failures += 1
             # pass
             # print(f"⚠️ Exception occurred in {dataset_name} {seed}: {e}")
@@ -89,4 +84,5 @@ for dataset_name in datasets:
     caafe_std = np.std(caafe_scores)
 
     print(
-        f"{dataset_name},{caafe_mean - baseline_mean},{baseline_mean},{baseline_std},{caafe_mean},{caafe_std},{failures}")
+        f"{dataset_name},{caafe_mean - baseline_mean},{baseline_mean},{baseline_std},{caafe_mean},{caafe_std},{failures}"
+    )
