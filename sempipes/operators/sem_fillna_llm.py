@@ -56,7 +56,7 @@ class LLMImputer(BaseEstimator, TransformerMixin):
         The dataframe has the following columns available with these values to help with this task: {serialised_row}. You need to assist the data scientist with filling the missing values in the target column.
         {values_instruction}
         
-        The data scientist wants you to take special care to the following: 
+        The data scientist wants you to take special care of the following: 
         {nl_prompt}.
         
         Answer with only the value to impute, without any additional text or formatting.

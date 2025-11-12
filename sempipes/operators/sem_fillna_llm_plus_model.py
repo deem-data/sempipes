@@ -39,7 +39,7 @@ class LearnedImputer(BaseEstimator, TransformerMixin):
         {candidate_columns}. 
         
         You need to assist the data scientists with choosing which columns to use to fill the missing values in 
-        the target column. The data scientist wants you to take special care to the following: 
+        the target column. The data scientist wants you to take special care of the following: 
         {nl_prompt}.
 
         Code formatting for your answer:

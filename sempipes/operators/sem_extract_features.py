@@ -88,7 +88,7 @@ def _get_feature_suggestion_message(
     Your goal is to help a data scientist select which features can be generated from multi-modal data from a pandas dataframe for a machine learning script which they are developing. 
     You can make your decision for each column individually or for combinations of multiple columns. 
 
-    The data scientist wants you to take special care to the following: {nl_prompt}
+    The data scientist wants you to take special care of the following: {nl_prompt}
 
     The data scientist wants to generate new features based on the following columns in a dataframe: {input_columns}.
 
@@ -178,6 +178,8 @@ Generate Python code with method `extract_features(df: pd.DataFrame, features_to
 
 Data types of the columns that should be used for the feature generation: {json.dumps(modality_per_column, indent=2)}
 
+In the code, try to use the least loaded GPU if multiple GPUs are available.
+
 """
     code_example = f"""
 Code formatting for each added column:
@@ -190,6 +192,21 @@ from transformers import (
     AutoModelForTokenClassification,
     pipeline,
 )
+
+def pick_gpu_by_free_mem_torch():
+    assert torch.cuda.is_available(), "No CUDA device"
+    free = []
+    for i in range(torch.cuda.device_count()):
+        # returns (free, total) in bytes for that device
+        f, t = torch.cuda.mem_get_info(i)
+        free.append((f, i))
+    free.sort(reverse=True)
+    _, idx = free[0]
+    print(f"Chosen GPU: {{idx}}")
+    return idx
+
+gpu_idx = pick_gpu_by_free_mem_torch()
+device = torch.device(f"cuda:{{gpu_idx}}") # Use the selected GPU for model inference
 
 features_to_extract = {features_to_extract}
 

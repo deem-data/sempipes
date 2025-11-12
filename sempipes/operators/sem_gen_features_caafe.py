@@ -102,7 +102,7 @@ The {model_reference} will be trained on the dataset with the generated columns 
 evaluation metric is {target_metric}. The best performing code will be selected.
 Added columns can be used in other codeblocks.
 
-The data scientist wants you to take special care to the following: {nl_prompt}.
+The data scientist wants you to take special care of the following: {nl_prompt}.
 
 Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
 

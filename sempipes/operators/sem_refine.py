@@ -80,7 +80,7 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         The generated refinement/refinement code can build a correspondence dictionary on how to refine, union, and group values for better consistency and generalizability, use similarity, n-grams, tf-idf, or call external libraries for the refinement.
         Do not use pandas.drop_duplicates() and do not change the size of the input dataframe.
         
-        The data scientist wants you to take special care to the following: 
+        The data scientist wants you to take special care of the following: 
         {nl_prompt}.
 
         """
