@@ -1,12 +1,20 @@
 from io import StringIO
+from random import randint
+from typing import Any
 
 import pandas as pd
+import skrub
 from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import batch_generate_json_retries, generate_python_code_from_messages
-from sempipes.operators.operators import SemAugmentDataOperator
+from sempipes.operators.operators import (
+    ContextAwareMixin,
+    OptimisableMixin,
+    SemAugmentDataOperator,
+)
 
 _SYSTEM_PROMPT = """
 You are an expert data scientist, assisting with data augmentation. You answer by generating code or directly generating data.
@@ -32,10 +40,27 @@ def _get_samples_from_df(
 
 
 class SemAugmentData(SemAugmentDataOperator):
-    def generate_data_generator(self, nl_prompt: str, number_of_rows_to_generate: int, **kwargs):
+    def generate_data_generator(
+        self,
+        data_op: DataOp,
+        nl_prompt: str,
+        name: str,
+        number_of_rows_to_generate: int,
+        **kwargs,
+    ):
         generate_via_code = kwargs["generate_via_code"] if "generate_via_code" in kwargs else True
         if generate_via_code:
-            return CodeDataAugmentor(nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate)
+            _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
+            _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
+            _memory = skrub.var(f"sempipes_memory__{name}", [])
+            return CodeDataAugmentor(
+                nl_prompt=nl_prompt,
+                number_of_rows_to_generate=number_of_rows_to_generate,
+                eval_mode=skrub.eval_mode(),
+                _pipeline_summary=_pipeline_summary,
+                _prefitted_state=_prefitted_state,
+                _memory=_memory,
+            )
         return DirectDataAugmentor(nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate)
 
 
@@ -59,15 +84,60 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str, number_of_rows_to_ge
     print(f" Generated {df_sample_processed.shape[0]} rows from a pd.DataFrame with {df_sample.shape[0]} rows.")
 
 
-class CodeDataAugmentor(BaseEstimator, TransformerMixin):
+def _add_memorized_history(
+    memory: list[dict[str, Any]] | None,
+    messages: list[dict[str, str]],
+    generated_code: list[str],
+    target_metric: str,
+) -> None:
+    if memory is not None and len(memory) > 0:
+        current_score = None
+
+        for memory_line in memory:
+            memorized_code = memory_line["update"]
+            memorized_score = memory_line["score"]
+
+            if current_score is None:
+                improvement = abs(memorized_score)
+            else:
+                improvement = memorized_score - current_score
+
+            if improvement > 0.0:
+                generated_code.append(memorized_code)
+                add_feature_sentence = "The code was executed and changes to augment ´df´ were kept."
+                current_score = memorized_score
+            else:
+                add_feature_sentence = f"The last code changes to ´df´ were discarded. " f"(Improvement: {improvement})"
+
+            messages += [
+                {"role": "assistant", "content": memorized_code},
+                {
+                    "role": "user",
+                    "content": f"Performance after data augmentation: {target_metric}={memorized_score:.5f}. "
+                    f".{add_feature_sentence}\nNext codeblock:\n",
+                },
+            ]
+
+
+# pylint: disable=too-many-ancestors
+class CodeDataAugmentor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
     def __init__(
         self,
         nl_prompt: str,
         number_of_rows_to_generate: int,
+        eval_mode: str = skrub.eval_mode(),
+        _pipeline_summary: PipelineSummary | None | DataOp = None,
+        _prefitted_state: dict[str, Any] | DataOp | None = None,
+        _memory: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.number_of_rows_to_generate = number_of_rows_to_generate
+        self.eval_mode = eval_mode
+        self._pipeline_summary = _pipeline_summary
+        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
+        self._memory: list[dict[str, Any]] | DataOp | None = _memory
         self.generated_code_: list[str] = []
+        self.df_augmented_: pd.DataFrame | None = None
 
     @staticmethod
     def _build_prompt_for_code_generation(
@@ -104,32 +174,55 @@ Return only Python code, no explanations or apologies.
 Codeblock:
 """
 
+    def empty_state(self):
+        return {"generated_code": []}
+
+    def state_after_fit(self):
+        return {"generated_code": self.generated_code_}
+
+    def memory_update_from_latest_fit(self):
+        if self.generated_code_ is not None and len(self.generated_code_) > 0:
+            return self.generated_code_[-1]
+        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
         print(f"--- sempipes.sem_augment('{self.nl_prompt}', True, {self.number_of_rows_to_generate})")
+        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
+
+        if self._prefitted_state is not None:
+            print(
+                f"--- Using provided state for sempipes.sem_augment('{prompt_preview}...', {self.number_of_rows_to_generate})"
+            )
+            self.generated_code_ = self._prefitted_state["generated_code"]
+            if self.df_augmented_ is not None:
+                return self.df_augmented_
+            print("\t> Warning: Provided state has empty df_augmented_, generating new code...")
+
+        target_metric = "accuracy"
+        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
+            target_metric = self._pipeline_summary.target_metric
 
         messages = []
+        samples = _get_samples_from_df(X, number_of_samples=10)
+        prompt = self._build_prompt_for_code_generation(
+            df=X,
+            nl_prompt=self.nl_prompt,
+            data_description_unparsed=X.describe(include="all").to_string(),
+            samples=samples,
+            number_of_rows_to_generate=self.number_of_rows_to_generate,
+        )
+
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
 
+            if attempt == 1:
+                messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+                _add_memorized_history(self._memory, messages, self.generated_code_, target_metric)
+
             try:
-                samples = _get_samples_from_df(X, number_of_samples=10)
-                prompt = self._build_prompt_for_code_generation(
-                    df=X,
-                    nl_prompt=self.nl_prompt,
-                    data_description_unparsed=X.describe(include="all").to_string(),
-                    samples=samples,
-                    number_of_rows_to_generate=self.number_of_rows_to_generate,
-                )
-
-                if attempt == 1:
-                    messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-
                 code = generate_python_code_from_messages(messages)
-                code_to_execute = "\n".join(self.generated_code_)
-                code_to_execute += "\n\n" + code
-
+                code_to_execute = "\n".join(self.generated_code_) + "\n\n" + code
                 _try_to_execute(X, code_to_execute, self.number_of_rows_to_generate)
-
                 self.generated_code_.append(code)
                 break
             except Exception as e:  # pylint: disable=broad-except
@@ -146,6 +239,7 @@ Codeblock:
         code_to_execute = "\n".join(self.generated_code_)
         augmentation_func = safe_exec(code_to_execute, "augment_data")
         df_augmented = augmentation_func(X)
+        self.df_augmented_ = df_augmented
         return df_augmented
 
     def transform(self, df):
@@ -240,15 +334,27 @@ Codeblock:
     def transform(self, df):
         return df
 
+    def __sklearn_clone__(self):
+        raise NotImplementedError("Cloning of DirectDataAugmentor is not supported")
+
 
 def sem_augment(
     self: DataOp,
     nl_prompt: str,
     number_of_rows_to_generate: int,
+    name: str | None = None,
     **kwargs,
 ) -> DataOp:
+    if name is None:
+        name = f"random_{randint(0, 10000)}_name"
+
+    data_op = self
     data_augmentor = SemAugmentData().generate_data_generator(
-        nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate, **kwargs
+        data_op=data_op,
+        nl_prompt=nl_prompt,
+        name=name,
+        number_of_rows_to_generate=number_of_rows_to_generate,
+        **kwargs,
     )
 
-    return self.skb.apply(data_augmentor, how="no_wrap")
+    return self.skb.apply(data_augmentor, how="no_wrap").skb.set_name(name)

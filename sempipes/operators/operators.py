@@ -156,14 +156,21 @@ class SemFillNAOperator(ABC):
 class SemRefineOperator(ABC):
     @abstractmethod
     def generate_refinement_estimator(
-        self, target_column: str, nl_prompt: str, refine_with_existing_values_only: bool
+        self,
+        data_op: DataOp,
+        target_column: str,
+        nl_prompt: str,
+        refine_with_existing_values_only: bool,
+        name: str,
     ) -> EstimatorTransformer:
         """Return an estimator that refines values in the target column on a pandas df."""
 
 
 class SemCleanOperator(ABC):
     @abstractmethod
-    def generate_cleaning_estimator(self, nl_prompt: str, columns: list[str]) -> EstimatorTransformer:
+    def generate_cleaning_estimator(
+        self, data_op: DataOp, nl_prompt: str, columns: list[str], name: str
+    ) -> EstimatorTransformer:
         """Return an estimator that applies classical tabular data cleaning techniques to the selected columns of a pandas df."""
 
 
@@ -171,7 +178,9 @@ class SemAugmentDataOperator(ABC):
     @abstractmethod
     def generate_data_generator(
         self,
+        data_op: DataOp,
         nl_prompt: str,
+        name: str,
         number_of_rows_to_generate: int,
         **kwargs,
     ) -> EstimatorTransformer:

@@ -1,13 +1,21 @@
-from typing import Self
+from random import randint
+from typing import Any, Self
 
 import pandas as pd
+import skrub
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
-from sempipes.operators.operators import EstimatorTransformer, SemCleanOperator
+from sempipes.operators.operators import (
+    ContextAwareMixin,
+    EstimatorTransformer,
+    OptimisableMixin,
+    SemCleanOperator,
+)
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
@@ -168,19 +176,96 @@ def _build_code_prompt(nl_prompt: str, df: pd.DataFrame, columns: list[str], dat
     return prompt
 
 
-class LLMCleaner(BaseEstimator, TransformerMixin):
+def _add_memorized_history(
+    memory: list[dict[str, Any]] | None,
+    messages: list[dict[str, str]],
+    generated_code: list[str],
+    target_metric: str,
+) -> None:
+    if memory is not None and len(memory) > 0:
+        current_score = None
+
+        for memory_line in memory:
+            memorized_code = memory_line["update"]
+            memorized_score = memory_line["score"]
+
+            if current_score is None:
+                improvement = abs(memorized_score)
+            else:
+                improvement = memorized_score - current_score
+
+            if improvement > 0.0:
+                generated_code.append(memorized_code)
+                add_feature_sentence = "The code was executed and changes to ´df´ were kept."
+                current_score = memorized_score
+            else:
+                add_feature_sentence = (
+                    f"The last cleaning code changes were discarded "
+                    f"(improvement: {improvement}). Please make more improvements to the cleaning code."
+                )
+
+            messages += [
+                {"role": "assistant", "content": memorized_code},
+                {
+                    "role": "user",
+                    "content": f"Performance after cleaning selected columns with suggested code: {target_metric}={memorized_score:.5f}. "
+                    f"{add_feature_sentence}\nNext codeblock:\n",
+                },
+            ]
+
+
+# pylint: disable=too-many-ancestors
+class LLMCleaner(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
     """Transformer that generates python cleaning code via the LLM.
 
     The transformer asks the LLM to produce a `clean_columns(df)` function and executes it.
     """
 
-    def __init__(self, nl_prompt: str, columns: list[str]) -> None:
+    def __init__(
+        self,
+        nl_prompt: str,
+        columns: list[str],
+        eval_mode: str = skrub.eval_mode(),
+        _pipeline_summary: PipelineSummary | None | DataOp = None,
+        _prefitted_state: dict[str, Any] | DataOp | None = None,
+        _memory: list[dict[str, Any]] | DataOp | None = None,
+    ) -> None:
         self.nl_prompt = nl_prompt
         self.columns = columns
+        self.eval_mode = eval_mode
+        self._pipeline_summary = _pipeline_summary
+        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
+        self._memory: list[dict[str, Any]] | DataOp | None = _memory
         self.generated_code_: list[str] = []
+
+    def empty_state(self):
+        return {"generated_code": []}
+
+    def state_after_fit(self):
+        return {"generated_code": self.generated_code_}
+
+    def memory_update_from_latest_fit(self):
+        if self.generated_code_ is not None and len(self.generated_code_) > 0:
+            return self.generated_code_[-1]
+        return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, df: pd.DataFrame, y=None) -> Self:  # pylint: disable=unused-argument
         print(f"--- sempipes.sem_clean(columns={self.columns}, nl_prompt='{self.nl_prompt}')")
+        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
+
+        if self._prefitted_state is not None:
+            print(f"--- Using provided state for sempipes.sem_clean('{prompt_preview}...', {self.columns})")
+            self.generated_code_ = self._prefitted_state["generated_code"]
+
+            # If state was provided but generated_code is empty, we still need to generate code
+            if not self.generated_code_:
+                print("\t> Warning: Provided state has empty generated_code, generating new code...")
+            else:
+                return self
+
+        target_metric = "accuracy"
+        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
+            target_metric = self._pipeline_summary.target_metric
 
         data_description = str(df[self.columns].describe(include="all"))
 
@@ -193,6 +278,9 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
             try:
+                if attempt == 1:
+                    _add_memorized_history(self._memory, messages, self.generated_code_, target_metric)
+
                 code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(generated_code) + "\n\n" + code
 
@@ -216,6 +304,8 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         check_is_fitted(self, ("generated_code_",))
 
+        print(self.generated_code_)
+
         code_to_execute = "\n".join(self.generated_code_)
         clean_func = safe_exec(code_to_execute, "clean_columns")
         df[self.columns] = clean_func(df[self.columns], self.columns)
@@ -223,10 +313,28 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
 
 
 class SemCleanWithLLM(SemCleanOperator):
-    def generate_cleaning_estimator(self, nl_prompt: str, columns: list[str]) -> EstimatorTransformer:
-        return LLMCleaner(nl_prompt=nl_prompt, columns=columns)
+    def generate_cleaning_estimator(
+        self, data_op: DataOp, nl_prompt: str, columns: list[str], name: str
+    ) -> EstimatorTransformer:
+        _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
+        _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
+        _memory = skrub.var(f"sempipes_memory__{name}", [])
+        return LLMCleaner(
+            nl_prompt=nl_prompt,
+            columns=columns,
+            eval_mode=skrub.eval_mode(),
+            _pipeline_summary=_pipeline_summary,
+            _prefitted_state=_prefitted_state,
+            _memory=_memory,
+        )
 
 
-def sem_clean(self: DataOp, nl_prompt: str, columns: list[str]) -> DataOp:
-    cleaner = SemCleanWithLLM().generate_cleaning_estimator(nl_prompt, columns)
-    return self.skb.apply(cleaner)
+def sem_clean(self: DataOp, nl_prompt: str, columns: list[str], name: str | None = None) -> DataOp:
+    if name is None:
+        name = f"random_{randint(0, 10000)}_name"
+
+    data_op = self
+    cleaner = SemCleanWithLLM().generate_cleaning_estimator(
+        data_op=data_op, nl_prompt=nl_prompt, columns=columns, name=name
+    )
+    return self.skb.apply(cleaner, how="no_wrap").skb.set_name(name)
