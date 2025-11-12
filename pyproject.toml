@@ -44,6 +44,7 @@ scib = "^1.1.7"
 scib-metrics = "^0.5.7"
 interpret = "^0.2.7"
 sentence-transformers = "^5.1.2"
+tabpfn = "^6.0.5"
 
 [build-system]
 requires = ["poetry-core"]
@@ -82,4 +83,7 @@ line-ending = "auto"
 [tool.ruff.lint.per-file-ignores]
 "**/{docs}/*" = ["ALL"]
 "**__init__.py" = ["ALL"]
-"comparisons/single_cell_analysis/aide_qr.py" = ["ALL"]
+"experiments/single_cell_analysis/aide_qr.py" = ["ALL"]
+
+[tool.mypy]
+exclude = '(^|/)experiments'

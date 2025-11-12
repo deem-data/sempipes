@@ -40,7 +40,7 @@ def _get_prompt(
     usefulness = ""
     model_reference = "classifier"
     target_metric = "accuracy"
-    source_code_hint = ""
+    # source_code_hint = ""
 
     if pipeline_summary is not None:
         task_type = pipeline_summary.task_type
@@ -60,15 +60,15 @@ def _get_prompt(
         if pipeline_summary.target_metric:
             target_metric = pipeline_summary.target_metric
 
-        if pipeline_summary.source_code:
-            source_code_hint = f"""
-            The features that you have to generate a part of a skrub machine learning pipeline with the following source code:
-            ---
-            {pipeline_summary.source_code}
-            ---
-            Make sure to generate features that work well with this pipeline and are compatible with the code and 
-            type of operations applied.
-            """
+        # if pipeline_summary.source_code:
+        #     source_code_hint = f"""
+        #     The features that you have to generate a part of a skrub machine learning pipeline with the following source code:
+        #     ---
+        #     {pipeline_summary.source_code}
+        #     ---
+        #     Make sure to generate features that work well with this pipeline and are compatible with the code and
+        #     type of operations applied.
+        #     """
 
         if task_type and target_name:
             action = "predict"
@@ -104,8 +104,6 @@ Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
-{source_code_hint}
-
 Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
 
 Code formatting for each added column:
@@ -133,7 +131,7 @@ def _build_prompt_from_df(
         nan_freq = f"{null_ratio * 100:.2g}"
         sampled_values = df_[column].tolist()
         if str(df[column].dtype) == "float64":
-            sampled_values = [round(sample, 2) for sample in sampled_values]
+            sampled_values = [float(round(sample, 2)) for sample in sampled_values]
         samples += f"{df_[column].name} ({df[column].dtype}): NaN-freq [{nan_freq}%], Samples {sampled_values}\n"
     return _get_prompt(df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary)
 

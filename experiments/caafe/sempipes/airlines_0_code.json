@@ -1,0 +1,6 @@
+{
+    "generated_code": [
+        "",
+        "# (TimeOfDayCategory)\n# Usefulness: Grouping flights into semantic \"times of day\" (Early Morning, Morning, Afternoon, Evening/Night) can reveal distinct delay patterns. For example, early morning flights might be prone to fog delays, while afternoon/evening flights could suffer from accumulating delays due to congestion.\n# Input samples: 'Time': [700.0, 1210.0, 735.0]\ndf['TimeOfDayCategory'] = pd.cut(df['Time'], \n                                   bins=[-1, 360, 720, 1080, 1440], \n                                   labels=[0, 1, 2, 3], \n                                   right=True, \n                                   include_lowest=True).astype(int)"
+    ]
+}

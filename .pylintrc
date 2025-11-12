@@ -10,7 +10,7 @@ ignore=CVS
 
 # Add files or directories matching the regex patterns to the ignore-list. The
 # regex matches against paths and can be in Posix or Windows format.
-ignore-paths=experiments/tmdb_box_office_prediction/kaggle2.py,experiments/tmdb_box_office_prediction/kaggle3.py,experiments/house_prices_advanced_regression_techniques/kaggle2.py,experiments/house_prices_advanced_regression_techniques/kaggle3.py,experiments/scrabble_player_rating/kaggle2.py
+ignore-paths=^experiments/
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.

@@ -1,0 +1,6 @@
+{
+    "generated_code": [
+        "",
+        "# PartOfDay\n# Usefulness: Transforms the continuous 'Time' column into discrete categories representing different parts of the day (Pre-Morning, Morning, Afternoon, Evening). Flight delays often exhibit distinct patterns based on the time of day, for instance, early morning flights might experience fewer delays than evening flights which can suffer from cascading effects. This feature helps a tree-based model capture these non-linear temporal relationships more effectively.\n# Input samples: 'Time': [np.float64(710.0), np.float64(690.0), np.float64(540.0)]\nimport pandas as pd\nimport numpy as np\ndf['PartOfDay'] = pd.cut(df['Time'], bins=[0, 360, 720, 1080, 1440], labels=[0, 1, 2, 3], include_lowest=True, right=False).astype('int64')"
+    ]
+}

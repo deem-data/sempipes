@@ -1,0 +1,7 @@
+{
+    "generated_code": [
+        "",
+        "import numpy as np\n# (x_win_top_row: True if player 'x' has three pieces in the top row)\n# Usefulness: This feature directly captures one of the primary win conditions for player 'x' in Tic-Tac-Toe. If 'x' has three pieces in a row, column, or diagonal, 'x' wins. This is highly indicative of the target 'positive' (win for x).\n# Input samples: 'top-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'top-middle-square': [np.int64(2), np.int64(1), np.int64(0)], 'top-right-square': [np.int64(2), np.int64(2), np.int64(1)]\ndf['x_win_top_row'] = (df['top-left-square'] == 2) & \\\n                        (df['top-middle-square'] == 2) & \\\n                        (df['top-right-square'] == 2)\n",
+        "# (x_win_left_col: True if player 'x' has three pieces in the left column)\n# Usefulness: This feature directly captures another primary win condition for player 'x' in Tic-Tac-Toe. A win condition for 'x' (either horizontally, vertically, or diagonally) is a strong indicator of the 'positive' class.\n# Input samples: 'top-left-square': [np.int64(2), np.int64(1), np.int64(2)], 'middle-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'bottom-left-square': [np.int64(2), np.int64(1), np.int64(0)]\ndf['x_win_left_col'] = (df['top-left-square'] == 2) & \\\n                         (df['middle-left-square'] == 2) & \\\n                         (df['bottom-left-square'] == 2)"
+    ]
+}

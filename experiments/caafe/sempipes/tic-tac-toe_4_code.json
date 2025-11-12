@@ -1,0 +1,7 @@
+{
+    "generated_code": [
+        "",
+        "import numpy as np\n# (Number of 'x' marks in the first row)\n# Usefulness: This feature directly measures the presence of player 'x' marks in a crucial part of the board, indicating progress towards one of the 8 winning lines. It can help the classifier identify boards where 'x' is close to or has already achieved a win in the top row.\n# Input samples: 'top-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'top-middle-square': [np.int64(1), np.int64(1), np.int64(2)], 'top-right-square': [np.int64(0), np.int64(1), np.int64(2)]\ndf['x_count_top_row'] = ((df['top-left-square'] == 0).astype(int) +\n                         (df['top-middle-square'] == 0).astype(int) +\n                         (df['top-right-square'] == 0).astype(int))",
+        "# (Number of 'x' marks in the middle row)\n# Usefulness: Similar to the top row, this feature identifies patterns of 'x' in the middle horizontal line, which is a potential winning line for player 'x'. It helps the model detect partial or complete wins along this specific row.\n# Input samples: 'middle-left-square': [np.int64(1), np.int64(0), np.int64(1)], 'middle-middle-square': [np.int64(1), np.int64(2), np.int64(2)], 'middle-right-square': [np.int64(2), np.int64(1), np.int64(2)]\ndf['x_count_middle_row'] = ((df['middle-left-square'] == 0).astype(int) +\n                            (df['middle-middle-square'] == 0).astype(int) +\n                            (df['middle-right-square'] == 0).astype(int))"
+    ]
+}
