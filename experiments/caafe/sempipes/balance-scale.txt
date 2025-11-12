@@ -1,0 +1,1963 @@
+######################## Starting round 0
+Baseline ROC AUC: 0.6940808080808081
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.49 seconds
+	COLOPRO> Score changed from None to 0.8769047619047619
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 7.90 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.48 seconds
+	COLOPRO> Score changed from 0.8769047619047619 to 0.9944444444444445
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.98 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.85 seconds
+	COLOPRO> Score changed from 0.8769047619047619 to 0.8395238095238096
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.9944444444444445
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.97 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 9.51 seconds
+	COLOPRO> Score changed from 0.9944444444444445 to 1.0
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_torque'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.01 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.39 seconds
+	COLOPRO> Score changed from 0.8769047619047619 to 0.8395238095238096
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.18 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.48 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.18 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.25 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.88 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 9.05 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.30 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 9.95 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.32 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.07 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_moment', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.79 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.49 seconds
+	COLOPRO> Score changed from 1.0 to 0.9944444444444445
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_right_moment_difference', 'total_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.97 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.41 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'is_balanced', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.41 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 10.36 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_right_moment_difference', 'total_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 7.33 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.98 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_moment', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 7.02 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.72 seconds
+	COLOPRO> Score changed from 1.0 to 0.9944444444444445
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.34 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.38 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_moment', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.42 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 0.9944444444444445
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.34 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.58 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['abs_moment_difference', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.92 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_right_moment_difference', 'total_weight'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.98 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 0.9944444444444445
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 3 new feature columns: ['abs_moment_difference', 'left_moment', 'left_right_moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 8.55 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 1.0 to 0.9944444444444445
+	COLOPRO> Saved trajectory to .sempipes_trajectories/balance-scale_20251111_141309_fb511357.json
+STATE
+{'generated_code': ['', '# left_right_moment_difference (Difference between left and right moments)\n# Usefulness: This feature directly calculates the difference between the "left moment" (left-weight * left-distance) and the "right moment" (right-weight * right-distance). According to the dataset description, the class is determined by which side has a greater moment, or if they are equal. A positive difference indicates a left tip, a negative difference indicates a right tip, and a zero difference indicates balance. This provides highly discriminative information for the RandomForestClassifier.\n# Input samples: \'left-weight\': [np.float64(5.0), np.float64(5.0), np.float64(1.0)], \'left-distance\': [np.float64(4.0), np.float64(4.0), np.float64(3.0)], \'right-weight\': [np.float64(3.0), np.float64(4.0), np.float64(4.0)], \'right-distance\': [np.float64(4.0), np.float64(3.0), np.float64(2.0)]\ndf[\'left_right_moment_difference\'] = (df[\'left-weight\'] * df[\'left-distance\']) - (df[\'right-weight\'] * df[\'right-distance\'])', '# abs_moment_difference (Absolute magnitude of the difference between left and right moments)\n# Usefulness: This feature captures the absolute magnitude of the imbalance, indicating how "strongly" the scale tips to one side or how "close" it is to being balanced. While the sign of the moment difference determines the class, the absolute value can provide the RandomForestClassifier with additional information about the confidence or strength of that imbalance. This can help refine decision boundaries and improve probability estimates, potentially leading to a slight boost in roc_auc_ovo, even when the primary classification rule is already well-captured.\n# Input samples: \'left_right_moment_difference\': [np.float64(8.0), np.float64(8.0), np.float64(-5.0)]\ndf[\'abs_moment_difference\'] = abs(df[\'left_right_moment_difference\'])']}
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+Sempipes ROC AUC: 1.0
+######################## Starting round 1
+Baseline ROC AUC: 0.7375595238095238
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 3 new feature columns: ['left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from None to 0.8448148148148148
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.74 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.59 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.68 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.00 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.82 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.78 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.70 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.79 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.20 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 18.49 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.95 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.64 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.58 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.23 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 11.72 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.68 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.77 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.60 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.62 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.17 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.37 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.58 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.87 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 0.826851851851852
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 0.8448148148148148
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 13.69 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.69 seconds
+	COLOPRO> Score changed from 0.8448148148148148 to 1.0
+	COLOPRO> Saved trajectory to .sempipes_trajectories/balance-scale_20251111_141600_3cd53ac4.json
+STATE
+{'generated_code': ['', "import numpy as np\n# moment_difference (Difference between left and right moments)\n# Usefulness: This feature directly encodes the core logic for determining the balance scale's class. The sign of this difference (positive, negative, or zero) directly corresponds to whether the scale tips left, right, or remains balanced. A Random Forest classifier can efficiently use this single numerical feature to make splits that perfectly separate the classes, as it encapsulates the comparison of left and right torques.\n# Input samples: 'left-weight': [np.float64(5.0), np.float64(4.0), np.float64(5.0)], 'left-distance': [np.float64(5.0), np.float64(5.0), np.float64(3.0)], 'right-weight': [np.float64(5.0), np.float64(4.0), np.float64(2.0)], 'right-distance': [np.float64(3.0), np.float64(1.0), np.float64(5.0)]\ndf['moment_difference'] = (df['left-weight'] * df['left-distance']) - (df['right-weight'] * df['right-distance'])"]}
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+Sempipes ROC AUC: 0.9910714285714285
+######################## Starting round 2
+Baseline ROC AUC: 0.6950992555831266
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 3 new feature columns: ['left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from None to 0.7526785714285715
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.83 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.20 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.94 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.41 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.78 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.00 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.21 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.23 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.67 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.07 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.27 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.27 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.92 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.67 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_product'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.28 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.40 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.09 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.00 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.96 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.49 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.85 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.71 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 0.7526785714285715
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.85 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7526785714285715 to 0.7076388888888889
+	COLOPRO> Saved trajectory to .sempipes_trajectories/balance-scale_20251111_141802_cdbb99d2.json
+STATE
+{'generated_code': []}
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+Sempipes ROC AUC: 0.6950992555831266
+######################## Starting round 3
+Baseline ROC AUC: 0.7050378335324572
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 3 new feature columns: ['left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from None to 0.6809259259259259
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.18 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.68 seconds
+	COLOPRO> Score changed from 0.6809259259259259 to 0.7053703703703704
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_force'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.38 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.6809259259259259 to 0.7053703703703704
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.7053703703703704
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['left_moment', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.97 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.7053703703703704 to 0.7744444444444445
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.31 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.6809259259259259 to 0.7053703703703704
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.7744444444444445
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.62 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7744444444444445 to 0.9944444444444445
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.9944444444444445
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 8.10 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.9944444444444445 to 1.0
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'relative_moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 11.63 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment', 'total_weight'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.42 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.22 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.23 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.64 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.74 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.19 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment', 'total_weight'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.27 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.68 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'moment_ratio', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.23 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment', 'sum_of_moments'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.31 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.97 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'moment_ratio', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 14.80 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment', 'total_weight'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.75 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.06 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.67 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'moment_ratio', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.56 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.69 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 4 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.92 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 5 new feature columns: ['absolute_moment_difference', 'left_moment', 'moment_difference', 'moment_ratio', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.90 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Saved trajectory to .sempipes_trajectories/balance-scale_20251111_142024_c27d4cab.json
+STATE
+{'generated_code': ['', '# left_moment (Product of left weight and left distance)\n# Usefulness: This feature directly calculates the "moment" on the left side of the balance scale, which is a fundamental component in determining the balance state according to the problem description. It provides a pre-computed interaction term that is highly relevant for the classification task.\n# Input samples: \'left-weight\': [5.0, 5.0, 4.0], \'left-distance\': [5.0, 5.0, 5.0]\ndf[\'left_moment\'] = df[\'left-weight\'] * df[\'left-distance\']', '# right_moment (Product of right weight and right distance)\n# Usefulness: This feature directly calculates the "moment" on the right side of the balance scale, which is the other fundamental component in determining the balance state according to the problem description. It provides a pre-computed interaction term that is highly relevant for the classification task, mirroring the \'left_moment\' feature.\n# Input samples: \'right-weight\': [3.0, 1.0, 3.0], \'right-distance\': [4.0, 3.0, 4.0]\ndf[\'right_moment\'] = df[\'right-weight\'] * df[\'right-distance\']', "# moment_difference (Difference between left moment and right moment)\n# Usefulness: This feature directly calculates the net moment on the balance scale. According to the problem description, the class is determined by comparing the left and right moments. A positive difference indicates the scale tips left, a negative difference indicates it tips right, and a zero difference indicates it is balanced. This single feature encapsulates the primary decision logic, making it highly informative for the classifier.\n# Input samples: 'left_moment': [25.0, 25.0, 20.0], 'right_moment': [12.0, 3.0, 12.0]\ndf['moment_difference'] = df['left_moment'] - df['right_moment']", "# absolute_moment_difference (Absolute difference between left and right moments)\n# Usefulness: This feature quantifies the magnitude of the imbalance, irrespective of the direction. While `moment_difference` indicates which way the scale tips, `absolute_moment_difference` provides information about *how much* it tips. This could help the classifier distinguish between cases that are slightly off-balance versus heavily off-balance, potentially aiding in finer distinctions or confidence levels, even if the primary classification is already well-captured by `moment_difference`.\n# Input samples: 'left_moment': [25.0, 25.0, 20.0], 'right_moment': [12.0, 3.0, 12.0], 'moment_difference': [13.0, 22.0, 8.0]\ndf['absolute_moment_difference'] = abs(df['moment_difference'])"]}
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+Sempipes ROC AUC: 1.0
+######################## Starting round 4
+Baseline ROC AUC: 0.6598502304147466
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 3 new feature columns: ['left_moment', 'moment_difference', 'right_moment'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from None to 0.7488095238095237
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_product'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.79 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7488095238095237 to 0.7963492063492064
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.69 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7488095238095237 to 0.7963492063492064
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.7963492063492064
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['left_product', 'right_product'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.05 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 0.7963492063492064 to 0.8706349206349205
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 8.09 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 0.7488095238095237 to 1.0
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.60 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['left_moment'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.07 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 0.7488095238095237 to 0.7963492063492064
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.59 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.06 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.82 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.85 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.64 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.87 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.98 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.93 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.53 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.76 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.08 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.47 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.66 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.00 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.65 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.34 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.55 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.93 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.67 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.63 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('Compute additional features...', 1) on dataframe of shape (62, 4) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['moment_difference'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.05 seconds
+	COLOPRO> Evaluating pipeline via 5-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.62 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Saved trajectory to .sempipes_trajectories/balance-scale_20251111_142220_18262e8d.json
+STATE
+{'generated_code': ['', "# Moment Difference (Left - Right)\n# Usefulness: This feature directly calculates the net moment on the balance scale, which is the fundamental physical principle determining the class. A positive value indicates a tip to the left, a negative value indicates a tip to the right, and a zero value indicates balance. This directly encodes the classification logic described in the dataset, making it highly discriminative for a tree-based model like RandomForestClassifier.\n# Input samples: 'left-weight': [np.float64(3.0), np.float64(1.0), np.float64(2.0)], 'left-distance': [np.float64(5.0), np.float64(5.0), np.float64(1.0)], 'right-weight': [np.float64(2.0), np.float64(1.0), np.float64(4.0)], 'right-distance': [np.float64(1.0), np.float64(5.0), np.float64(1.0)]\ndf['moment_difference'] = (df['left-weight'] * df['left-distance']) - \\\n                          (df['right-weight'] * df['right-distance'])"]}
+--- Using provided state for sempipes.sem_gen_features('Compute additional features...', 1)
+Sempipes ROC AUC: 0.9986559139784946
+balance-scale,0.23863978934247754,0.6983255302841325,0.02487221935379646,0.93696531962661,0.1209786222868112

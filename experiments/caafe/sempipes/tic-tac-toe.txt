@@ -1,0 +1,2611 @@
+######################## Starting round 0
+Baseline ROC AUC: 0.8571428571428572
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 11 new feature columns: ['board_full', 'num_empty_squares', 'num_o_pieces', 'num_o_winning_lines', 'num_pieces_diff', 'num_x_pieces', 'num_x_winning_lines', 'o_has_any_corner', 'o_has_center', 'x_has_any_corner', 'x_has_center'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 11.08 seconds
+	COLOPRO> Score changed from None to 0.6950000000000001
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 3: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> An error occurred in attempt 4: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> An error occurred in attempt 5: name 'end' is not defined
+	COLOPRO> Evolution took 45.86 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 9.01 seconds
+	COLOPRO> Score changed from 0.6950000000000001 to 0.6950000000000001
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 3: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> An error occurred in attempt 4: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> An error occurred in attempt 5: 'num_x'
+	COLOPRO> Evolution took 108.95 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 21.18 seconds
+	COLOPRO> Score changed from 0.6950000000000001 to 0.6950000000000001
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.6950000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 12.37 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.52 seconds
+	COLOPRO> Score changed from 0.6950000000000001 to 0.7666666666666667
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.50 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.75 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.49 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 8.20 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.24 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 10.08 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.37 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.95 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.09 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.13 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.41 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.44 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.28 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.92 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.09 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.26 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.88 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.76 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.78 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.09 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.33 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.93 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.00 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_middle_row', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.88 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7566666666666667
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_win_left_col', 'x_win_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.37 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7933333333333332
+	COLOPRO> Saved trajectory to .sempipes_trajectories/tic-tac-toe_20251111_215505_094bc48b.json
+STATE
+{'generated_code': ['', "import numpy as np\n# (x_win_top_row: True if player 'x' has three pieces in the top row)\n# Usefulness: This feature directly captures one of the primary win conditions for player 'x' in Tic-Tac-Toe. If 'x' has three pieces in a row, column, or diagonal, 'x' wins. This is highly indicative of the target 'positive' (win for x).\n# Input samples: 'top-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'top-middle-square': [np.int64(2), np.int64(1), np.int64(0)], 'top-right-square': [np.int64(2), np.int64(2), np.int64(1)]\ndf['x_win_top_row'] = (df['top-left-square'] == 2) & \\\n                        (df['top-middle-square'] == 2) & \\\n                        (df['top-right-square'] == 2)\n", "# (x_win_left_col: True if player 'x' has three pieces in the left column)\n# Usefulness: This feature directly captures another primary win condition for player 'x' in Tic-Tac-Toe. A win condition for 'x' (either horizontally, vertically, or diagonally) is a strong indicator of the 'positive' class.\n# Input samples: 'top-left-square': [np.int64(2), np.int64(1), np.int64(2)], 'middle-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'bottom-left-square': [np.int64(2), np.int64(1), np.int64(0)]\ndf['x_win_left_col'] = (df['top-left-square'] == 2) & \\\n                         (df['middle-left-square'] == 2) & \\\n                         (df['bottom-left-square'] == 2)"]}
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+Sempipes ROC AUC: 0.9107142857142858
+######################## Starting round 1
+Baseline ROC AUC: 0.9315789473684211
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 2 new feature columns: ['num_o_pieces', 'num_x_pieces'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.94 seconds
+	COLOPRO> Score changed from None to 0.7375
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['num_x_pieces'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.06 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7375 to 0.9016666666666666
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 27.24 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.7375 to 1.0
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.36 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.91 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 3: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 1 new feature columns: ['o_corners_occupied'], removed 0 feature columns: []
+	COLOPRO> Evolution took 76.32 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7375 to 0.8916666666666668
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_x_squares', 'x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.03 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.16 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.93 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.36 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.48 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.57 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.26 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 1.01 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.81 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.60 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.95 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.56 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.33 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: 'NoneType' object has no attribute 'strip'
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 7.33 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.99 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.68 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.90 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.24 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.99 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.90 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: invalid syntax (<string>, line 18)
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.45 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.21 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 1: invalid syntax (<string>, line 18)
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_x_pieces', 'x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 17.96 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['x_has_winning_line'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.60 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Saved trajectory to .sempipes_trajectories/tic-tac-toe_20251111_215845_650edf2a.json
+STATE
+{'generated_code': ['', 'import numpy as np\n\n# (X has a winning line)\n# Usefulness: This feature directly identifies if player \'x\' has a three-in-a-row configuration, which is the definition of "win for x" according to the dataset description. It captures the target concept\'s essence, making it highly predictive for classifying the \'Class\' label. This directly models whether a board configuration results in a positive outcome for \'x\'. We assume that the integer `2` represents player \'x\', which is a common encoding for categorical features {x, o, b} where \'b\' (blank) is 0, \'o\' (player o) is 1, and \'x\' (player x) is 2, often following alphabetical order for the latter two if \'b\' is separated.\n# Input samples: \'top-left-square\': [np.int64(1), np.int64(0), np.int64(2)], \'top-middle-square\': [np.int64(1), np.int64(1), np.int64(2)], \'top-right-square\': [np.int64(2), np.int64(2), np.int64(2)], \'middle-left-square\': [np.int64(0), np.int64(0), np.int64(0)], \'middle-middle-square\': [np.int64(2), np.int64(2), np.int64(1)], \'middle-right-square\': [np.int64(1), np.int64(0), np.int64(1)], \'bottom-left-square\': [np.int64(0), np.int64(1), np.int64(0)], \'bottom-middle-square\': [np.int64(0), np.int64(2), np.int64(1)], \'bottom-right-square\': [np.int64(0), np.int64(1), np.int64(0)]\ndf[\'x_has_winning_line\'] = (\n    ((df[\'top-left-square\'] == 2) & (df[\'top-middle-square\'] == 2) & (df[\'top-right-square\'] == 2)) |  # Row 1\n    ((df[\'middle-left-square\'] == 2) & (df[\'middle-middle-square\'] == 2) & (df[\'middle-right-square\'] == 2)) |  # Row 2\n    ((df[\'bottom-left-square\'] == 2) & (df[\'bottom-middle-square\'] == 2) & (df[\'bottom-right-square\'] == 2)) |  # Row 3\n    ((df[\'top-left-square\'] == 2) & (df[\'middle-left-square\'] == 2) & (df[\'bottom-left-square\'] == 2)) |  # Col 1\n    ((df[\'top-middle-square\'] == 2) & (df[\'middle-middle-square\'] == 2) & (df[\'bottom-middle-square\'] == 2)) |  # Col 2\n    ((df[\'top-right-square\'] == 2) & (df[\'middle-right-square\'] == 2) & (df[\'bottom-right-square\'] == 2)) |  # Col 3\n    ((df[\'top-left-square\'] == 2) & (df[\'middle-middle-square\'] == 2) & (df[\'bottom-right-square\'] == 2)) |  # Diag 1\n    ((df[\'top-right-square\'] == 2) & (df[\'middle-middle-square\'] == 2) & (df[\'bottom-left-square\'] == 2))    # Diag 2\n).astype(int)']}
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+Sempipes ROC AUC: 1.0
+######################## Starting round 2
+Baseline ROC AUC: 0.7638888888888888
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 2 new feature columns: ['num_x_marks', 'occupied_squares'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.91 seconds
+	COLOPRO> Score changed from None to 0.6841666666666667
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['num_x_pieces'], removed 0 feature columns: []
+	COLOPRO> Evolution took 15.18 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.6841666666666667 to 0.7766666666666666
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 26.88 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.96 seconds
+	COLOPRO> Score changed from 0.6841666666666667 to 0.9633333333333333
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.9633333333333333
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.20 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.91 seconds
+	COLOPRO> Score changed from 0.9633333333333333 to 1.0
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['o_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 30.24 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.6841666666666667 to 0.7766666666666666
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 0.94 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.43 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.96 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.11 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.73 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.33 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.41 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 0.95 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: name 'STOP' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> Computed 3 new feature columns: ['count_x_moves', 'num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 15.55 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.15 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.13 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.52 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 0.86 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.36 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.66 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.00 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.95 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.72 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.93 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.13 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.90 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 1.31 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.99 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 1.0
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 2 new feature columns: ['num_o_winning_lines', 'num_x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 0.84 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 1.0 to 1.0
+	COLOPRO> Saved trajectory to .sempipes_trajectories/tic-tac-toe_20251111_220125_8bf7df22.json
+STATE
+{'generated_code': ['', 'import numpy as np\n# (num_x_winning_lines and description)\n# Usefulness: This feature directly counts how many of the 8 possible winning lines (3 rows, 3 columns, 2 diagonals) contain three \'x\' marks (\'1\'). If this value is greater than zero, \'x\' has won the game, making this feature a direct indicator for the "positive" outcome. It will be highly discriminative for the target variable \'Class\', where \'positive\' means \'win for x\'.\n# Input samples: \'top-left-square\': [np.int64(2), np.int64(1), np.int64(1)], \'top-middle-square\': [np.int64(1), np.int64(1), np.int64(1)], \'middle-middle-square\': [np.int64(1), np.int64(2), np.int64(2)]\ndf[\'num_x_winning_lines\'] = ((df[\'top-left-square\'] == 1) & (df[\'top-middle-square\'] == 1) & (df[\'top-right-square\'] == 1)).astype(int) + \\\n                             ((df[\'middle-left-square\'] == 1) & (df[\'middle-middle-square\'] == 1) & (df[\'middle-right-square\'] == 1)).astype(int) + \\\n                             ((df[\'bottom-left-square\'] == 1) & (df[\'bottom-middle-square\'] == 1) & (df[\'bottom-right-square\'] == 1)).astype(int) + \\\n                             ((df[\'top-left-square\'] == 1) & (df[\'middle-left-square\'] == 1) & (df[\'bottom-left-square\'] == 1)).astype(int) + \\\n                             ((df[\'top-middle-square\'] == 1) & (df[\'middle-middle-square\'] == 1) & (df[\'bottom-middle-square\'] == 1)).astype(int) + \\\n                             ((df[\'top-right-square\'] == 1) & (df[\'middle-right-square\'] == 1) & (df[\'bottom-right-square\'] == 1)).astype(int) + \\\n                             ((df[\'top-left-square\'] == 1) & (df[\'middle-middle-square\'] == 1) & (df[\'bottom-right-square\'] == 1)).astype(int) + \\\n                             ((df[\'top-right-square\'] == 1) & (df[\'middle-middle-square\'] == 1) & (df[\'bottom-left-square\'] == 1)).astype(int)', "import numpy as np\n# (num_o_winning_lines and description)\n# Usefulness: This feature counts the number of lines where player 'o' has three-in-a-row. Since the target 'Class' is 'positive' for an 'x' win, 'o' winning lines correspond to a 'negative' outcome. This complements 'num_x_winning_lines' by specifically identifying states where 'o' has won, providing distinct information about the board state that is crucial for distinguishing 'negative' cases (e.g., 'o' win versus a draw).\n# Input samples: 'top-left-square': [np.int64(2), np.int64(2), np.int64(1)], 'top-middle-square': [np.int64(2), np.int64(1), np.int64(2)], 'top-right-square': [np.int64(2), np.int64(1), np.int64(1)]\ndf['num_o_winning_lines'] = ((df['top-left-square'] == 2) & (df['top-middle-square'] == 2) & (df['top-right-square'] == 2)).astype(int) + \\\n                             ((df['middle-left-square'] == 2) & (df['middle-middle-square'] == 2) & (df['middle-right-square'] == 2)).astype(int) + \\\n                             ((df['bottom-left-square'] == 2) & (df['bottom-middle-square'] == 2) & (df['bottom-right-square'] == 2)).astype(int) + \\\n                             ((df['top-left-square'] == 2) & (df['middle-left-square'] == 2) & (df['bottom-left-square'] == 2)).astype(int) + \\\n                             ((df['top-middle-square'] == 2) & (df['middle-middle-square'] == 2) & (df['bottom-middle-square'] == 2)).astype(int) + \\\n                             ((df['top-right-square'] == 2) & (df['middle-right-square'] == 2) & (df['bottom-right-square'] == 2)).astype(int) + \\\n                             ((df['top-left-square'] == 2) & (df['middle-middle-square'] == 2) & (df['bottom-right-square'] == 2)).astype(int) + \\\n                             ((df['top-right-square'] == 2) & (df['middle-middle-square'] == 2) & (df['bottom-left-square'] == 2)).astype(int)"]}
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+Sempipes ROC AUC: 0.9999999999999999
+######################## Starting round 3
+Baseline ROC AUC: 0.736842105263158
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 1 new feature columns: ['player1_moves'], removed 0 feature columns: []
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from None to 0.765
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['o_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 22.47 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.84 seconds
+	COLOPRO> Score changed from 0.765 to 0.7958333333333333
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['o_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 13.75 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.765 to 0.7958333333333333
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.7958333333333333
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['o_pieces_count', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.44 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7958333333333333 to 0.9650000000000001
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['x_has_won'], removed 0 feature columns: []
+	COLOPRO> Evolution took 27.99 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.91 seconds
+	COLOPRO> Score changed from 0.765 to 0.7891666666666667
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 16.26 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.33 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['max_x_in_line', 'o_pieces_count', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 15.81 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9483333333333333
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_two_in_a_row_threats'], removed 0 feature columns: []
+	COLOPRO> Evolution took 26.13 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9408333333333333
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_completed_lines_count', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 16.07 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_has_winning_line', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 9.57 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_has_winning_line', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 8.60 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 11.30 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 16.45 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_win_threats_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 25.92 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 1.03 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9408333333333333
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_has_won', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 6.50 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to nan
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_has_won', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 10.87 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 12.48 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_actual_winning_lines', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 14.18 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> An error occurred in attempt 3: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 14 messages...'
+	> An error occurred in attempt 4: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 16 messages...'
+	> An error occurred in attempt 5: name 'end' is not defined
+	COLOPRO> Evolution took 34.88 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9650000000000001
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['has_x_won', 'o_pieces_count', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 22.37 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 12 messages...'
+	> Computed 3 new feature columns: ['num_x_winning_lines', 'o_pieces_count', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 25.01 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.97 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_pieces_count', 'x_winning_lines_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 17.28 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 0.9650000000000001
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['o_pieces_count', 'x_immediate_win', 'x_pieces_count'], removed 0 feature columns: []
+	COLOPRO> Evolution took 24.85 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.9650000000000001 to 0.9358333333333334
+	COLOPRO> Saved trajectory to .sempipes_trajectories/tic-tac-toe_20251111_220829_79196026.json
+STATE
+{'generated_code': ['', "import numpy as np\n# o_pieces_count (Number of 'o' pieces on the board)\n# Usefulness: This feature quantifies the number of 'o' (opponent) pieces. A higher count of 'o' pieces indicates a stronger board presence by the opponent, which could signify more blocking positions against 'x' or the creation of 'o's own winning threats. This can provide crucial information for predicting the 'x' win outcome, potentially indicating a decreased likelihood of 'x' winning.\n# Input samples: 'top-left-square': [np.int64(0), np.int64(2), np.int64(0)], 'top-middle-square': [np.int64(1), np.int64(0), np.int64(0)], 'top-right-square': [np.int64(1), np.int64(0), np.int64(1)], 'middle-left-square': [np.int64(2), np.int64(2), np.int64(0)], 'middle-middle-square': [np.int64(2), np.int64(1), np.int64(1)], 'middle-right-square': [np.int64(2), np.int64(0), np.int64(0)], 'bottom-left-square': [np.int64(1), np.int64(2), np.int64(2)], 'bottom-middle-square': [np.int64(0), np.int64(1), np.int64(2)], 'bottom-right-square': [np.int64(2), np.int64(0), np.int64(2)]\ndf['o_pieces_count'] = (df[['top-left-square', 'top-middle-square', 'top-right-square',\n                             'middle-left-square', 'middle-middle-square', 'middle-right-square',\n                             'bottom-left-square', 'bottom-middle-square', 'bottom-right-square']] == 1).sum(axis=1)", '# x_pieces_count (Number of \'x\' pieces on the board)\n# Usefulness: This feature directly measures the numerical advantage or board presence of player \'x\'. A higher count of \'x\' pieces increases the probability of \'x\' having completed a winning line or being able to complete one in subsequent moves. Since the target is "win for x", knowing the count of \'x\' pieces provides a strong indicator of \'x\'\'s potential to win, especially in conjunction with the \'o\' piece count.\n# Input samples: \'top-left-square\': [np.int64(0), np.int64(2), np.int64(0)], \'top-middle-square\': [np.int64(1), np.int64(0), np.int64(0)], \'top-right-square\': [np.int64(1), np.int64(0), np.int64(1)], \'middle-left-square\': [np.int64(2), np.int64(2), np.int64(0)], \'middle-middle-square\': [np.int64(2), np.int64(1), np.int64(1)], \'middle-right-square\': [np.int64(2), np.int64(0), np.int64(0)], \'bottom-left-square\': [np.int64(1), np.int64(2), np.int64(2)], \'bottom-middle-square\': [np.int64(0), np.int64(1), np.int64(2)], \'bottom-right-square\': [np.int64(2), np.int64(0), np.int64(2)]\ndf[\'x_pieces_count\'] = (df[[\'top-left-square\', \'top-middle-square\', \'top-right-square\',\n                             \'middle-left-square\', \'middle-middle-square\', \'middle-right-square\',\n                             \'bottom-left-square\', \'bottom-middle-square\', \'bottom-right-square\']] == 0).sum(axis=1)']}
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+Sempipes ROC AUC: 0.9578947368421052
+######################## Starting round 4
+Baseline ROC AUC: 0.75
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 2: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> An error occurred in attempt 3: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> An error occurred in attempt 4: 'num_x_moves'
+	> Querying 'gemini/gemini-2.5-flash' with 10 messages...'
+	> An error occurred in attempt 5: name 'end' is not defined
+	COLOPRO> Computing pipeline summary for context-aware optimisation ---
+	COLOPRO> Processing trial 0
+	COLOPRO> Initialising optimisation of additional_features via OPRO
+	TREE_SEARCH> Creating root node
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from None to 0.68
+	COLOPRO> Processing trial 1
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: name 'end' is not defined
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['num_o_potential_win_lines'], removed 0 feature columns: []
+	COLOPRO> Evolution took 46.53 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 1.03 seconds
+	COLOPRO> Score changed from 0.68 to 0.7033333333333334
+	COLOPRO> Processing trial 2
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> Computed 1 new feature columns: ['x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 7.87 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 0.68 to 0.7116666666666667
+	COLOPRO> Processing trial 3
+	TREE_SEARCH> Trying to improve node with score 0.7116666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 2 new feature columns: ['x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.82 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7116666666666667 to 0.7666666666666667
+	COLOPRO> Processing trial 4
+	TREE_SEARCH> Drafting new node
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 4 messages...'
+	> An error occurred in attempt 1: No axis named 1 for object type Series
+	> Querying 'gemini/gemini-2.5-flash' with 6 messages...'
+	> Computed 1 new feature columns: ['o_potential_wins_or_x_blocks'], removed 0 feature columns: []
+	COLOPRO> Evolution took 40.52 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.89 seconds
+	COLOPRO> Score changed from 0.68 to 0.7033333333333334
+	COLOPRO> Processing trial 5
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.76 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 6
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.90 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.90 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 7
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.95 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 8
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.64 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 9
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.07 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.88 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 10
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.73 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.92 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 11
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.27 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 12
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.61 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 13
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.35 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.94 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 14
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.20 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 15
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.54 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 16
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.56 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.96 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 17
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.20 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 18
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 5.74 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.85 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 19
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.98 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.92 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 20
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 2.70 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 21
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 4.36 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.86 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 22
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+
+	COLOPRO> Evolution took 2.88 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.87 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Processing trial 23
+	TREE_SEARCH> Trying to improve node with score 0.7666666666666667
+	COLOPRO> Generating 1 new search node(s)
+	COLOPRO> Evolving operator "additional_features" via OPRO
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (71, 9) in mode 'fit_transform'.
+	> Querying 'gemini/gemini-2.5-flash' with 8 messages...'
+	> Computed 3 new feature columns: ['x_count_bottom_row', 'x_count_middle_row', 'x_count_top_row'], removed 0 feature columns: []
+	COLOPRO> Evolution took 3.86 seconds
+	COLOPRO> Evaluating pipeline via 10-fold cross-validation
+	COLOPRO> Pipeline evaluation took 0.91 seconds
+	COLOPRO> Score changed from 0.7666666666666667 to 0.7150000000000001
+	COLOPRO> Saved trajectory to .sempipes_trajectories/tic-tac-toe_20251111_221251_db73e71a.json
+STATE
+{'generated_code': ['', "import numpy as np\n# (Number of 'x' marks in the first row)\n# Usefulness: This feature directly measures the presence of player 'x' marks in a crucial part of the board, indicating progress towards one of the 8 winning lines. It can help the classifier identify boards where 'x' is close to or has already achieved a win in the top row.\n# Input samples: 'top-left-square': [np.int64(2), np.int64(0), np.int64(1)], 'top-middle-square': [np.int64(1), np.int64(1), np.int64(2)], 'top-right-square': [np.int64(0), np.int64(1), np.int64(2)]\ndf['x_count_top_row'] = ((df['top-left-square'] == 0).astype(int) +\n                         (df['top-middle-square'] == 0).astype(int) +\n                         (df['top-right-square'] == 0).astype(int))", "# (Number of 'x' marks in the middle row)\n# Usefulness: Similar to the top row, this feature identifies patterns of 'x' in the middle horizontal line, which is a potential winning line for player 'x'. It helps the model detect partial or complete wins along this specific row.\n# Input samples: 'middle-left-square': [np.int64(1), np.int64(0), np.int64(1)], 'middle-middle-square': [np.int64(1), np.int64(2), np.int64(2)], 'middle-right-square': [np.int64(2), np.int64(1), np.int64(2)]\ndf['x_count_middle_row'] = ((df['middle-left-square'] == 0).astype(int) +\n                            (df['middle-middle-square'] == 0).astype(int) +\n                            (df['middle-right-square'] == 0).astype(int))"]}
+--- Using provided state for sempipes.sem_gen_features('...', 1)
+Sempipes ROC AUC: 0.77734375
+tic-tac-toe,0.12129999477861331,0.8078905597326649,0.0749132202776332,0.9291905545112782,0.08276558436097328

@@ -38,7 +38,7 @@ def bert_micromodel(responses, rationales):
     return max_scores
 
 
-all_data = as_dataframe("experiments/micromodels/empathy.json")  # pd.read_csv("experiments/micromodels/empathy.csv")
+all_data = as_dataframe("experiments/micromodels/empathy.json")
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):

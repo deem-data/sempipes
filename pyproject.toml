@@ -43,6 +43,7 @@ scib = "^1.1.7"
 scib-metrics = "^0.5.7"
 interpret = "^0.2.7"
 sentence-transformers = "^5.1.2"
+tabpfn = "^6.0.5"
 
 [build-system]
 requires = ["poetry-core"]

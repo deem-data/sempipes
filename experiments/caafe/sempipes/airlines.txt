@@ -1,0 +1,5 @@
+######################## Starting round 0
+Baseline ROC AUC: 0.6603501826550153
+--- Fitting sempipes.sem_gen_features('...', 1) on dataframe of shape (1500, 7) in mode 'preview'.
+	> Querying 'gemini/gemini-2.5-flash' with 2 messages...'
+	> Computed 1 new feature columns: ['DepartureHour'], removed 0 feature columns: []

@@ -1,5 +1,6 @@
-import concurrent.futures
 import warnings
+
+from joblib.externals.loky import get_reusable_executor
 
 import sempipes
 from experiments.colopro import Setup, TestPipeline
@@ -20,7 +21,7 @@ def _evaluate_pipeline(pipeline: TestPipeline, pipeline_setup: Setup) -> tuple[s
 
 if __name__ == "__main__":
     degree_of_parallelism = 8
-    num_repetitions = 6
+    num_repetitions = 3
 
     setup = Setup(
         # search=TreeSearch(min_num_drafts=2),
@@ -36,26 +37,26 @@ if __name__ == "__main__":
 
     pipelines = [
         MidwestSurveyPipeline(),
-        BoxOfficePipeline(),
-        HealthInsurancePipeline(),
-        FraudBasketsPipeline(),
-        ChurnPipeline(),
+        #BoxOfficePipeline(),
+        #HealthInsurancePipeline(),
+        #FraudBasketsPipeline(),
+        #ChurnPipeline(),
     ]
 
     results = []
-    with concurrent.futures.ProcessPoolExecutor(max_workers=degree_of_parallelism) as executor:
-        futures = [
-            executor.submit(_evaluate_pipeline, pipeline, setup)
-            for _ in range(num_repetitions)
-            for pipeline in pipelines
-        ]
+    for _ in range(num_repetitions):
+        for pipeline in pipelines:
+            results.append(_evaluate_pipeline(pipeline, setup))
 
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                results.append(future.result())
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                print(f"Error: {repr(e)}")
+    #executor = get_reusable_executor(max_workers=degree_of_parallelism, kill_workers=True)
+    #futures = [
+    #    executor.submit(_evaluate_pipeline, pipeline, setup) for _ in range(num_repetitions) for pipeline in pipelines
+    #]
+
+    #results.extend(f.result() for f in futures)
 
     print("#" * 120)
     for name, score in results:
         print(name, score)
+
+    #executor.shutdown(wait=True)

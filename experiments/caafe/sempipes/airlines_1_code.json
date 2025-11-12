@@ -1,0 +1,6 @@
+{
+    "generated_code": [
+        "",
+        "import pandas as pd\nimport numpy as np\n\n# Time_OfDay_Category (Categorical encoding of the scheduled departure time)\n# Usefulness: Flight delays often depend on the time of day due to various factors like accumulated delays, peak traffic hours, or less staffing. Categorizing the 'Time' into meaningful parts of the day (Night, Morning, Afternoon, Evening) captures these real-world patterns more effectively than a raw continuous 'Time' variable for a tree-based model.\n# Input samples: 'Time': [np.float64(1105.0), np.float64(445.0), np.float64(485.0)]\nbins = [-1, 360, 720, 1080, 1440] # Bins for Night (0-360), Morning (360-720), Afternoon (720-1080), Evening (1080-1440)\nlabels = [0, 1, 2, 3] # Numerical labels for categories\ndf['Time_OfDay_Category'] = pd.cut(df['Time'], bins=bins, labels=labels, right=False).astype(np.int64)"
+    ]
+}

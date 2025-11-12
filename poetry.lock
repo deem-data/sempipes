@@ -427,6 +427,18 @@ files = [
 dev = ["backports.zoneinfo ; python_version < \"3.9\"", "freezegun (>=1.0,<2.0)", "jinja2 (>=3.0)", "pytest (>=6.0)", "pytest-cov", "pytz", "setuptools", "tzdata ; sys_platform == \"win32\""]
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+description = "Function decoration for backoff and retry"
+optional = false
+python-versions = ">=3.7,<4.0"
+groups = ["dev"]
+files = [
+    {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
+    {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
+]
+
+[[package]]
 name = "beartype"
 version = "0.22.4"
 description = "Unbearably fast near-real-time pure-Python runtime-static type-checker."
@@ -1436,7 +1448,7 @@ version = "1.9.0"
 description = "Distro - an OS platform information API"
 optional = false
 python-versions = ">=3.6"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"},
     {file = "distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed"},
@@ -1472,6 +1484,21 @@ files = [
     {file = "einops-0.8.1-py3-none-any.whl", hash = "sha256:919387eb55330f5757c6bea9165c5ff5cfe63a642682ea788a6d472576d81737"},
     {file = "einops-0.8.1.tar.gz", hash = "sha256:de5d960a7a761225532e0f1959e5315ebeafc0cd43394732f103ca44b9837e84"},
 ]
+
+[[package]]
+name = "eval-type-backport"
+version = "0.2.2"
+description = "Like `typing._eval_type`, but lets older Python versions use newer typing features."
+optional = false
+python-versions = ">=3.8"
+groups = ["dev"]
+files = [
+    {file = "eval_type_backport-0.2.2-py3-none-any.whl", hash = "sha256:cb6ad7c393517f476f96d456d0412ea80f0a8cf96f6892834cd9340149111b0a"},
+    {file = "eval_type_backport-0.2.2.tar.gz", hash = "sha256:f0576b4cf01ebb5bd358d02314d31846af5e07678387486e2c798af0e7d849c1"},
+]
+
+[package.extras]
+tests = ["pytest"]
 
 [[package]]
 name = "executing"
@@ -3346,6 +3373,23 @@ hf-datasets = ["datasets", "pandas"]
 pandas-datasets = ["pandas"]
 polars-datasets = ["polars"]
 signing = ["betterproto (>=2.0.0b6)", "model-signing", "sigstore (>=3.6.1)"]
+
+[[package]]
+name = "kditransform"
+version = "1.2.0"
+description = "Kernel density integral transformation"
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "kditransform-1.2.0-py3-none-any.whl", hash = "sha256:d8102c1091bc835620d96adc009e66abf4bd4581430aa90097690dfa0d949bbf"},
+]
+
+[package.dependencies]
+numba = ">=0.48"
+numpy = "*"
+scikit-learn = ">=1.6.0"
+scipy = ">=1.0"
 
 [[package]]
 name = "kiwisolver"
@@ -5500,6 +5544,31 @@ typing-extensions = ">=4.9.0"
 dev = ["black (==23.9.0)", "build", "coveralls", "ghp-import", "ipython", "jupyter-book", "mypy", "numpy", "pre-commit", "pyright (>=1.1.331)", "pytest (>=6)", "pytest-cov", "ruff (>=0.2.1)", "sybil", "tox", "wheel"]
 
 [[package]]
+name = "posthog"
+version = "6.9.1"
+description = "Integrate PostHog into any python application."
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "posthog-6.9.1-py3-none-any.whl", hash = "sha256:a8e33fef54275c32077afea4b2a0e2ca554b226b63d6fcd319447c81154faa1f"},
+    {file = "posthog-6.9.1.tar.gz", hash = "sha256:0bf1115261369b76e2f643d04805cec434236f23fb69972ed5d1bd49b5a9a6fe"},
+]
+
+[package.dependencies]
+backoff = ">=1.10.0"
+distro = ">=1.5.0"
+python-dateutil = ">=2.2"
+requests = ">=2.7,<3.0"
+six = ">=1.5"
+typing-extensions = ">=4.2.0"
+
+[package.extras]
+dev = ["django-stubs", "lxml", "mypy", "mypy-baseline", "packaging", "pre-commit", "pydantic", "ruff", "setuptools", "tomli", "tomli_w", "twine", "types-mock", "types-python-dateutil", "types-requests", "types-setuptools", "types-six", "wheel"]
+langchain = ["langchain (>=0.2.0)"]
+test = ["anthropic", "coverage", "django", "freezegun (==1.5.1)", "google-genai", "langchain-anthropic (>=0.3.15)", "langchain-community (>=0.3.25)", "langchain-core (>=0.3.65)", "langchain-openai (>=0.3.22)", "langgraph (>=0.4.8)", "mock (>=2.0.0)", "openai", "parameterized (>=0.8.1)", "pydantic", "pytest", "pytest-asyncio", "pytest-timeout"]
+
+[[package]]
 name = "pre-commit"
 version = "4.3.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
@@ -5977,6 +6046,30 @@ files = [
 typing-extensions = ">=4.14.1"
 
 [[package]]
+name = "pydantic-settings"
+version = "2.11.0"
+description = "Settings management using Pydantic"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "pydantic_settings-2.11.0-py3-none-any.whl", hash = "sha256:fe2cea3413b9530d10f3a5875adffb17ada5c1e1bab0b2885546d7310415207c"},
+    {file = "pydantic_settings-2.11.0.tar.gz", hash = "sha256:d0e87a1c7d33593beb7194adb8470fc426e95ba02af83a0f23474a04c9a08180"},
+]
+
+[package.dependencies]
+pydantic = ">=2.7.0"
+python-dotenv = ">=0.21.0"
+typing-inspection = ">=0.4.0"
+
+[package.extras]
+aws-secrets-manager = ["boto3 (>=1.35.0)", "boto3-stubs[secretsmanager]"]
+azure-key-vault = ["azure-identity (>=1.16.0)", "azure-keyvault-secrets (>=4.8.0)"]
+gcp-secret-manager = ["google-cloud-secret-manager (>=2.23.1)"]
+toml = ["tomli (>=2.0.1)"]
+yaml = ["pyyaml (>=6.0.1)"]
+
+[[package]]
 name = "pydot"
 version = "4.0.1"
 description = "Python interface to Graphviz's Dot"
@@ -6061,6 +6154,70 @@ scikit-learn = ">=0.18"
 scipy = ">=1.0"
 
 [[package]]
+name = "pyobjc-core"
+version = "12.0"
+description = "Python<->ObjC Interoperability Module"
+optional = false
+python-versions = ">=3.8"
+groups = ["dev"]
+markers = "sys_platform == \"darwin\""
+files = [
+    {file = "pyobjc_core-12.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:beb665937b0df76412dfd08c6518925806e41536307629a859105270e3a5e6c9"},
+    {file = "pyobjc_core-12.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:dd4962aceb0f9a0ee510e11ced449323db85e42664ac9ade53ad1cc2394dc248"},
+    {file = "pyobjc_core-12.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:1675dbb700b6bb6e3f3c9ce3f5401947e0193e16085eeb70e9160c6c6fc1ace5"},
+    {file = "pyobjc_core-12.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:c44b76d8306a130c9eb0cb79d86fd6675c8ba3e5b458e78095d271a10cd38b6a"},
+    {file = "pyobjc_core-12.0-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:5c617551e0ab860c49229fcec0135a5cde702485f22254ddc17205eb24b7fc55"},
+    {file = "pyobjc_core-12.0-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:c2709ff43ac5c2e9e2c574ae515d3aa0e470345847a4d96c5d4a04b1b86e966d"},
+    {file = "pyobjc_core-12.0-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:eb6b987e53291e7cafd8f71a80a2dd44d7afec4202a143a3e47b75cb9cdb5716"},
+    {file = "pyobjc_core-12.0.tar.gz", hash = "sha256:7e05c805a776149a937b61b892a0459895d32d9002bedc95ce2be31ef1e37a29"},
+]
+
+[[package]]
+name = "pyobjc-framework-cocoa"
+version = "12.0"
+description = "Wrappers for the Cocoa frameworks on macOS"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+markers = "sys_platform == \"darwin\""
+files = [
+    {file = "pyobjc_framework_cocoa-12.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:fe453a559be779fb4bc730b2f6686c5c78eb1898a7291964bc289f96506879b6"},
+    {file = "pyobjc_framework_cocoa-12.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:ae041b7c64a8fa93f0e06728681f7ad657ef2c92dcfdf8abc073d89fb6e3910b"},
+    {file = "pyobjc_framework_cocoa-12.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:ed99d53a91f9feb9452ba8942cd09d86727f6dd2d56ecfd9b885ddbd4259ebdd"},
+    {file = "pyobjc_framework_cocoa-12.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:13e573f5093f4158f305b1bac5e1f783881ce2f5f4a69f3c80cb000f76731259"},
+    {file = "pyobjc_framework_cocoa-12.0-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:3b167793cd1b509eaf693140ace9be1f827a2c8686fceb8c599907661f608bc2"},
+    {file = "pyobjc_framework_cocoa-12.0-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:a2b6fb9ab3e5ab6db04dfa17828a97894e7da85dd8600885c72a0c2c2214d618"},
+    {file = "pyobjc_framework_cocoa-12.0-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:32ff10250a57f72a0b6eca85b790dcc87548ff71d33d0436ffb69680d5e2f308"},
+    {file = "pyobjc_framework_cocoa-12.0.tar.gz", hash = "sha256:02d69305b698015a20fcc8e1296e1528e413d8cf9fdcd590478d359386d76e8a"},
+]
+
+[package.dependencies]
+pyobjc-core = ">=12.0"
+
+[[package]]
+name = "pyobjc-framework-metal"
+version = "12.0"
+description = "Wrappers for the framework Metal on macOS"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+markers = "sys_platform == \"darwin\""
+files = [
+    {file = "pyobjc_framework_metal-12.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:57cf43192a765a89d17bade352d476077bcc15adb45fb6a563c60e6c8ab398d4"},
+    {file = "pyobjc_framework_metal-12.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:eed803a7a47586db394af967e3ad0b44dc25940525a08aa12fa790e2d5c8b092"},
+    {file = "pyobjc_framework_metal-12.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:dae747eae25599d2e5a42f832b1e1e25afbecab78a4a193f8dccfc2add85afe3"},
+    {file = "pyobjc_framework_metal-12.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:8f902490f46203f2f97e8bba7980b608fa653103b0e2a5e3ab2f6099abb4723a"},
+    {file = "pyobjc_framework_metal-12.0-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:e147b7138ca953bc32be546dc34d10932552f2eee6ac83e438df3d0cc6f25c50"},
+    {file = "pyobjc_framework_metal-12.0-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:877d4dc62d9086fe0e1007cd6a4c3d310fb8692311264a7908466f0f595f814b"},
+    {file = "pyobjc_framework_metal-12.0-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:85dc55e77bf36e3217b81c27f0c17398959fce45acda917db2af7096d8ca90ec"},
+    {file = "pyobjc_framework_metal-12.0.tar.gz", hash = "sha256:1a4c08118089239986a3c4f7b19722e18986626933f0960be027c682a70d8758"},
+]
+
+[package.dependencies]
+pyobjc-core = ">=12.0"
+pyobjc-framework-Cocoa = ">=12.0"
+
+[[package]]
 name = "pyparsing"
 version = "3.2.5"
 description = "pyparsing - Classes and methods to define and execute parsing grammars"
@@ -6118,7 +6275,7 @@ version = "1.2.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "python_dotenv-1.2.1-py3-none-any.whl", hash = "sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61"},
     {file = "python_dotenv-1.2.1.tar.gz", hash = "sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6"},
@@ -7881,6 +8038,65 @@ wandb = "*"
 xgboost = "*"
 
 [[package]]
+name = "tabpfn"
+version = "6.0.5"
+description = "TabPFN: Foundation model for tabular data"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "tabpfn-6.0.5-py3-none-any.whl", hash = "sha256:0507e37b9922a1a79c0d1cbad109440f418ce260f78f6a1b91ff96f97551783a"},
+    {file = "tabpfn-6.0.5.tar.gz", hash = "sha256:31c2ba143569ad162fa517776d947166e66d78b17778d96791fcb16568bd3641"},
+]
+
+[package.dependencies]
+einops = ">=0.2.0,<0.9"
+eval-type-backport = ">=0.2.2"
+huggingface-hub = ">=0.19.0,<2"
+joblib = ">=1.2.0"
+kditransform = ">=1.2"
+numpy = ">=1.21.6,<3"
+pandas = ">=1.4.0,<3"
+pydantic = ">=2.8.0"
+pydantic-settings = ">=2.10.1"
+pyobjc-framework-Metal = {version = "*", markers = "sys_platform == \"darwin\" and python_version > \"3.9\""}
+scikit-learn = ">=1.2.0,<1.8"
+scipy = ">=1.11.1,<2"
+tabpfn-common-utils = {version = ">=0.1.8", extras = ["telemetry-interactive"]}
+torch = ">=2.1,<3"
+typing_extensions = ">=4.12.0"
+
+[package.extras]
+ci = ["licensecheck (>=2025.1.0)", "onnx (>=1.19.0)", "psutil (>=7.1.0)", "pytest (>=8.4.2)", "pytest-mock (>=3.14.1)"]
+dev = ["black (>=25.9.0)", "markdown-exec[ansi] (>=1.11.0)", "mike (>=2.1.3)", "mkdocs (>=1.6.1)", "mkdocs-autorefs (>=1.4.3)", "mkdocs-gen-files (>=0.5.0)", "mkdocs-glightbox (>=0.5.1)", "mkdocs-literate-nav (>=0.6.2)", "mkdocs-material (>=9.6.21)", "mkdocstrings[python] (>=0.30.1)", "mypy (==1.18.2)", "onnx (>=1.19.0)", "pre-commit (>=4.3.0)", "psutil (>=7.1.0)", "pytest (>=8.4.2)", "pytest-mock (>=3.14.1)", "pytest-xdist (>=3.8.0)", "ruff (==0.14.0)"]
+
+[[package]]
+name = "tabpfn-common-utils"
+version = "0.2.7"
+description = "Utilities shared between TabPFN codebases"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "tabpfn_common_utils-0.2.7-py3-none-any.whl", hash = "sha256:abbad356ec7ae8c4141c1678a17ff71761406ac6b01e117b4b19f3c3fdd4bd84"},
+    {file = "tabpfn_common_utils-0.2.7.tar.gz", hash = "sha256:55eded86a15cf4c3861450329c7d1e69022acb6b620d9ec968253bf4b096cb95"},
+]
+
+[package.dependencies]
+filelock = ">=3.19.1"
+numpy = ">=1.21.6"
+pandas = ">=1.4.0,<3"
+platformdirs = ">=4.4.0"
+posthog = ">=6.7,<7.0"
+requests = ">=2.32.5"
+scikit-learn = ">=1.2.0"
+typing-extensions = ">=4.12,<5"
+
+[package.extras]
+build = ["build (>=1.0.0)", "hatchling (>=1.25)", "twine (>=5.0.0)"]
+dev = ["pyright (>=1.1.399)", "pytest (>=8.3)", "pytest-cov (>=5)", "ruff (>=0.5)"]
+
+[[package]]
 name = "terminado"
 version = "0.18.1"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -9176,4 +9392,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.13"
-content-hash = "30c1a5d949931b1b72da5e06836ab8c0a2ba2205bf83fbadfefff99021259402"
+content-hash = "74caaa35d6efe1c21d88d79801c8e5b732fa46455e1a386b45784004a2214f31"
