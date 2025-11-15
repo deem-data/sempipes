@@ -114,7 +114,9 @@ def _add_memorized_history(
                 )
                 current_score = memorized_score
             else:
-                add_feature_sentence = f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
+                add_feature_sentence = (
+                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
+                )
 
             messages += [
                 {"role": "assistant", "content": memorized_code},
