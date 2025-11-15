@@ -93,7 +93,6 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
 def _add_memorized_history(
     memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
-    generated_code: list[str],
     target_metric: str,
 ) -> None:
     if memory is not None and len(memory) > 0:
@@ -109,14 +108,13 @@ def _add_memorized_history(
                 improvement = memorized_score - current_score
 
             if improvement > 0.0:
-                generated_code.append(memorized_code)
                 add_feature_sentence = (
                     "The code was executed and improved the downstream performance. "
-                    "You may reuse a selection of these aggregations for the next version of the code."
+                    "You may choose to copy from this previous version of the code for the next version of the code."
                 )
                 current_score = memorized_score
             else:
-                add_feature_sentence = f"The last code changes were discarded. " f"(Improvement: {improvement})"
+                add_feature_sentence = f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
 
             messages += [
                 {"role": "assistant", "content": memorized_code},
@@ -169,7 +167,7 @@ class LLMCodeGenSemAggFeaturesEstimator(EstimatorTransformer, TransformerMixin, 
         self.right_join_key = right_join_key
         self.nl_prompt = nl_prompt
         self.how_many = how_many
-        self.generated_code_: list[str] = []
+        self.generated_code_: str | None = None
 
         self.eval_mode = eval_mode
         self._pipeline_summary = _pipeline_summary
@@ -178,20 +176,18 @@ class LLMCodeGenSemAggFeaturesEstimator(EstimatorTransformer, TransformerMixin, 
 
     def empty_state(self):
         return {
-            "generated_code": [
-                """
+            "generated_code": """
 def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
     return left_df         
 """
-            ]
         }
 
     def state_after_fit(self):
         return {"generated_code": self.generated_code_}
 
     def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None and len(self.generated_code_) > 0:
-            return self.generated_code_[-1]
+        if self.generated_code_ is not None:
+            return self.generated_code_
         return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, stacked_inputs, y=None) -> "LLMCodeGenSemAggFeaturesEstimator":  # pylint: disable=unused-argument
@@ -227,11 +223,7 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
         for attempt in range(1, _MAX_RETRIES + 1):
             if attempt == 1:
                 messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                _add_memorized_history(self._memory, messages, self.generated_code_, target_metric)
-
-            # print("-" * 120)
-            # print(messages)
-            # print("-" * 120)
+                _add_memorized_history(self._memory, messages, target_metric)
 
             code = generate_python_code_from_messages(messages)
             try:
@@ -239,7 +231,7 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
                 new_columns = [column for column in test_result.columns if column not in samples.columns]
 
                 print(f"\t> Computed {len(new_columns)} new feature columns: {new_columns}.")
-                self.generated_code_.append(code)
+                self.generated_code_ = code
                 break
 
             except Exception as e:  # pylint: disable=broad-except
@@ -262,9 +254,7 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
         data_to_aggregate = stacked_inputs["data_to_aggregate"]
 
         num_samples_before = len(samples)
-        code_to_execute = "\n".join(self.generated_code_)
-
-        agg_join_func = safe_exec(code_to_execute, variable_to_return="_sem_agg_join")  # type: ignore
+        agg_join_func = safe_exec(self.generated_code_, variable_to_return="_sem_agg_join")  # type: ignore
         result_df = agg_join_func(self.left_join_key, samples, self.right_join_key, data_to_aggregate)
 
         if self.right_join_key in result_df.columns:

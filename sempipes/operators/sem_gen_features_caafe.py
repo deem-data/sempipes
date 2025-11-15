@@ -136,15 +136,6 @@ def _build_prompt_from_df(
     return _get_prompt(df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary)
 
 
-def _pipeline_summary_info(pipeline_summary):
-    if pipeline_summary is not None:
-        return (
-            f" for a {pipeline_summary.task_type} task, predicting `{pipeline_summary.target_name}` "
-            f"with {pipeline_summary.model}"
-        )
-    return ""
-
-
 def _add_memorized_history(
     memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
@@ -187,10 +178,12 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> tuple[list[str], 
     columns_after = df_sample_processed.columns
     new_columns = list(sorted(set(columns_after) - set(columns_before)))
     removed_columns = list(sorted(set(columns_before) - set(columns_after)))
-    print(
-        f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
-        f"removed {len(removed_columns)} feature columns: {removed_columns}"
-    )
+
+    changed_columns = f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
+    if len(removed_columns) > 0:
+        changed_columns += f"removed {len(removed_columns)} feature columns: {removed_columns}"
+
+    print(changed_columns)
     return new_columns, removed_columns
 
 

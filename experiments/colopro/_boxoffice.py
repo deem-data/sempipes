@@ -1,12 +1,16 @@
+import warnings
+
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
 import skrub
+from sklearn.metrics import root_mean_squared_log_error
+from sklearn.model_selection import train_test_split
 from skrub import DataOp
-from skrub._data_ops._evaluation import find_node_by_name
 
-from experiments.colopro import Setup, TestPipeline
-from sempipes.optimisers import optimise_colopro
+from experiments.colopro import TestPipeline
+
+warnings.filterwarnings("ignore")
 
 
 class BoxOfficePipeline(TestPipeline):
@@ -14,52 +18,23 @@ class BoxOfficePipeline(TestPipeline):
     def name(self) -> str:
         return "boxoffice"
 
-    def baseline(self) -> float:
+    @property
+    def scoring(self) -> str:
+        return "neg_root_mean_squared_log_error"
+
+    def score(self, y_true, y_pred) -> float:
+        return root_mean_squared_log_error(y_true, y_pred)
+
+    def pipeline_with_all_data(self, seed) -> DataOp:
         data = pd.read_csv("experiments/colopro/boxoffice.csv")
+        all_data = data.iloc[:500]
+        return _pipeline(all_data)
 
-        data_eval = data.iloc[350:]
-
-        operator_name = "additional_movie_features"
-
-        pipeline = _pipeline(data_eval)
-        data_op = find_node_by_name(pipeline, operator_name)
-        empty_state = data_op._skrub_impl.estimator.empty_state()
-
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = empty_state
-
-        return skrub.cross_validate(learner, env, scoring="neg_root_mean_squared_log_error")["test_score"].mean()
-
-    def optimize(self, setup: Setup) -> float:
+    def pipeline_with_train_data(self, seed) -> DataOp:
         data = pd.read_csv("experiments/colopro/boxoffice.csv")
-
-        data_val = data.iloc[0:350]
-        data_eval = data.iloc[350:]
-
-        operator_name = "additional_movie_features"
-
-        pipeline_to_optimise = _pipeline(data_val)
-        outcomes = optimise_colopro(
-            pipeline_to_optimise,
-            operator_name,
-            num_trials=setup.num_trials,
-            scoring="neg_root_mean_squared_log_error",
-            search=setup.search,
-            cv=5,
-            pipeline_definition=_pipeline,
-            run_name=self.name,
-        )
-
-        best_outcome = max(outcomes, key=lambda x: x.score)
-        state = best_outcome.state
-
-        pipeline = _pipeline(data_eval)
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = state
-
-        return skrub.cross_validate(learner, env, scoring="neg_root_mean_squared_log_error")["test_score"].mean()
+        all_data = data.iloc[:500]
+        train_data, _ = train_test_split(all_data, test_size=TestPipeline.TEST_SIZE, random_state=seed)
+        return _pipeline(train_data)
 
 
 def _pipeline(data) -> DataOp:
@@ -73,7 +48,6 @@ def _pipeline(data) -> DataOp:
 
     revenue = skrub.var("revenue", revenue_df).skb.mark_as_y().skb.subsample(n=100)
     revenue = revenue.skb.set_description("the international box office revenue for a movie")
-
     movie_stats = movie_stats.sem_gen_features(
         nl_prompt="""
             Create additional features that could help predict the box office revenue of a movie.
@@ -81,8 +55,8 @@ def _pipeline(data) -> DataOp:
             that could influence a movie's financial success. Some of the attributes are in JSON format,
             so you might need to parse them to extract useful information.
         """,
-        name="additional_movie_features",
-        how_many=25,
+        name=TestPipeline.OPERATOR_NAME,
+        how_many=5,
     )
 
     json_columns = [
@@ -110,23 +84,7 @@ def _pipeline(data) -> DataOp:
 
     y_log = revenue.skb.apply_func(np.log1p)
 
-    params = {
-        "objective": "regression_l1",
-        "metric": "rmse",
-        "n_estimators": 3000,
-        "learning_rate": 0.003,
-        "feature_fraction": 0.7,
-        "bagging_fraction": 0.7,
-        "bagging_freq": 1,
-        "lambda_l1": 0.1,
-        "lambda_l2": 0.1,
-        "num_leaves": 31,
-        "verbose": -1,
-        "n_jobs": -1,
-        "seed": 42,
-        "boosting_type": "gbdt",
-    }
-    model = lgb.LGBMRegressor(**params)  # type: ignore
+    model = lgb.LGBMRegressor(verbose=-1, random_state=0)  # type: ignore
     predictions = X.skb.apply(model, y=y_log)
 
     def exp_if_transform(outputs, mode=skrub.eval_mode()):

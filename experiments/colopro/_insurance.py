@@ -1,11 +1,14 @@
+import warnings
+
 import pandas as pd
 import skrub
 from sklearn.ensemble import HistGradientBoostingClassifier
-from skrub import TableVectorizer
-from skrub._data_ops._evaluation import find_node_by_name
+from sklearn.model_selection import train_test_split
+from skrub import DataOp, TableVectorizer
 
-from experiments.colopro import Setup, TestPipeline
-from sempipes.optimisers.colopro import optimise_colopro
+from experiments.colopro import TestPipeline
+
+warnings.filterwarnings("ignore")
 
 
 class HealthInsurancePipeline(TestPipeline):
@@ -13,51 +16,25 @@ class HealthInsurancePipeline(TestPipeline):
     def name(self) -> str:
         return "insurance"
 
-    def baseline(self) -> float:
+    def score(self, y_true, y_pred) -> float:
+        from sklearn.metrics import accuracy_score
+
+        return accuracy_score(y_true, y_pred)
+
+    @property
+    def scoring(self) -> str:
+        return "accuracy"
+
+    def pipeline_with_all_data(self, seed) -> DataOp:
         data = pd.read_csv("experiments/colopro/insurance.csv")
+        X = data.iloc[:1000]
+        return _pipeline(X)
 
-        X_eval = data.iloc[500:1500]
-        operator_name = "more_features"
-
-        pipeline = _pipeline(X_eval)
-        data_op = find_node_by_name(pipeline, operator_name)
-        empty_state = data_op._skrub_impl.estimator.empty_state()
-
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = empty_state
-
-        return skrub.cross_validate(learner, env)["test_score"].mean()
-
-    def optimize(self, setup: Setup) -> float:
+    def pipeline_with_train_data(self, seed) -> DataOp:
         data = pd.read_csv("experiments/colopro/insurance.csv")
-
-        X_val = data.iloc[0:500]
-        X_eval = data.iloc[500:1500]
-
-        operator_name = "more_features"
-
-        pipeline_to_optimise = _pipeline(X_val)
-        outcomes = optimise_colopro(
-            pipeline_to_optimise,
-            operator_name,
-            num_trials=setup.num_trials,
-            scoring="accuracy",
-            search=setup.search,
-            cv=5,
-            pipeline_definition=_pipeline,
-            run_name=self.name,
-        )
-
-        best_outcome = max(outcomes, key=lambda x: x.score)
-        state = best_outcome.state
-
-        pipeline = _pipeline(X_eval)
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = state
-
-        return skrub.cross_validate(learner, env)["test_score"].mean()
+        X = data.iloc[:1000]
+        X_train, _ = train_test_split(X, test_size=TestPipeline.TEST_SIZE, random_state=seed)
+        return _pipeline(X)
 
 
 def _pipeline(data) -> skrub.DataOp:
@@ -71,8 +48,6 @@ def _pipeline(data) -> skrub.DataOp:
     """)
     records = records.drop("Response", axis=1)
 
-    # labels = labels.skb.set_name(y_description)
-
     records = records.skb.mark_as_X()
     labels = labels.skb.mark_as_y()
 
@@ -80,9 +55,9 @@ def _pipeline(data) -> skrub.DataOp:
         nl_prompt="""
             Compute additional features that could help predict whether a person will apply for an insurance policy based on their demographics, and other relevant data. Consider factors such as age, income, and previous insurance history to derive meaningful features that enhance the predictive power of the model.
         """,
-        name="more_features",
-        how_many=10,
+        name=TestPipeline.OPERATOR_NAME,
+        how_many=1,
     )
 
     encoded_responses = records_with_additional_features.skb.apply(TableVectorizer())
-    return encoded_responses.skb.apply(HistGradientBoostingClassifier(), y=labels)
+    return encoded_responses.skb.apply(HistGradientBoostingClassifier(random_state=0), y=labels)
