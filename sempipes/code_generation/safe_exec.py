@@ -98,6 +98,7 @@ def safe_exec(
         "TypeError": TypeError,
         "SyntaxError": SyntaxError,
         "enumerate": enumerate,
+        "print": print,
     }
 
     safe_globals = {
