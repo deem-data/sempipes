@@ -46,3 +46,6 @@ experiments/sigmod/hidden_data/*
 .sigmod-env/
 experiments/sigmod/results/*
 experiments/sigmod/logs/*
+autogluon_*/
+Autogluon*/
+ag_*/

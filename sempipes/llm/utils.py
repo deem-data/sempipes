@@ -30,6 +30,11 @@ def unwrap_json(text: str) -> str:
     return _unwrap(text=text, prefix="```json", suffixes=["```", "```end", "\nend"])
 
 
-def unwrap_python(text: str | None) -> str:
-    assert text is not None, "Response text to unwrap is None"
-    return _unwrap(text=text, prefix="```python", suffixes=["```", "```end", "\nend"])
+def unwrap_python(text: str) -> str:
+    result = _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")
+    # Remove any standalone "end" statements that might have been generated
+    lines = result.splitlines()
+    # Remove trailing empty lines and "end" statements
+    while lines and (not lines[-1].strip() or lines[-1].strip() == "end"):
+        lines.pop()
+    return "\n".join(lines)

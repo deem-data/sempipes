@@ -30,6 +30,8 @@ import torchaudio
 import tqdm
 import transformers
 import unidecode
+import xgboost
+import autogluon
 
 _ALLOWED_MODULES = [
     "numpy",
@@ -62,6 +64,8 @@ _ALLOWED_MODULES = [
     "huggingface_hub",
     "unicodedata",
     "unidecode",
+    "xgboost",
+    "autogluon",
 ]
 
 
@@ -101,6 +105,7 @@ def safe_exec(
         "len": len,
         "range": range,
         "isinstance": isinstance,
+        "hasattr": hasattr,
         "sum": sum,
         "any": any,
         "all": all,
@@ -162,6 +167,8 @@ def safe_exec(
         "huggingface_hub": huggingface_hub,
         "unicodedata": unicodedata,
         "unidecode": unidecode,
+        "xgboost": xgboost,
+        "autogluon": autogluon,
     }
 
     # We need a single dict to allow function definitions inside the code
