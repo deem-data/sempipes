@@ -114,7 +114,7 @@ def test_refinement_typos():
         "DE",
         "DE",
         "ES",
-        "es",
+        "ES",
         "ES",
         "ES",
         "CN",
