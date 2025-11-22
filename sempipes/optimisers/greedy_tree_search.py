@@ -13,6 +13,9 @@ class TreeSearch(SearchPolicy):
         self.root_node: SearchNode | None = None
         self.outcomes: list[Outcome] = []
 
+    def clone_empty(self) -> SearchPolicy:
+        return TreeSearch(min_num_drafts=self.min_num_drafts)
+
     def create_root_node(self, dag_sink: DataOp, operator_name: str):
         data_op = find_node_by_name(dag_sink, operator_name)
         empty_state = data_op._skrub_impl.estimator.empty_state()

@@ -1,20 +1,21 @@
-from dotenv import load_dotenv
-from skrub import DataOp
-import skrub
-from skrub._data_ops._skrub_namespace import SkrubNamespace
-from sempipes.operators.operators import SemChoices
+import os
 
-from sempipes.operators.sem_augment import sem_augment
-from sempipes.operators.sem_refine import sem_refine
-from sempipes.operators.sem_choose_llm import sem_choose, apply_with_sem_choose
-from sempipes.operators.sem_distill import sem_distill
-from sempipes.operators.sem_extract_features import sem_extract_features
-from sempipes.operators.sem_select_llm import sem_select
-from sempipes.operators.sem_agg_features import sem_agg_features
-from sempipes.operators.sem_gen_features_caafe import sem_gen_features
-from sempipes.operators.sem_clean import sem_clean
-from sempipes.operators import sem_fillna
-from sempipes.config import get_config, LLM, update_config
+# Set SCIPY_ARRAY_API=1 to enable scipy array API compatibility. Must be set before any scipy imports.
+os.environ.setdefault("SCIPY_ARRAY_API", "1")
+from dotenv import load_dotenv  # pylint: disable=wrong-import-position
+from skrub import DataOp  # pylint: disable=wrong-import-position
+from skrub._data_ops._skrub_namespace import SkrubNamespace  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_augment import sem_augment  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_refine import sem_refine  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_choose_llm import sem_choose, apply_with_sem_choose  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_distill import sem_distill  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_extract_features import sem_extract_features  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_select_llm import sem_select  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_agg_features import sem_agg_features  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_gen_features_caafe import sem_gen_features  # pylint: disable=wrong-import-position
+from sempipes.operators.sem_clean import sem_clean  # pylint: disable=wrong-import-position
+from sempipes.operators import sem_fillna  # pylint: disable=wrong-import-position
+from sempipes.config import get_config, LLM, update_config  # pylint: disable=wrong-import-position
 
 # Load environment variables from a .env file if present
 load_dotenv()

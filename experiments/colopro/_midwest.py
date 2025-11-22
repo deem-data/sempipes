@@ -1,10 +1,13 @@
-import skrub
-from sklearn.ensemble import HistGradientBoostingClassifier
-from skrub import TableVectorizer
-from skrub._data_ops._evaluation import find_node_by_name
+import warnings
 
-from experiments.colopro import Setup, TestPipeline
-from sempipes.optimisers.colopro import optimise_colopro
+import skrub
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from skrub import DataOp, TableVectorizer
+
+from experiments.colopro import TestPipeline
+
+warnings.filterwarnings("ignore")
 
 
 class MidwestSurveyPipeline(TestPipeline):
@@ -12,62 +15,42 @@ class MidwestSurveyPipeline(TestPipeline):
     def name(self) -> str:
         return "midwestsurvey"
 
-    def baseline(self) -> float:
+    @property
+    def scoring(self) -> str:
+        return "accuracy"
+
+    def score(self, y_true, y_pred) -> float:
+        from sklearn.metrics import accuracy_score
+
+        return accuracy_score(y_true, y_pred)
+
+    def pipeline_with_all_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_midwest_survey()
 
-        X_eval = dataset.X.iloc[500:1500]
-        X_description = dataset.metadata["description"]
+        X = dataset.X.iloc[:2000]
+        mask = ~X["In_what_ZIP_code_is_your_home_located"].str.contains(r"[^0-9.]")
+        X = X[mask]
+        y = dataset.y.iloc[:2000][mask]
 
-        y_eval = dataset.y.iloc[500:1500]
+        X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
 
-        operator_name = "demographic_features"
+        return _pipeline(X, X_description, y, y_description)
 
-        pipeline = _pipeline(X_eval, X_description, y_eval, y_description)
-
-        data_op = find_node_by_name(pipeline, operator_name)
-        empty_state = data_op._skrub_impl.estimator.empty_state()
-
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = empty_state
-
-        return skrub.cross_validate(learner, env)["test_score"].mean()
-
-    def optimize(self, setup: Setup) -> float:
+    def pipeline_with_train_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_midwest_survey()
 
-        X_val = dataset.X.iloc[0:500]
-        X_eval = dataset.X.iloc[500:1500]
-        X_description = dataset.metadata["description"]
+        X = dataset.X.iloc[:2000]
+        mask = ~X["In_what_ZIP_code_is_your_home_located"].str.contains(r"[^0-9.]")
+        X = X[mask]
+        y = dataset.y.iloc[:2000][mask]
 
-        y_val = dataset.y.iloc[0:500]
-        y_eval = dataset.y.iloc[500:1500]
+        X_train, _, y_train, _ = train_test_split(X, y, train_size=TestPipeline.TEST_SIZE, random_state=seed)
+
+        X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
 
-        operator_name = "demographic_features"
-
-        pipeline_to_optimise = _pipeline(X_val, X_description, y_val, y_description)
-        outcomes = optimise_colopro(
-            pipeline_to_optimise,
-            operator_name,
-            num_trials=setup.num_trials,
-            scoring="accuracy",
-            search=setup.search,
-            cv=5,
-            pipeline_definition=_pipeline,
-            run_name=self.name,
-        )
-
-        best_outcome = max(outcomes, key=lambda x: x.score)
-        state = best_outcome.state
-
-        pipeline = _pipeline(X_eval, X_description, y_eval, y_description)
-        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
-        env = pipeline.skb.get_data()
-        env[f"sempipes_prefitted_state__{operator_name}"] = state
-
-        return skrub.cross_validate(learner, env)["test_score"].mean()
+        return _pipeline(X_train, X_description, y_train, y_description)
 
 
 def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
@@ -82,14 +65,11 @@ def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
 
     responses_with_additional_features = responses.sem_gen_features(
         nl_prompt="""
-            Compute additional demographics-related features, use your intrinsic knowledge about the US. 
-            Take into account how the identification with the country or regions of it changed over the generations.         
-            Also think about how the identification differs per class and education. The midwest is generally associated 
-            with "Midwestern values" — friendliness, modesty, hard work, and community-mindedness.
+            Compute additional features which help predict the census region of a respondent based on their demographics. Use your intrinsic knowledge about the US to come up with the features. Pay special attention to the zip code of the person.
         """,
-        name="demographic_features",
+        name=TestPipeline.OPERATOR_NAME,
         how_many=5,
     )
 
     encoded_responses = responses_with_additional_features.skb.apply(TableVectorizer())
-    return encoded_responses.skb.apply(HistGradientBoostingClassifier(), y=labels)
+    return encoded_responses.skb.apply(RandomForestClassifier(random_state=0), y=labels)

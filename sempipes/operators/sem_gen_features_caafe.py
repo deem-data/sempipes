@@ -9,6 +9,7 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import (
@@ -104,7 +105,7 @@ Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
-Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
+Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns. 
 
 Code formatting for each added column:
 ```python
@@ -134,15 +135,6 @@ def _build_prompt_from_df(
             sampled_values = [float(round(sample, 2)) for sample in sampled_values]
         samples += f"{df_[column].name} ({df[column].dtype}): NaN-freq [{nan_freq}%], Samples {sampled_values}\n"
     return _get_prompt(df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary)
-
-
-def _pipeline_summary_info(pipeline_summary):
-    if pipeline_summary is not None:
-        return (
-            f" for a {pipeline_summary.task_type} task, predicting `{pipeline_summary.target_name}` "
-            f"with {pipeline_summary.model}"
-        )
-    return ""
 
 
 def _add_memorized_history(
@@ -187,10 +179,12 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> tuple[list[str], 
     columns_after = df_sample_processed.columns
     new_columns = list(sorted(set(columns_after) - set(columns_before)))
     removed_columns = list(sorted(set(columns_before) - set(columns_after)))
-    print(
-        f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
-        f"removed {len(removed_columns)} feature columns: {removed_columns}"
-    )
+
+    changed_columns = f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
+    if len(removed_columns) > 0:
+        changed_columns += f"removed {len(removed_columns)} feature columns: {removed_columns}"
+
+    print(changed_columns)
     return new_columns, removed_columns
 
 
@@ -233,6 +227,10 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         if self._prefitted_state is not None:
             print(f"--- Using provided state for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
+            return self
+
+        if self.eval_mode == "preview" and get_config().prefer_empty_state_in_preview:
+            self.generated_code_ = []
             return self
 
         print(
@@ -281,7 +279,24 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
     def transform(self, df):
         check_is_fitted(self, ("generated_code_", "new_columns_", "removed_columns_"))
         code_to_execute = "\n".join(self.generated_code_)
+
         df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        # import os
+        # from datetime import datetime
+
+        # try:
+        #     in_df = df.copy(deep=True)
+        #     df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        # except Exception as e:
+        #     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        #     error_folder = f"error_{timestamp}"
+        #     os.makedirs(error_folder, exist_ok=True)
+        #     # Save the dataframe as csv
+        #     in_df.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
+        #     # Save the code as text
+        #     with open(os.path.join(error_folder, "executed_code.py"), "w") as f:
+        #         f.write(code_to_execute)
+        #     raise e
 
         for column in self.new_columns_:
             assert column in df.columns, f"Expected new column '{column}' not found in transformed dataframe"

@@ -30,6 +30,7 @@ repos:
     hooks:
       - id: mypy
         args: ["--config-file", "mypy.ini"]
+        exclude: ^experiments/
         additional_dependencies:
           - skrub==0.6.1
           - plotly==6.3.0
