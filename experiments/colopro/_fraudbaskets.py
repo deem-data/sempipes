@@ -31,7 +31,7 @@ class FraudBasketsPipeline(TestPipeline):
         nonfraudulent_baskets = all_baskets[all_baskets.fraud_flag == 0]
         fraudulent_baskets = all_baskets[all_baskets.fraud_flag == 1]
 
-        baskets = pd.concat([nonfraudulent_baskets.iloc[:400], fraudulent_baskets.iloc[:100]])
+        baskets = pd.concat([nonfraudulent_baskets.iloc[:4000], fraudulent_baskets.iloc[:1000]])
         return _pipeline(baskets, dataset["products"])
 
     def pipeline_with_train_data(self, seed) -> DataOp:
@@ -41,7 +41,7 @@ class FraudBasketsPipeline(TestPipeline):
         nonfraudulent_baskets = all_baskets[all_baskets.fraud_flag == 0]
         fraudulent_baskets = all_baskets[all_baskets.fraud_flag == 1]
 
-        baskets = pd.concat([nonfraudulent_baskets.iloc[:400], fraudulent_baskets.iloc[:100]])
+        baskets = pd.concat([nonfraudulent_baskets.iloc[:4000], fraudulent_baskets.iloc[:1000]])
         train_baskets, _ = train_test_split(baskets, test_size=TestPipeline.TEST_SIZE, random_state=seed)
         return _pipeline(train_baskets, dataset["products"])
 

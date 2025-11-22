@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+import numpy as np
 from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 from tqdm import tqdm
@@ -27,9 +28,8 @@ class TestPipeline(ABC):
     def score(self, y_true, y_pred) -> float:
         pass
 
-    @abstractmethod
-    def scoring(self) -> str:
-        pass
+    def requires_probabilities(self) -> bool:
+        return False
 
     @abstractmethod
     def pipeline_with_all_data(self, seed) -> DataOp:
@@ -53,52 +53,59 @@ class TestPipeline(ABC):
             pipeline = self.pipeline_with_all_data(seed)
 
             from_trial = best_outcome.search_node.trial
-            score = self._evaluate(seed, pipeline, operator_state=best_outcome.state, from_trial=from_trial)
+            try:
+                score = self._evaluate(seed, pipeline, operator_state=best_outcome.state)
+            except Exception as e:
+                print("Error evaluating operator state:", e)
+                import traceback
 
+                traceback.print_exc()
+                score = None
             scores_over_time.append((max_trial, from_trial, best_outcome.score, score))
 
         return scores_over_time
 
     def _optimize_pipeline(self, pipeline, setup):
+        search_policy = setup.search.clone_empty()
         outcomes = optimise_colopro(
             pipeline,
             TestPipeline.OPERATOR_NAME,
             num_trials=setup.num_trials,
             scoring=self.scoring,
-            search=setup.search,
-            cv=5,
+            search=search_policy,
+            cv=10,
             run_name=self.name,
         )
 
         return outcomes
 
-    def _evaluate(self, seed, pipeline, operator_state=None, from_trial=None):
+    def _evaluate(self, seed, pipeline, operator_state=None):
         if operator_state is None:
             data_op = find_node_by_name(pipeline, self.OPERATOR_NAME)
             empty_state = data_op._skrub_impl.estimator.empty_state()
             operator_state = empty_state
 
-        scores = []
+        print("#" * 80)
+        print("Operator state:", operator_state)
+        print("#" * 80)
 
-        for _ in range(10):
-            split = pipeline.skb.train_test_split(test_size=self.TEST_SIZE, random_state=seed)
-            learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
+        np.random.seed(seed)
+        split = pipeline.skb.train_test_split(test_size=self.TEST_SIZE, random_state=seed, stratify=self.stratify_by)
+        learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
-            # print("Seed:", seed)
-            # print("From trial:", from_trial)
-            import numpy as np
-            # print("Sum of train _skrub_y:", np.sum(split["train"]["_skrub_y"]))
-            # print("Hash of operator state:", hash(str(operator_state)))
+        train_env = split["train"]
+        train_env[f"sempipes_prefitted_state__{self.OPERATOR_NAME}"] = operator_state
+        learner.fit(train_env)
 
-            train_env = split["train"]
-            train_env[f"sempipes_prefitted_state__{self.OPERATOR_NAME}"] = operator_state
-            learner.fit(train_env)
-
-            test_env = split["test"]
-            test_env[f"sempipes_prefitted_state__{self.OPERATOR_NAME}"] = operator_state
+        test_env = split["test"]
+        test_env[f"sempipes_prefitted_state__{self.OPERATOR_NAME}"] = operator_state
+        if self.requires_probabilities():
+            y_pred = learner.predict_proba(test_env)
+        else:
             y_pred = learner.predict(test_env)
-            score = self.score(split["test"]["_skrub_y"], y_pred)
+        score = self.score(split["test"]["_skrub_y"], y_pred)
+        print("%" * 80)
+        print(score)
+        print("%" * 80)
 
-            scores.append(score)
-
-        return np.mean(scores)
+        return score

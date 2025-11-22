@@ -27,6 +27,9 @@ class MonteCarloTreeSearch(SearchPolicy):
         self.outcomes: list[Outcome] = []
         self.search_node_stats: dict[int, SearchNodeStatistics] = {}
 
+    def clone_empty(self) -> SearchPolicy:
+        return MonteCarloTreeSearch(nodes_per_expansion=self.nodes_per_expansion, c=self.c)
+
     def create_root_node(self, dag_sink: DataOp, operator_name: str):
         data_op = find_node_by_name(dag_sink, operator_name)
         empty_state = data_op._skrub_impl.estimator.empty_state()

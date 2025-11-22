@@ -1,7 +1,7 @@
 import warnings
 
 import skrub
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from skrub import DataOp, TableVectorizer
 
@@ -28,7 +28,9 @@ class MidwestSurveyPipeline(TestPipeline):
         dataset = skrub.datasets.fetch_midwest_survey()
 
         X = dataset.X.iloc[:2000]
-        y = dataset.y.iloc[:2000]
+        mask = ~X["In_what_ZIP_code_is_your_home_located"].str.contains(r"[^0-9.]")
+        X = X[mask]
+        y = dataset.y.iloc[:2000][mask]
 
         X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
@@ -39,7 +41,9 @@ class MidwestSurveyPipeline(TestPipeline):
         dataset = skrub.datasets.fetch_midwest_survey()
 
         X = dataset.X.iloc[:2000]
-        y = dataset.y.iloc[:2000]
+        mask = ~X["In_what_ZIP_code_is_your_home_located"].str.contains(r"[^0-9.]")
+        X = X[mask]
+        y = dataset.y.iloc[:2000][mask]
 
         X_train, _, y_train, _ = train_test_split(X, y, train_size=TestPipeline.TEST_SIZE, random_state=seed)
 
@@ -61,14 +65,11 @@ def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
 
     responses_with_additional_features = responses.sem_gen_features(
         nl_prompt="""
-            Compute additional demographics-related features, use your intrinsic knowledge about the US. 
-            Take into account how the identification with the country or regions of it changed over the generations.         
-            Also think about how the identification differs per class and education. The midwest is generally associated 
-            with "Midwestern values" — friendliness, modesty, hard work, and community-mindedness.
+            Compute additional features which help predict the census region of a respondent based on their demographics. Use your intrinsic knowledge about the US to come up with the features. Pay special attention to the zip code of the person.
         """,
         name=TestPipeline.OPERATOR_NAME,
-        how_many=1,
+        how_many=5,
     )
 
     encoded_responses = responses_with_additional_features.skb.apply(TableVectorizer())
-    return encoded_responses.skb.apply(HistGradientBoostingClassifier(random_state=0), y=labels)
+    return encoded_responses.skb.apply(RandomForestClassifier(random_state=0), y=labels)

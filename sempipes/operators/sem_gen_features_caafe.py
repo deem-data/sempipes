@@ -9,6 +9,7 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import (
@@ -104,7 +105,7 @@ Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
-Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
+Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns. 
 
 Code formatting for each added column:
 ```python
@@ -228,6 +229,10 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
+        if self.eval_mode == "preview" and get_config().prefer_empty_state_in_preview:
+            self.generated_code_ = []
+            return self
+
         print(
             f"--- Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
         )
@@ -274,7 +279,24 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
     def transform(self, df):
         check_is_fitted(self, ("generated_code_", "new_columns_", "removed_columns_"))
         code_to_execute = "\n".join(self.generated_code_)
+
         df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        # import os
+        # from datetime import datetime
+
+        # try:
+        #     in_df = df.copy(deep=True)
+        #     df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        # except Exception as e:
+        #     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        #     error_folder = f"error_{timestamp}"
+        #     os.makedirs(error_folder, exist_ok=True)
+        #     # Save the dataframe as csv
+        #     in_df.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
+        #     # Save the code as text
+        #     with open(os.path.join(error_folder, "executed_code.py"), "w") as f:
+        #         f.write(code_to_execute)
+        #     raise e
 
         for column in self.new_columns_:
             assert column in df.columns, f"Expected new column '{column}' not found in transformed dataframe"

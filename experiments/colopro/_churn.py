@@ -30,14 +30,14 @@ class ChurnPipeline(TestPipeline):
         all_customers = pd.read_csv("experiments/colopro/churn_customers.csv")
         all_transactions = pd.read_csv("experiments/colopro/churn_transactions.csv")
 
-        all_customers = all_customers[:1000]
+        all_customers = all_customers[:10000]
         return _pipeline(all_customers, all_transactions)
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         all_customers = pd.read_csv("experiments/colopro/churn_customers.csv")
         all_transactions = pd.read_csv("experiments/colopro/churn_transactions.csv")
 
-        all_customers = all_customers[:1000]
+        all_customers = all_customers[:10000]
         train_customers, _ = train_test_split(all_customers, test_size=TestPipeline.TEST_SIZE, random_state=seed)
         return _pipeline(train_customers, all_transactions)
 

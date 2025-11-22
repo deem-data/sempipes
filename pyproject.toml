@@ -86,4 +86,4 @@ line-ending = "auto"
 "experiments/single_cell_analysis/aide_qr.py" = ["ALL"]
 
 [tool.mypy]
-exclude = '(^|/)experiments'
+exclude = '^experiments/'

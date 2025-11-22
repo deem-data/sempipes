@@ -31,6 +31,10 @@ class Outcome:
 
 class SearchPolicy(ABC):
     @abstractmethod
+    def clone_empty(self) -> SearchPolicy:
+        pass
+
+    @abstractmethod
     def create_root_node(self, dag_sink: DataOp, operator_name: str) -> SearchNode:
         pass
 

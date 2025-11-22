@@ -53,7 +53,7 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
     # TODO Add few-shot examples
     return f"""
         You need to extend a data preparation pipeline for a machine learning model with generating additional features for the training data. The code already has a dataframe with 
-        existing features and the goal is to left join another dataframe with the existing data frame to generate more features. For that, you need
+        existing features and the goal is to left join another dataframe with the existing dataframe to generate more features. For that, you need
         to decide which columns to include from the dataframe to join and how to aggregate them in a way that helps the downstream model. A single column can be 
         included multiple times with different aggregations.
 
@@ -85,7 +85,7 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
 
         MAKE SURE THAT THE NEW COLUMNS HAVE MEANINGFUL NAMES.
         
-        EXPLAIN YOUR RATIONALE FOR CHOOSING AGGREGATION FUNCTIONS IN COMMENTS IN THE PYTHON CODE. For each new generated 
+        EXPLAIN YOUR RATIONALE FOR CHOOSING AGGREGATION FUNCTIONS IN COMMENTS IN THE PYTHON CODE. For each newly generated 
         feature, add a comment to the code that describes the features, explains why you chose it and why this feature adds useful real world knowledge for the downstream model. 
     """
 

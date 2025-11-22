@@ -25,6 +25,7 @@ class Config:
         parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
     )
     batch_size_for_batch_processing: int = 20
+    prefer_empty_state_in_preview: bool = False
 
 
 # Holds the current config; ContextVar makes it safe for threads/async tasks
@@ -56,6 +57,9 @@ def update_config(**kwargs) -> None:
         llm_for_batch_processing=kwargs.get("llm_for_batch_processing", current_config.llm_for_batch_processing),
         batch_size_for_batch_processing=kwargs.get(
             "batch_size_for_batch_processing", current_config.batch_size_for_batch_processing
+        ),
+        prefer_empty_state_in_preview=kwargs.get(
+            "prefer_empty_state_in_preview", current_config.prefer_empty_state_in_preview
         ),
     )
 
