@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from dataclasses_json import dataclass_json
@@ -18,6 +18,7 @@ class SearchNode:
     memory: list[dict[str, Any]]
     predefined_state: dict[str, Any] | None
     parent_score: float | None
+    inspirations: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass_json

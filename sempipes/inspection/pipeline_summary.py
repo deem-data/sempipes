@@ -10,6 +10,9 @@ from skrub._data_ops._data_ops import Apply, GetItem
 from skrub._data_ops._evaluation import find_node, find_X, find_y
 
 from sempipes.inspection.runtime_summary import available_packages
+from sempipes.logging import get_logger
+
+logger = get_logger()
 
 
 @dataclass
@@ -78,3 +81,5 @@ def _summarise_dag(dag_sink_node: DataOp, summary: PipelineSummary) -> None:
     if X_op is not None:
         if X_op.skb.description is not None:
             summary.dataset_description = X_op.skb.description
+
+    logger.debug(f"Computed pipeline summary: {summary}")

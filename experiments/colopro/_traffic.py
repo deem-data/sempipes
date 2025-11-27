@@ -45,12 +45,12 @@ class TrafficPipeline(TestPipeline):
         return accuracy_score(y_true, y_pred)
 
     def pipeline_with_all_data(self, seed) -> DataOp:
-        dataset = skrub.datasets.fetch_traffic_violations() 
-        df = dataset.traffic_violations[dataset.traffic_violations.violation_type.isin(['Warning', 'Citation'])]
+        dataset = skrub.datasets.fetch_traffic_violations()
+        df = dataset.traffic_violations[dataset.traffic_violations.violation_type.isin(["Warning", "Citation"])]
         df = df.sample(n=10000, random_state=0)
-        X = df.drop(columns=['violation_type'])
-        X = X.drop(columns=['search_outcome', 'description', 'charge'])
-        y = df['violation_type']
+        X = df.drop(columns=["violation_type"])
+        X = X.drop(columns=["search_outcome", "description", "charge"])
+        y = df["violation_type"]
 
         X_description = _DESCRIPTION
         y_description = _TARGET_DESCRIPTION
@@ -58,12 +58,12 @@ class TrafficPipeline(TestPipeline):
         return _pipeline(X, X_description, y, y_description)
 
     def pipeline_with_train_data(self, seed) -> DataOp:
-        dataset = skrub.datasets.fetch_traffic_violations() 
-        df = dataset.traffic_violations[dataset.traffic_violations.violation_type.isin(['Warning', 'Citation'])]
+        dataset = skrub.datasets.fetch_traffic_violations()
+        df = dataset.traffic_violations[dataset.traffic_violations.violation_type.isin(["Warning", "Citation"])]
         df = df.sample(n=10000, random_state=0)
-        X = df.drop(columns=['violation_type'])
-        X = X.drop(columns=['search_outcome', 'description', 'charge'])
-        y = df['violation_type']
+        X = df.drop(columns=["violation_type"])
+        X = X.drop(columns=["search_outcome", "description", "charge"])
+        y = df["violation_type"]
 
         X_description = _DESCRIPTION
         y_description = _TARGET_DESCRIPTION

@@ -21,6 +21,7 @@ torch = {version = "^2.8.0", source = "pypi"}
 transformers = "^4.57.1"
 dataclasses-json = "^0.6.7"
 scipy = "^1.16.3"
+logging = "^0.4.9.6"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"

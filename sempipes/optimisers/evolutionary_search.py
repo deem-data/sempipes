@@ -6,7 +6,10 @@ from typing import Any
 from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 
+from sempipes.logging import get_logger
 from sempipes.optimisers.search_policy import _ROOT_TRIAL, Outcome, SearchNode, SearchPolicy
+
+logger = get_logger()
 
 
 class EvolutionarySearch(SearchPolicy):
@@ -22,7 +25,7 @@ class EvolutionarySearch(SearchPolicy):
         data_op = find_node_by_name(dag_sink, operator_name)
         empty_state = data_op._skrub_impl.estimator.empty_state()
 
-        print("\tEVO_SEARCH> Creating root node")
+        logger.info("EVO_SEARCH> Creating root node")
         root_node = SearchNode(
             trial=_ROOT_TRIAL,
             parent_trial=None,
@@ -61,7 +64,7 @@ class EvolutionarySearch(SearchPolicy):
         probabilities = [outcome.score / total_score for outcome in best_population]
         outcome_to_evolve = random.choices(best_population, weights=probabilities, k=1)[0]
 
-        print(f"\tEVO_SEARCH> Trying to improve node with score {outcome_to_evolve.score}")
+        logger.info(f"EVO_SEARCH> Trying to improve node with score {outcome_to_evolve.score}")
         updated_memory = copy.deepcopy(outcome_to_evolve.search_node.memory)
         updated_memory.append({"update": outcome_to_evolve.memory_update, "score": outcome_to_evolve.score})
         next_node = SearchNode(

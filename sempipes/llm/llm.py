@@ -1,10 +1,13 @@
 import json
 
-from litellm import APIConnectionError, batch_completion, completion
+from litellm import batch_completion, completion
 from tqdm import tqdm
 
 from sempipes.config import get_config
 from sempipes.llm.utils import unwrap_json, unwrap_python
+from sempipes.logging import get_logger
+
+logger = get_logger()
 
 _MAX_RETRIES = 5
 
@@ -35,7 +38,7 @@ def generate_python_code_from_messages(messages: list[dict]) -> str:
 
 def _generate_code_from_messages(messages: list[dict]) -> str:
     code_gen_llm = get_config().llm_for_code_generation
-    print(f"\t> Querying '{code_gen_llm.name}' with {len(messages)} messages...'")
+    logger.info(f"Querying '{code_gen_llm.name}' with {len(messages)} messages...'")
 
     response = completion(
         model=code_gen_llm.name,
@@ -81,7 +84,7 @@ def batch_generate_json_retries(
                     results[idx] = None
 
             except Exception as e:  # pylint: disable=broad-except
-                print(f"\t> An error occurred in attempt {attempts+1} of prompt {prompts[idx]}:", e)
+                logger.info(f"An error occurred in attempt {attempts+1} of prompt {prompts[idx]}:", e)
                 # Add error to prompt for retry
                 error_prompt = prompts[idx]
 
@@ -114,7 +117,7 @@ def batch_generate_results(
     config = get_config()
     batch_llm = config.llm_for_batch_processing
     batch_size = config.batch_size_for_batch_processing
-    print(f"\t> Querying '{batch_llm.name}' with {len(prompts)} requests in batches of size {batch_size}...'")
+    logger.info(f"Querying '{batch_llm.name}' with {len(prompts)} requests in batches of size {batch_size}...'")
 
     outputs = []
 
@@ -129,14 +132,10 @@ def batch_generate_results(
 
         for response in responses:
             try:
-                if isinstance(response, APIConnectionError):
-                    print(">" * 80)
-                    print(response)
-                    print(">" * 80)
                 content = response.choices[0].message["content"]
                 outputs.append(content)
             except Exception as e:
-                print(f"Error processing response: {response}")
+                logger.error(f"Error processing response: {response}", exc_info=True)
                 raise e
 
     return outputs
@@ -158,8 +157,8 @@ def batch_generate_results_retries(
     batch_size = config.batch_size_for_batch_processing
 
     while to_retry_indices and attempts < _MAX_RETRIES:
-        print(
-            f"\t> Querying '{batch_llm.name}' with {len(to_retry_indices)} requests in batches of size {batch_size} (attempt {attempts+1})...'"
+        logger.info(
+            f"Querying '{batch_llm.name}' with {len(to_retry_indices)} requests in batches of size {batch_size} (attempt {attempts+1})...'"
         )
         retry_prompts = [prompts[i] for i in to_retry_indices]
         batch_outputs = []
@@ -178,10 +177,10 @@ def batch_generate_results_retries(
                         content = response.choices[0].message["content"]
                         batch_outputs.append(content)
                     except Exception as e:  # pylint: disable=broad-except
-                        print(f"Error processing response: {response}. Error: {e}")
+                        logger.error(f"Error processing response: {response}. Error: {e}", exc_info=True)
                         batch_outputs.append(None)
             except Exception as e:  # pylint: disable=broad-except
-                print(f"Batch completion failed: {e}")
+                logger.error(f"Batch completion failed: {e}", exc_info=True)
                 batch_outputs.extend([None] * len(message_batch))
 
         next_retry_indices = []

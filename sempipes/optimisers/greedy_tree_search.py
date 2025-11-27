@@ -4,7 +4,10 @@ from typing import Any
 from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 
+from sempipes.logging import get_logger
 from sempipes.optimisers.search_policy import _ROOT_TRIAL, Outcome, SearchNode, SearchPolicy
+
+logger = get_logger()
 
 
 class TreeSearch(SearchPolicy):
@@ -20,7 +23,7 @@ class TreeSearch(SearchPolicy):
         data_op = find_node_by_name(dag_sink, operator_name)
         empty_state = data_op._skrub_impl.estimator.empty_state()
 
-        print("\tTREE_SEARCH> Creating root node")
+        logger.info("TREE_SEARCH> Creating root node")
         root_node = SearchNode(
             trial=_ROOT_TRIAL,
             parent_trial=None,
@@ -58,17 +61,22 @@ class TreeSearch(SearchPolicy):
         num_unprocessed_draft_nodes = len(unprocessed_draft_nodes)
 
         if num_unprocessed_draft_nodes < self.min_num_drafts:  # pylint: disable=no-else-return
-            print("\tTREE_SEARCH> Drafting new node")
+            logger.info("TREE_SEARCH> Drafting new node")
             next_search_node = self._draft()
             return [next_search_node]
         else:
             next_search_node = self._improve_best()
-            print(f"\tTREE_SEARCH> Trying to improve node with score {next_search_node.parent_score}")
+            logger.info(f"TREE_SEARCH> Trying to improve node with score {next_search_node.parent_score}")
             return [next_search_node]
 
     def _draft(self) -> SearchNode:
         root_outcome = next(filter(lambda outcome: outcome.search_node is self.root_node, self.outcomes), None)
         assert root_outcome is not None
+
+        inspirations = []
+        for outcome in self.outcomes:
+            if outcome != root_outcome and outcome.score > root_outcome.score:
+                inspirations.append({"state": outcome.state, "score": outcome.score})
 
         updated_memory = copy.deepcopy(root_outcome.search_node.memory)
         updated_memory.append({"update": root_outcome.memory_update, "score": root_outcome.score})
@@ -78,6 +86,7 @@ class TreeSearch(SearchPolicy):
             memory=updated_memory,
             predefined_state=None,
             parent_score=root_outcome.score,
+            inspirations=inspirations,
         )
 
         return draft_node

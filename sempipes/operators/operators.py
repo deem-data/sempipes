@@ -54,7 +54,8 @@ class PrefittableMixin(ABC):
 class OptimisableMixin(PrefittableMixin):
     EMPTY_MEMORY_UPDATE: str = ""
 
-    _memory: list[dict[str, Any]] | DataOp | None = {}
+    _memory: list[dict[str, Any]] | DataOp | None = None
+    _inspirations: list[dict[str, Any]] | DataOp | None = None
 
     @abstractmethod
     def empty_state(self) -> dict[str, Any]:
