@@ -1,5 +1,8 @@
 # This code is based on Apache-licensed code from https://github.com/noahho/CAAFE/
 # TODO This class needs some serious refactoring
+import os
+import traceback
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
@@ -12,11 +15,14 @@ from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
+from sempipes.logging import get_logger
 from sempipes.operators.operators import (
     ContextAwareMixin,
     OptimisableMixin,
     SemGenFeaturesOperator,
 )
+
+logger = get_logger()
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
@@ -25,12 +31,13 @@ _SYSTEM_PROMPT = (
 )
 
 
-def _get_prompt(
+def _get_prompt(  # pylint: disable=too-many-locals
     df: pd.DataFrame,
     nl_prompt: str,
     how_many: int,
     samples: str | None = None,
     pipeline_summary: PipelineSummary | None = None,
+    inspirations: list[dict[str, Any]] | None = None,
 ) -> str:
     data_description_unparsed = None
 
@@ -41,7 +48,21 @@ def _get_prompt(
     usefulness = ""
     model_reference = "classifier"
     target_metric = "accuracy"
-    # source_code_hint = ""
+
+    inspiration_examples = ""
+    if inspirations and len(inspirations) > 0:
+        inspiration_examples += (
+            "Here are some examples of code that has been used to generate features in the past, together with the resulting scores."
+            "You can use these as inspiration to generate your own code.\n\n"
+        )
+
+        # Sort inspirations by score in descending order and select top 3
+        top_inspirations = sorted(inspirations, key=lambda x: x["score"], reverse=True)[:3]
+
+        for i, inspiration in enumerate(top_inspirations):
+            code = "\n".join(inspiration["state"]["generated_code"])
+            score = inspiration["score"]
+            inspiration_examples += f"Example {i+1}:\n```python\n{code}\n```\nScore: {score:.4f}\n\n"
 
     if pipeline_summary is not None:
         task_type = pipeline_summary.task_type
@@ -60,16 +81,6 @@ def _get_prompt(
 
         if pipeline_summary.target_metric:
             target_metric = pipeline_summary.target_metric
-
-        # if pipeline_summary.source_code:
-        #     source_code_hint = f"""
-        #     The features that you have to generate a part of a skrub machine learning pipeline with the following source code:
-        #     ---
-        #     {pipeline_summary.source_code}
-        #     ---
-        #     Make sure to generate features that work well with this pipeline and are compatible with the code and
-        #     type of operations applied.
-        #     """
 
         if task_type and target_name:
             action = "predict"
@@ -105,6 +116,8 @@ Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
+{inspiration_examples}
+
 Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns. 
 
 Code formatting for each added column:
@@ -123,7 +136,11 @@ Codeblock:
 
 
 def _build_prompt_from_df(
-    df: pd.DataFrame, nl_prompt: str, how_many: int, pipeline_summary: PipelineSummary | None = None
+    df: pd.DataFrame,
+    nl_prompt: str,
+    how_many: int,
+    pipeline_summary: PipelineSummary | None = None,
+    inspirations: list[dict[str, Any]] | None = None,
 ) -> str:
     samples = ""
     df_ = df.head(10)
@@ -134,7 +151,9 @@ def _build_prompt_from_df(
         if str(df[column].dtype) == "float64":
             sampled_values = [float(round(sample, 2)) for sample in sampled_values]
         samples += f"{df_[column].name} ({df[column].dtype}): NaN-freq [{nan_freq}%], Samples {sampled_values}\n"
-    return _get_prompt(df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary)
+    return _get_prompt(
+        df, nl_prompt, how_many, samples=samples, pipeline_summary=pipeline_summary, inspirations=inspirations
+    )
 
 
 def _add_memorized_history(
@@ -180,11 +199,11 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> tuple[list[str], 
     new_columns = list(sorted(set(columns_after) - set(columns_before)))
     removed_columns = list(sorted(set(columns_before) - set(columns_after)))
 
-    changed_columns = f"\t> Computed {len(new_columns)} new feature columns: {new_columns}, "
+    changed_columns = f"Computed {len(new_columns)} new feature columns: {new_columns}, "
     if len(removed_columns) > 0:
         changed_columns += f"removed {len(removed_columns)} feature columns: {removed_columns}"
 
-    print(changed_columns)
+    logger.info(changed_columns)
     return new_columns, removed_columns
 
 
@@ -198,6 +217,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         _pipeline_summary: PipelineSummary | None | DataOp = None,
         _prefitted_state: dict[str, Any] | DataOp | None = None,
         _memory: list[dict[str, Any]] | DataOp | None = None,
+        _inspirations: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.how_many = how_many
@@ -205,7 +225,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         self._pipeline_summary = _pipeline_summary
         self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
-
+        self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
         self.generated_code_: list[str] = []
         self.new_columns_: list[str] = []
         self.removed_columns_: list[str] = []
@@ -225,16 +245,19 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
 
         if self._prefitted_state is not None:
-            print(f"--- Using provided state for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})")
+            logger.debug(f"Using provided state for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
         if self.eval_mode == "preview" and get_config().prefer_empty_state_in_preview:
+            logger.debug(
+                f"Using empty state during preview for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})"
+            )
             self.generated_code_ = []
             return self
 
-        print(
-            f"--- Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
+        logger.info(
+            f"Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
         )
 
         target_metric = "accuracy"
@@ -246,7 +269,9 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
             code = ""
 
             try:  # pylint: disable=too-many-try-statements
-                prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._pipeline_summary)
+                prompt = _build_prompt_from_df(
+                    df, self.nl_prompt, self.how_many, self._pipeline_summary, self._inspirations
+                )
 
                 if attempt == 1:
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
@@ -264,7 +289,8 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
 
                 break
             except Exception as e:  # pylint: disable=broad-except
-                print(f"\t> An error occurred in attempt {attempt}:", e)
+                logger.info(f"An error occurred in attempt {attempt}:", e)
+                logger.debug(f"{e}", exc_info=True)
                 messages += [
                     {"role": "assistant", "content": code},
                     {
@@ -279,24 +305,22 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
     def transform(self, df):
         check_is_fitted(self, ("generated_code_", "new_columns_", "removed_columns_"))
         code_to_execute = "\n".join(self.generated_code_)
+        df_copy_for_logging = df.copy(deep=True)
 
-        df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
-        # import os
-        # from datetime import datetime
-
-        # try:
-        #     in_df = df.copy(deep=True)
-        #     df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
-        # except Exception as e:
-        #     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        #     error_folder = f"error_{timestamp}"
-        #     os.makedirs(error_folder, exist_ok=True)
-        #     # Save the dataframe as csv
-        #     in_df.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
-        #     # Save the code as text
-        #     with open(os.path.join(error_folder, "executed_code.py"), "w") as f:
-        #         f.write(code_to_execute)
-        #     raise e
+        try:
+            df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+        except Exception as e:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            error_folder = f".sem_gen_features_error_{timestamp}"
+            os.makedirs(error_folder, exist_ok=True)
+            df_copy_for_logging.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
+            with open(os.path.join(error_folder, "executed_code.py"), "w", encoding="utf-8") as f:
+                f.write(code_to_execute)
+            stack_trace_file_path = os.path.join(error_folder, "stack_trace.txt")
+            with open(stack_trace_file_path, "w", encoding="utf-8") as f:
+                traceback.print_exc(file=f)
+            logger.error(f"Error occurred in transform: {e}", exc_info=True)
+            raise e
 
         for column in self.new_columns_:
             assert column in df.columns, f"Expected new column '{column}' not found in transformed dataframe"
@@ -314,6 +338,7 @@ class SemGenFeaturesCaafe(SemGenFeaturesOperator):
         _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
         _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
         _memory = skrub.var(f"sempipes_memory__{name}", [])
+        _inspirations = skrub.var(f"sempipes_inspirations__{name}", [])
 
         return LLMFeatureGenerator(
             nl_prompt,
@@ -321,6 +346,7 @@ class SemGenFeaturesCaafe(SemGenFeaturesOperator):
             _pipeline_summary=_pipeline_summary,
             _prefitted_state=_prefitted_state,
             _memory=_memory,
+            _inspirations=_inspirations,
         )
 
 

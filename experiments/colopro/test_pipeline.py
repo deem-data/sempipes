@@ -56,10 +56,7 @@ class TestPipeline(ABC):
             try:
                 score = self._evaluate(seed, pipeline, operator_state=best_outcome.state)
             except Exception as e:
-                print("Error evaluating operator state:", e)
-                import traceback
-
-                traceback.print_exc()
+                sempipes.logger.error(f"Error evaluating operator state: {e}", exc_info=True)
                 score = None
             scores_over_time.append((max_trial, from_trial, best_outcome.score, score))
 
@@ -85,12 +82,12 @@ class TestPipeline(ABC):
             empty_state = data_op._skrub_impl.estimator.empty_state()
             operator_state = empty_state
 
-        print("#" * 80)
-        print("Operator state:", operator_state)
-        print("#" * 80)
+        state_log = ("#" * 80) + "\n" + f"Operator state: {operator_state}" + "\n" + ("#" * 80)
+
+        sempipes.logger.info(state_log)
 
         np.random.seed(seed)
-        split = pipeline.skb.train_test_split(test_size=self.TEST_SIZE, random_state=seed, stratify=self.stratify_by)
+        split = pipeline.skb.train_test_split(test_size=self.TEST_SIZE, random_state=seed)
         learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
         train_env = split["train"]
@@ -104,8 +101,9 @@ class TestPipeline(ABC):
         else:
             y_pred = learner.predict(test_env)
         score = self.score(split["test"]["_skrub_y"], y_pred)
-        print("%" * 80)
-        print(score)
-        print("%" * 80)
+
+        score_log = ("%" * 80) + "\n" + f"Score: {score}" + "\n" + ("%" * 80)
+
+        sempipes.logger.info(score_log)
 
         return score
