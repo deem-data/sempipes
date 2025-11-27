@@ -9,10 +9,13 @@ from skrub._data_ops._evaluation import find_node_by_name
 from tqdm import tqdm
 
 import sempipes
+from sempipes.logging import get_logger
 from sempipes.optimisers.colopro import optimise_colopro
 
 if TYPE_CHECKING:
     from experiments.colopro import Setup
+
+logger = get_logger()
 
 
 class TestPipeline(ABC):
@@ -56,7 +59,7 @@ class TestPipeline(ABC):
             try:
                 score = self._evaluate(seed, pipeline, operator_state=best_outcome.state)
             except Exception as e:
-                sempipes.logger.error(f"Error evaluating operator state: {e}", exc_info=True)
+                logger.error(f"Error evaluating operator state: {e}", exc_info=True)
                 score = None
             scores_over_time.append((max_trial, from_trial, best_outcome.score, score))
 
@@ -84,7 +87,7 @@ class TestPipeline(ABC):
 
         state_log = ("#" * 80) + "\n" + f"Operator state: {operator_state}" + "\n" + ("#" * 80)
 
-        sempipes.logger.info(state_log)
+        logger.info(state_log)
 
         np.random.seed(seed)
         split = pipeline.skb.train_test_split(test_size=self.TEST_SIZE, random_state=seed)
@@ -104,6 +107,6 @@ class TestPipeline(ABC):
 
         score_log = ("%" * 80) + "\n" + f"Score: {score}" + "\n" + ("%" * 80)
 
-        sempipes.logger.info(score_log)
+        logger.info(score_log)
 
         return score

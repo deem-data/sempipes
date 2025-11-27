@@ -9,6 +9,7 @@ from experiments.colopro._churn import ChurnPipeline
 from experiments.colopro._fraudbaskets import FraudBasketsPipeline
 from experiments.colopro._midwest import MidwestSurveyPipeline
 from experiments.colopro._traffic import TrafficPipeline
+from sempipes.logging import get_logger
 from sempipes.optimisers import EvolutionarySearch, MonteCarloTreeSearch, TreeSearch
 
 warnings.filterwarnings("ignore")
@@ -20,6 +21,8 @@ def _evaluate_pipeline(pipeline: TestPipeline, seed, pipeline_setup: Setup) -> t
 
 
 if __name__ == "__main__":
+    logger = get_logger()
+
     pipelines = [
         MidwestSurveyPipeline(),
         FraudBasketsPipeline(),
@@ -87,7 +90,7 @@ if __name__ == "__main__":
 
     results = []
 
-    sempipes.logger.info(
+    logger.info(
         f"Starting mini-benchmark for pipeline {pipeline_name}  with model {model_name}, temperature {model_temperature} and search {search_name}."
     )
 
@@ -102,7 +105,7 @@ if __name__ == "__main__":
                 )
                 results.append((name, seed, max_trial, chosen_trial, train_score, test_score))
         except Exception as e:
-            sempipes.logger.error(f"MINIBENCH_ERROR> {e} for seed {seed}", exc_info=True)
+            logger.error(f"MINIBENCH_ERROR> {e} for seed {seed}", exc_info=True)
             pass
 
     print("#" * 120)
