@@ -6,13 +6,16 @@ from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.llm.llm import batch_generate_json_retries, generate_python_code_from_messages
+from sempipes.logging import get_logger
 from sempipes.operators.operators import SemAugmentDataOperator
+
+logger = get_logger()
 
 _SYSTEM_PROMPT = """
 You are an expert data scientist, assisting with data augmentation. You answer by generating code or directly generating data.
 """
 
-_MAX_RETRIES = 5
+_MAX_RETRIES = 10
 
 
 def _get_samples_from_df(
@@ -43,6 +46,7 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str, number_of_rows_to_ge
     df_sample = df.head(100).copy(deep=True)
     columns_before = df_sample.columns
 
+    logger.info("Validation generated code...")
     augmentation_func = safe_exec(code_to_execute, "augment_data")
     df_sample_processed = augmentation_func(df_sample)
 
@@ -89,7 +93,42 @@ The generated code should be a Python method `augment_data(df: pandas.DataFrame)
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
-Code formatting for each added column:
+Here is a simple example:
+
+```python
+def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
+    from sdv.metadata import Metadata
+    from sdv.single_table import TVAESynthesizer
+
+    num_rows_to_synth = 10
+
+    metadata = Metadata.detect_from_dataframe(data=df, table_name='train_data')
+    synthesizer = TVAESynthesizer(metadata)
+    synthesizer.fit(data=df)
+    augmented_data = synthesizer.sample(num_rows=num_rows_to_synth)
+    df = pd.concat([df, augmented_data], ignore_index=True)
+    return df
+```end
+
+Here is a more complex example, where we condition the synthetic data generation on a specific column value:
+
+```python
+def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
+    from sdv.metadata import Metadata
+    from sdv.single_table import TVAESynthesizer
+    from sdv.sampling import Condition
+
+    num_rows_to_synth = 100
+
+    metadata = Metadata.detect_from_dataframe(data=df, table_name='train_data')
+    synthesizer = TVAESynthesizer(metadata)
+    conditioned = Condition(num_rows=num_rows_to_synth, column_values={{'column_to_condition_on': 'column_value_to_condition_on'}})
+    synthetic_train = synthesizer.sample_from_conditions([conditioned])
+    df = pd.concat([df, synthetic_train], ignore_index=True)
+    return df
+```end
+
+Here is the exact code formatting for the function to generate:
 ```python
 def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
     # Some Python code to augment df with new rows, append it to the original df, and return original df with new rows
@@ -99,13 +138,13 @@ def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
 
 Each codeblock ends with ```end and starts with "```python"
 
-Return only Python code, no explanations or apologies.
+Return only Python code, no explanations or apologies. Explain the code you generate with comments.
 
 Codeblock:
 """
 
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
-        print(f"--- sempipes.sem_augment('{self.nl_prompt}', True, {self.number_of_rows_to_generate})")
+        logger.info(f"sempipes.sem_augment('{self.nl_prompt}', True, {self.number_of_rows_to_generate})")
 
         messages = []
         for attempt in range(1, _MAX_RETRIES + 1):
@@ -128,12 +167,16 @@ Codeblock:
                 code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 
-                _try_to_execute(X, code_to_execute, self.number_of_rows_to_generate)
+                # print("#" * 80)
+                # print(f"{code}")
+                # print("#" * 80)
+
+                _try_to_execute(X.copy(deep=True), code_to_execute, self.number_of_rows_to_generate)
 
                 self.generated_code_.append(code)
                 break
             except Exception as e:  # pylint: disable=broad-except
-                print(f"\t> An error occurred in attempt {attempt}:", e)
+                logger.error(f"\t> An error occurred in attempt {attempt}: {e}", exc_info=True)
                 messages += [
                     {"role": "assistant", "content": code},
                     {
@@ -145,7 +188,7 @@ Codeblock:
 
         code_to_execute = "\n".join(self.generated_code_)
         augmentation_func = safe_exec(code_to_execute, "augment_data")
-        df_augmented = augmentation_func(X)
+        df_augmented = augmentation_func(X.copy(deep=True))
         return df_augmented
 
     def transform(self, df):
@@ -201,7 +244,7 @@ Codeblock:
         return prompt
 
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
-        print(f"--- sempipes.sem_augment('{self.nl_prompt}', False, {self.number_of_rows_to_generate})")
+        logger.info(f"sempipes.sem_augment('{self.nl_prompt}', False, {self.number_of_rows_to_generate})")
 
         all_messages = []
         batch_size = 100

@@ -13,6 +13,7 @@ import numpy
 import pandas as pd
 import PIL
 import scipy
+import sdv
 import sklearn
 import skrub
 import torch
@@ -40,6 +41,7 @@ _ALLOWED_MODULES = [
     "time",
     "tqdm",
     "scipy",
+    "sdv",
 ]
 
 
@@ -121,6 +123,7 @@ def safe_exec(
         "PIL": PIL,
         "tqdm": tqdm,
         "scipy": scipy,
+        "sdv": sdv,
     }
 
     # We need a single dict to allow function definitions inside the code
