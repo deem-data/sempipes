@@ -358,4 +358,14 @@ def sem_gen_features(
 ) -> DataOp:
     data_op = self
     feature_gen_estimator = SemGenFeaturesCaafe().generate_features_estimator(data_op, nl_prompt, name, how_many)
-    return self.skb.apply(feature_gen_estimator, how="no_wrap").skb.set_name(name)
+    result = self.skb.apply(feature_gen_estimator, how="no_wrap")
+
+    # Workaround to make the fitted estimator available in the computational graph
+    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
+    result_with_name = result.skb.set_name(name)
+    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
+
+    def extract_result(tuple_of_data_ops):
+        return tuple_of_data_ops["result"]
+
+    return result_with_fitted_estimator.skb.apply_func(extract_result)

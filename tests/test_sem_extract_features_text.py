@@ -19,6 +19,7 @@ def test_sem_extract_features_text():
     toxicity_ref = toxicity_ref.sem_extract_features(
         nl_prompt="Extract a single binary feature called `maybe_toxic` from the text tweets that could help predict toxicity.",
         input_columns=["text"],
+        name="extract_toxicity_feature",
     )
 
     extracted_feature = toxicity_ref["maybe_toxic"].skb.eval()
@@ -39,6 +40,7 @@ def test_sem_extract_features_text_with_code():
     toxicity_ref = toxicity_ref.sem_extract_features(
         nl_prompt="Extract a single binary feature called `maybe_toxic` from the text tweets that could help predict toxicity.",
         input_columns=["text"],
+        name="extract_toxicity_feature",
         generate_via_code=True,
     )
 
@@ -65,6 +67,7 @@ def test_sem_extract_features_text_explicit_cols():
     toxicity_ref = toxicity_ref.sem_extract_features(
         nl_prompt="Extract features from textual tweets that could help predict toxicity.",
         input_columns=["text"],
+        name="extract_toxicity_feature",
         output_columns=output_columns,
     )
 
@@ -94,6 +97,7 @@ def test_sem_extract_features_text_pipeline_code():
     X = X.sem_extract_features(
         nl_prompt="Extract up to five features from the text tweets that could help predict toxicity. Focus on sentiment, presence of hate speech, and any other relevant linguistic features. If you encounter neutral or not valid content like a link, treat as a no sentiment.",
         input_columns=["text"],
+        name="extract_toxicity_feature",
         generate_via_code=True,
     )
 
@@ -129,6 +133,7 @@ def test_sem_extract_features_text_pipeline():
     X_with_features = X.sem_extract_features(
         nl_prompt="Extract up to five features from the text tweets that could help predict toxicity. Focus on sentiment, presence of hate speech, and any other relevant linguistic features. If you encounter neutral or not valid content like a link, treat as a no sentiment.",
         input_columns=["text"],
+        name="extract_toxicity_feature",
     ).skb.eval()
 
     pipeline_with_features = skrub.tabular_pipeline("classification")

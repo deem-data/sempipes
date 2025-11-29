@@ -31,6 +31,7 @@ def test_sem_augment_via_code():
     salaries_augmented = salaries.sem_augment(
         nl_prompt="Augment data to improve 'current_annual_salary' prediction. Ensure that the augmented values are realistic and within a reasonable range based on the existing data. Maintain logical consistency across related columns. Avoid creating duplicate rows and ensure that categorical variables remain valid.",
         number_of_rows_to_generate=2000,
+        name="augment_salaries",
         generate_via_code=True,
     )
 
@@ -83,6 +84,7 @@ def test_sem_augment_via_data():
     salaries_augmented = salaries.sem_augment(
         nl_prompt="Augment data to improve 'current_annual_salary' prediction.",
         number_of_rows_to_generate=2000,
+        name="augment_salaries",
         generate_via_code=False,
     )
 

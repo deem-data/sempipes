@@ -17,7 +17,7 @@ from sempipes.operators.sem_clean import sem_clean  # pylint: disable=wrong-impo
 from sempipes.operators import sem_fillna  # pylint: disable=wrong-import-position
 from sempipes.config import get_config, LLM, update_config, detect_interactive_mode  # pylint: disable=wrong-import-position
 from sempipes.logging import get_logger  # pylint: disable=wrong-import-position
-
+from sempipes.interactive.inspection import inspect_generated_code  # pylint: disable=wrong-import-position
 
 # Load environment variables from a .env file if present
 load_dotenv()
@@ -51,4 +51,4 @@ def as_y(op: DataOp, description: str):
     return op.skb.mark_as_y().skb.set_description(description)
 
 
-__all__ = ["as_X", "as_y", "sem_choose", "get_config", "update_config", "LLM"]
+__all__ = ["as_X", "as_y", "sem_choose", "get_config", "update_config", "LLM", "inspect_generated_code"]
