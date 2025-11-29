@@ -1,18 +1,16 @@
-import warnings
-
-import numpy as np
 import pandas as pd
-import skrub
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
-
+import numpy as np
+import warnings
 import sempipes
+import skrub
 
 warnings.filterwarnings("ignore")
 
-
 def _pipeline(raw_data, seed):
+
     data = skrub.var("data", raw_data).skb.set_description("""
 SIVEP-Gripe, Brazil’s national surveillance system for severe acute respiratory infections (SRAG).
 ---
@@ -121,53 +119,51 @@ SIVEP-Gripe, Brazil’s national surveillance system for severe acute respirator
         Augment the dataset with additional records similar to the existing records of people from the indegenous minority in Brazil, for whom the prediction model may not work as well as for the majority. The additional data should improve the prediction quality for them, so make sure that it follows the same distribution as the original data.
 """,
         number_of_rows_to_generate=600,
-        name="augment_indigenous_minority",
         generate_via_code=True,
     )
-
+    
     X = data_augmented.drop(columns="due_to_covid", errors="ignore").skb.mark_as_X()
-    y = (
-        data_augmented["due_to_covid"]
-        .skb.mark_as_y()
-        .skb.set_description("Indicator whether the severe acute respiratory infections originated from COVID-19.")
-    )
+    y = data_augmented['due_to_covid'].skb.mark_as_y().skb.set_description("Indicator whether the severe acute respiratory infections originated from COVID-19.")
+
 
     return X.skb.apply(XGBClassifier(eval_metric="logloss", random_state=seed), y=y)
 
-
+    
 all_data = pd.read_csv("experiments/sivep/data.csv")
 
 scores = []
 for seed in [42, 1337, 2025, 7321, 98765]:
     df = all_data.sample(frac=0.1, random_state=seed)
-
+    
     # Remove records with unreported race
     df = df[df.cs_raca != 9]
     # Remove influenza cases
     df = df[~df.classi_fin.isin([1])]
     # Target label: SRAG due to covid
-    df["due_to_covid"] = df.classi_fin == 5
-
-    data = df.drop(columns=["classi_fin", "evolucao", "vacina_cov", "cs_sexo", "dt_evoluca", "dt_interna"])
+    df['due_to_covid'] = df.classi_fin==5
+    
+    data = df.drop(columns=['classi_fin', 'evolucao', 'vacina_cov', 'cs_sexo', 'dt_evoluca', 'dt_interna'])
     train, test = train_test_split(data, test_size=0.1, random_state=seed)
-
+    
     pipeline = _pipeline(data, seed)
 
     learner = pipeline.skb.make_learner()
-
+    
     env_train = {
         "data": train,
     }
-
+    
     learner.fit(env_train)
 
     majority_groups = {1, 2, 3, 4}
     test_minority = test[~test.cs_raca.isin(majority_groups)]
     test_minority_labels = test_minority.due_to_covid
-
-    env_test = {"data": test_minority}
-
-    predictions = learner.predict_proba(env_test)
+    
+    env_test = {
+        "data": test_minority
+    }    
+    
+    predictions = learner.predict_proba(env_test)    
     augmented_minority_score = roc_auc_score(test_minority_labels, predictions[:, 1])
 
     print(f"ROC AUC score for minority group on seed {seed}: {augmented_minority_score}")

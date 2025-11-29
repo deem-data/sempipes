@@ -23,8 +23,11 @@ ROC AUC score for minority group on seed 7321: 0.6310255284909664 -> 0.654195011
 ROC AUC score for minority group on seed 98765: 0.6848481946173739 -> 0.6806021134629505
 
 Mean final score:  0.6793744313875907 0.019309705683950684
+<<<<<<< HEAD
 ```
 
 ```
 Mean final score:  0.6885630149700445 0.025667676105219386
+=======
+>>>>>>> main
 ```
