@@ -4,6 +4,7 @@ import mimetypes
 from enum import Enum
 
 import pandas as pd
+import skrub
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
@@ -15,7 +16,11 @@ from sempipes.llm.llm import (
     generate_python_code_from_messages,
     get_generic_message,
 )
+from sempipes.logging import get_logger
 from sempipes.operators.operators import EstimatorTransformer, SemExtractFeaturesOperator
+
+logger = get_logger()
+
 
 _MAX_RETRIES = 5
 _SYSTEM_PROMPT = """
@@ -242,7 +247,7 @@ def _try_to_execute(
         expected_column in extracted_sample.columns for expected_column in expected_columns
     ), f"The returned DataFrame does not contain all required columns. Expected: {expected_columns}. Actual: {list(extracted_sample.columns)} "
 
-    print("\t> Code executed successfully on a sample dataframe.")
+    logger.debug("Code executed successfully on a sample dataframe.")
 
 
 def _get_modality(column: pd.Series) -> Modality:
@@ -273,6 +278,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         self.generate_via_code = generate_via_code
         self.modality_per_column: dict[str, Modality] = {}
         self.generated_features_: list[dict[str, object]] = []
+        self.generated_code_: list[str] = []
 
     def _build_mm_generation_prompt(self, row):
         audios, images = [], []
@@ -340,7 +346,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                 self.generated_features_.append(feature)
                 self.output_columns[feature["feature_name"]] = feature["feature_prompt"]
             else:
-                print("\t> Unable to parse some of the suggested features.")
+                logger.info("Unable to parse some of the suggested features.")
 
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
         # Determine modalities of input columns
@@ -348,14 +354,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         if self.output_columns == {}:
             # Ask LLM which features to generate given input columns
-            print(f"--- sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
+            logger.info(f"sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
 
             self._build_output_columns_to_generate_llm(df)
 
         else:
             # Use user-given columns
-            print(
-                f"--- sempipes.sem_extract_features('{self.input_columns}', '{self.output_columns}', '{self.nl_prompt}')"
+            logger.info(
+                f"sempipes.sem_extract_features('{self.input_columns}', '{self.output_columns}', '{self.nl_prompt}')"
             )
 
             for new_feature, prompt in self.output_columns.items():
@@ -363,7 +369,11 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                     {"feature_name": new_feature, "feature_prompt": prompt, "input_columns": self.input_columns}
                 )
 
-        print(f"\t> Generated possible columns: { self.generated_features_}")
+        logger.info(f"Generated possible columns: {self.generated_features_}")
+
+        if self.generate_via_code:
+            self.extract_features_with_code(df)
+
         return self
 
     def extract_features_with_code(self, df):
@@ -376,7 +386,6 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         # Generate code for multi-modal data
         messages = []
-        generated_code = []
         for attempt in range(1, _MAX_RETRIES + 1):
             code = ""
 
@@ -385,7 +394,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                     messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
 
                 code = generate_python_code_from_messages(messages)
-                code_to_execute = "\n".join(generated_code)
+                code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 
                 # Try to extract actual features
@@ -396,10 +405,10 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                     features_to_extract=self.generated_features_,
                 )
 
-                generated_code.append(code)
+                self.generated_code_.append(code)
                 break
             except Exception as e:  # pylint: disable=broad-except
-                print(f"\t> An error occurred in attempt {attempt}:", e)
+                logger.error(f"An error occurred in attempt {attempt}: {e}", exc_info=True)
                 messages += [
                     {"role": "assistant", "content": code},
                     {
@@ -408,15 +417,6 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                         f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
                     },
                 ]
-
-        # Extract actual features
-        code_to_execute = "\n".join(generated_code)
-        feature_extraction_func = safe_exec(code_to_execute, "extract_features")
-        df = feature_extraction_func(df, self.generated_features_)
-
-        print(f"\t> Generated columns: {list(df.columns)}. \n Code: {code_to_execute}")
-
-        return df
 
     def extract_features_with_llm(self, df):
         # Construct prompts with multi-modal data
@@ -440,14 +440,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                         else generated_columns[column_name] + [cell_value]
                     )
             except Exception as e:
-                print(f"Error processing response: {encoded_result}")
+                logger.error(f"Error processing response: {encoded_result}", exc_info=True)
                 raise e
 
         # Assign new results back
         for new_column, new_vals in generated_columns.items():
             df[new_column] = new_vals
 
-        print(f"\t> Generated {len(generated_columns)} columns: {list(generated_columns.keys())}")
+        logger.info(f"Generated {len(generated_columns)} columns: {list(generated_columns.keys())}.")
 
         return df
 
@@ -455,12 +455,14 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
         check_is_fitted(self, "generated_features_")
 
         if self.generate_via_code:
-            df = self.extract_features_with_code(df=df)
+            code_to_execute = "\n".join(self.generated_code_)
+            feature_extraction_func = safe_exec(code_to_execute, "extract_features")
+            df_with_features = feature_extraction_func(df.copy(deep=True), self.generated_features_)
 
-        else:
-            df = self.extract_features_with_llm(df=df)
+            logger.info(f"Generated columns: {list(df_with_features.columns)}.")
+            return df_with_features
 
-        return df
+        return self.extract_features_with_llm(df=df)
 
 
 class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
@@ -483,10 +485,22 @@ def sem_extract_features(
     self: DataOp,
     nl_prompt: str,
     input_columns: list[str],
+    name: str,
     output_columns: dict[str, str] | None = None,
     **kwargs,
 ) -> DataOp:
     feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(
         nl_prompt, input_columns, output_columns, **kwargs
     )
-    return self.skb.apply(feature_extractor)
+
+    result = self.skb.apply(feature_extractor, how="no_wrap")
+
+    # Workaround to make the fitted estimator available in the computational graph
+    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
+    result_with_name = result.skb.set_name(name)
+    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
+
+    def extract_result(tuple_of_data_ops):
+        return tuple_of_data_ops["result"]
+
+    return result_with_fitted_estimator.skb.apply_func(extract_result)

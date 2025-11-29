@@ -1,6 +1,7 @@
 from io import StringIO
 
 import pandas as pd
+import skrub
 from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 
@@ -288,10 +289,21 @@ def sem_augment(
     self: DataOp,
     nl_prompt: str,
     number_of_rows_to_generate: int,
+    name: str,
     **kwargs,
 ) -> DataOp:
     data_augmentor = SemAugmentData().generate_data_generator(
         nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate, **kwargs
     )
 
-    return self.skb.apply(data_augmentor, how="no_wrap")
+    result = self.skb.apply(data_augmentor, how="no_wrap")
+
+    # Workaround to make the fitted estimator available in the computational graph
+    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
+    result_with_name = result.skb.set_name(name)
+    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
+
+    def extract_result(tuple_of_data_ops):
+        return tuple_of_data_ops["result"]
+
+    return result_with_fitted_estimator.skb.apply_func(extract_result)

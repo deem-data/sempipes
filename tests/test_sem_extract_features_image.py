@@ -32,6 +32,7 @@ def test_sem_extract_features_image_code():
     X_with_features = X_with_features.sem_extract_features(
         nl_prompt="Extract up to three features from the product image and/or the product display name that can be used for the product master category prediction. The features should be very fine-grained and helpful.",
         input_columns=["productDisplayName", "full_path"],
+        name="extract_product_features",
         generate_via_code=True,
     )
 
@@ -77,6 +78,7 @@ def test_sem_extract_features_image():
     X_with_features = X_with_features.sem_extract_features(
         nl_prompt="Extract up to three features from the product image and/or the product display name that can be used for the product master category prediction. The features should be very fine-grained and helpful.",
         input_columns=["productDisplayName", "full_path"],
+        name="extract_product_features",
     )
 
     X_with_features = X_with_features.skb.drop(["full_path"])

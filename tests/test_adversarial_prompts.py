@@ -101,6 +101,7 @@ def test_sem_extract_features_image_code_parrot():
     X_with_features = X_with_features.sem_extract_features(
         nl_prompt="Extract parrot color from the image. The features should be very fine-grained and helpful for the parrot type prediction.",
         input_columns=["full_path"],
+        name="extract_parrot_color",
         output_columns={"parrot_color": "Extract parrot color from the image"},
     )
 
