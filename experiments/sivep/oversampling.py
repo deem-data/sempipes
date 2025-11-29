@@ -2,8 +2,6 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
-from sklearn.ensemble import HistGradientBoostingClassifier
-from imblearn.over_sampling import SMOTE
 import numpy as np
 import warnings
 
@@ -24,37 +22,13 @@ for seed in [42, 1337, 2025, 7321, 98765]:
     data = df.drop(columns=['classi_fin', 'evolucao', 'vacina_cov', 'cs_sexo', 'dt_evoluca', 'dt_interna'])
     train, test = train_test_split(data, test_size=0.1, random_state=seed)
 
-    #train_indigenous = train[train.cs_raca==5].copy(deep=True)
-    #train_indigenous_labels = train_indigenous.due_to_covid
-    #train_indigenous = train_indigenous.drop(columns=['due_to_covid']) 
-
-    X_group = train[train.cs_raca==5].copy(deep=True)
-
-    # Decide how many times you want to replicate this group
-    factor = 3  # e.g., triple the number of group samples
-
-    n_extra = (factor - 1) * len(X_group)
-    extra_samples = X_group.sample(n=n_extra, replace=True, random_state=seed)
+    train_indigenous = train[train.cs_raca==5].copy(deep=True)
+    num_extra_samples = 2 * len(train_indigenous)
+    extra_samples = train_indigenous.sample(n=num_extra_samples, replace=True, random_state=seed)
     augmented_train =  pd.concat([train, extra_samples], ignore_index=True)
     augmented_train_labels = augmented_train.due_to_covid
     augmented_train = augmented_train.drop(columns=['due_to_covid'])  
 
-    # composite_labels = (
-    #     train['due_to_covid'].astype(int).astype(str) + "_" + train['cs_raca'].fillna(9).astype(int).astype(str)
-    # )
-    # X_for_smote = train.drop(columns=['due_to_covid'])  # keep cs_raca as feature
-    # X_res, y_composite_res = SMOTE().fit_resample(X_for_smote.fillna(0), composite_labels)
-
-    # # 4) Split composite label back into (class, group)
-    # y_res_split = y_composite_res.str.split("_", expand=True)
-    # augmented_train_labels = y_res_split[0].astype(int)      # this is your `due_to_covid`
-    # #augmented_cs_raca      = y_res_split[1].astype(int)      # this is `cs_raca` after SMOTE
-
-    # # 5) Make sure `cs_raca` in X_res matches the unpacked one (optional but safer)
-    # #X_res = X_res.copy()
-    # #X_res['cs_raca'] = augmented_cs_raca
-
-    # augmented_train = X_res
     train_labels = train.due_to_covid
     train = train.drop(columns=['due_to_covid'])  
 

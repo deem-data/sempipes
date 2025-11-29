@@ -19,7 +19,7 @@ SIVEP-Gripe, Brazil’s national surveillance system for severe acute respirator
 > Coding below reflects the standard definitions used in the public dataset.
 ---
 
-## 🧪 Clinical / Epidemiological Variables
+## Clinical / Epidemiological Variables
 
 ### **antiviral**
 * **Type:** Categorical (1/2/9)
@@ -116,7 +116,7 @@ SIVEP-Gripe, Brazil’s national surveillance system for severe acute respirator
 
     data_augmented = data.sem_augment(
         nl_prompt="""
-        Augment the dataset with additional records similar to the existing records of people from the indegenous minority in Brazil, for whom the prediction model may not work as well as for th e majority. The additional data should improve the prediction quality for them, so make sure that it follows the same distribution as the original data.
+        Augment the dataset with additional records similar to the existing records of people from the indegenous minority in Brazil, for whom the prediction model may not work as well as for the majority. The additional data should improve the prediction quality for them, so make sure that it follows the same distribution as the original data.
 """,
         number_of_rows_to_generate=600,
         generate_via_code=True,
