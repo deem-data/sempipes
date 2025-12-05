@@ -1,5 +1,6 @@
-from skrub._data_ops._evaluation import find_node_by_name, find_node
 from IPython.display import Code
+from skrub._data_ops._evaluation import find_node_by_name
+
 
 # TODO This code only works for certain operators and should do some null checking and error handling.
 def inspect_generated_code(pipeline, operator_name, eval_mode="preview"):

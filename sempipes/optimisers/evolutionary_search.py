@@ -58,8 +58,9 @@ class EvolutionarySearch(SearchPolicy):
         best_population = sorted(self.outcomes, key=lambda x: x.score, reverse=True)[: self.population_size]
         best_population = [outcome for outcome in best_population if math.isfinite(outcome.score)]
 
-        # Randomly select an outcome from the best population
-        # based on the ratio of their scores to the overall sum of the scores
+        if len(best_population) == 0:
+            raise ValueError("EVO_SEARCH> No finite scores found in the best population!!! This should not happen.")
+
         total_score = sum(outcome.score for outcome in best_population)
         probabilities = [outcome.score / total_score for outcome in best_population]
         outcome_to_evolve = random.choices(best_population, weights=probabilities, k=1)[0]
