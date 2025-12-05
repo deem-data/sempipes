@@ -76,7 +76,7 @@ class EstimatorTransformer(BaseEstimator, TransformerMixin):
 
 
 class OptimisableEstimatorTransformer(  # pylint: disable=too-many-ancestors
-    EstimatorTransformer, ContextAwareMixin, OptimisableMixin, ABC
+    EstimatorTransformer, ContextAwareMixin, OptimisableMixin
 ):
     pass
 
@@ -172,10 +172,12 @@ class SemAugmentDataOperator(ABC):
     @abstractmethod
     def generate_data_generator(
         self,
+        data_op: DataOp,
         nl_prompt: str,
+        name: str,
         number_of_rows_to_generate: int,
         **kwargs,
-    ) -> EstimatorTransformer:
+    ) -> OptimisableEstimatorTransformer:
         """Return an estimator that generates a new set of the data."""
 
 

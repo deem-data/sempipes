@@ -10,6 +10,7 @@ litellm.set_verbose = False
 logging.basicConfig(format="%(asctime)s - %(levelname)s - SEMPIPES> %(message)s", level=logging.INFO)
 logging.getLogger("litellm").setLevel(logging.ERROR)
 logging.getLogger("httpx").setLevel(logging.ERROR)
+logging.getLogger("sdv").setLevel(logging.ERROR)
 
 
 def get_logger() -> logging.Logger:
