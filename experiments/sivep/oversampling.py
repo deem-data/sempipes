@@ -16,7 +16,6 @@ non_augmented_scores = []
 scores = []
 for seed in [42, 1337, 2025, 7321, 98765]:
     np.random.seed(seed)
-    np.random.seed(seed)
     df = all_data.sample(frac=0.1, random_state=seed)
 
     # Remove records with unreported race
