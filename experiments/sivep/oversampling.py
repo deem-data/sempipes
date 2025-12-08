@@ -1,6 +1,9 @@
 import warnings
 
 import numpy as np
+import warnings
+
+import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
@@ -9,9 +12,10 @@ from xgboost import XGBClassifier
 warnings.filterwarnings("ignore")
 all_data = pd.read_csv("experiments/sivep/data.csv")
 
-non_aug_scores = []
+non_augmented_scores = []
 scores = []
 for seed in [42, 1337, 2025, 7321, 98765]:
+    np.random.seed(seed)
     np.random.seed(seed)
     df = all_data.sample(frac=0.1, random_state=seed)
 
@@ -27,12 +31,12 @@ for seed in [42, 1337, 2025, 7321, 98765]:
     train, test = train_test_split(data, test_size=0.5, random_state=seed)
 
     train_indigenous = train[train.cs_raca == 5].copy(deep=True)
-    num_extra_samples = 600#2 * len(train_indigenous)
+    num_extra_samples = 600
     extra_samples = train_indigenous.sample(n=num_extra_samples, replace=True, random_state=seed)
     augmented_train = pd.concat([train, extra_samples], ignore_index=True)
     augmented_train_labels = augmented_train.due_to_covid
     augmented_train = augmented_train.drop(columns=["due_to_covid"])
-
+    
     train_labels = train.due_to_covid
     train = train.drop(columns=["due_to_covid"])
 
@@ -43,9 +47,7 @@ for seed in [42, 1337, 2025, 7321, 98765]:
     augmented_model.fit(augmented_train, augmented_train_labels)
 
     majority_groups = {1, 2, 3, 4}
-
     test_minority = test[~test.cs_raca.isin(majority_groups)]
-
     test_minority_labels = test_minority.due_to_covid
     test_minority = test_minority.drop(columns=["due_to_covid"])
 
@@ -54,7 +56,7 @@ for seed in [42, 1337, 2025, 7321, 98765]:
 
     print(f"ROC AUC score for minority group on seed {seed}: {minority_score} -> {augmented_minority_score}")
     scores.append(augmented_minority_score)
-    non_aug_scores.append(minority_score)
+    non_augmented_scores.append(minority_score)
 
 print("\nMean final score: ", np.mean(scores), np.std(scores))
-print("\nMean final non-augmented score: ", np.mean(non_aug_scores), np.std(non_aug_scores))
+print("\nMean final non-augmented score: ", np.mean(non_augmented_scores), np.std(non_augmented_scores))

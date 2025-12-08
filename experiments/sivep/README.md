@@ -16,13 +16,15 @@
 https://data.mendeley.com/datasets/f6sjz6by8k/1
 
 ```console
-ROC AUC score for minority group on seed 42: 0.6588640275387263 -> 0.6740103270223752
-ROC AUC score for minority group on seed 1337: 0.6841085271317829 -> 0.6924141749723144
-ROC AUC score for minority group on seed 2025: 0.6047008547008547 -> 0.6086691086691087
-ROC AUC score for minority group on seed 7321: 0.6374889478337754 -> 0.5873121131741822
-ROC AUC score for minority group on seed 98765: 0.6218487394957983 -> 0.623716153127918
+ROC AUC score for minority group on seed 42: 0.6588640275387263 -> 0.6757314974182443
+ROC AUC score for minority group on seed 1337: 0.6841085271317829 -> 0.705703211517165
+ROC AUC score for minority group on seed 2025: 0.6047008547008547 -> 0.6547619047619048
+ROC AUC score for minority group on seed 7321: 0.6374889478337754 -> 0.6027851458885943
+ROC AUC score for minority group on seed 98765: 0.6218487394957983 -> 0.6281512605042017
 
-Mean final score:  0.6372243753931797 0.03971959078620795
+Mean final score:  0.6534266040180221 0.035876274222688014
+
+Mean final non-augmented score:  0.6414022193401875 0.02783302321002928
 ```
 
 
