@@ -139,7 +139,7 @@ class SemExtractFeaturesOperator(ABC):
         input_columns: list[str],
         output_columns: dict[str, str] | None,
         **kwargs,
-    ) -> EstimatorTransformer:
+    ) -> OptimisableEstimatorTransformer:
         """Return an estimator that extracts features from the image/text on a pandas df."""
 
 

@@ -57,25 +57,17 @@ def create_pipeline():
     )
     return X.skb.apply(emo_ebm, y=y)
 
-
-sempipes.update_config(llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0}))
-scores = []
-
-all_data = as_dataframe("experiments/micromodels/empathy.json").tail(2023)
+all_data = as_dataframe("experiments/micromodels/empathy.json").tail(123)
 pipeline = create_pipeline()
 
-for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
-    print(f"Processing split {split_index}")
+env = pipeline.skb.get_data()
+env["posts_and_responses"] = all_data
 
-    env = pipeline.skb.get_data()
-    env["posts_and_responses"] = all_data
-
-    split = pipeline.skb.train_test_split(environment=env, test_size=0.5, random_state=seed)
-    learner = pipeline.skb.make_learner(fitted=False)
-    learner.fit(split["train"])
-    predictions = learner.predict(split["test"])
-    score = f1_score(split["y_test"], predictions, average="micro")
-    print(f"F1 score on {split_index}: {score}")
-    scores.append(score)
-
-print("\nMean final score: ", np.mean(scores), np.std(scores))
+split = pipeline.skb.train_test_split(environment=env, test_size=0.5, random_state=42)
+learner = pipeline.skb.make_learner(fitted=False)
+print("###DEBUG -> TRAINING")
+learner.fit(split["train"])
+print("###DEBUG -> PREDICTING")
+predictions = learner.predict(split["test"])
+score = f1_score(split["y_test"], predictions, average="micro")
+print(f"F1 score {score}")
