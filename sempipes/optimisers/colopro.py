@@ -180,6 +180,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             "operator_name": operator_name,
             "num_trials": num_trials,
             "scoring": serialize_scoring(scoring),
+            # "scoring": scoring if not isinstance(scoring, Callable) else f"<function: {scoring.__name__}>" if hasattr(scoring, "__name__") else f"<callable: {type(scoring).__name__}>",
             "cv": str(cv),
             "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,
         },

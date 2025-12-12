@@ -29,18 +29,31 @@ def _add_memorized_history(
 ) -> None:
     if memory is not None and len(memory) > 0:
         current_score = None
-
+        # FIXME Maybe? Add more real world knowledge
         messages += [
             {
                 "role": "user",
                 "content": """
                 IMPORTANT: Try to generate code that extracts better features for the downstream model. Here are some things that you can try:
 
+                If user allows you to use the `transformers` library, you can try to use it to extract features:
                     - Try to use a pretrained model specialized for the domain of the data.
                     - Try different variants of pretrained models for the feature extraction.
                     - Adjust the hyperparameters of previously chosen pretrained models for the feature extraction.
                     - Try models with a larger maximum sequence length.
                     - Try models with a larger number of parameters.
+                
+                If user prohibits you from using the `transformers` library:
+                    - Use advanced regex patterns with named groups, lookaheads/lookbehinds, and pattern combinations to extract structured information.
+                    - Apply domain-specific text processing techniques (e.g., keyword extraction, n-gram analysis, TF-IDF, character-level features).
+                    - Leverage pandas string methods (`.str.extract()`, `.str.contains()`, `.str.findall()`) for efficient pattern matching.
+                    - Extract statistical features from text (word counts, character counts, punctuation density, capitalization patterns).
+                    - Use rule-based feature engineering based on domain knowledge (e.g., date formats, email patterns, phone numbers, URLs).
+                    - Apply string similarity metrics (Levenshtein distance, Jaccard similarity) when comparing text values.
+                    - Create composite features by combining multiple extraction strategies and validate them against the feature requirements.
+                    - Add detailed comments explaining the extraction logic and why each pattern or rule was chosen.
+                    - If data is multi-lingual, try to have a list of multilingual synonyms or other techniques that DO NOT take too much time to compute.
+                    - Try to analyze the data and understand the patterns and use them to extract features.
 
                 Below is a history of the code that has been generated and executed so far, together with the performance of the model.
 
@@ -112,6 +125,9 @@ Use the following columns as input for the feature extraction:
 
 {column_description_prompt}
 
+Here are special user instructions that you ALWAYS HAVE TO FOLLOW:
+    {nl_prompt}
+
 In the code, try to use the least loaded GPU if multiple GPUs are available. Prefer MPS (Metal Performance Shaders) for Apple Silicon devices if available, then CUDA, then CPU.
 
 """
@@ -169,6 +185,7 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
     post_message = """
 
 IMPORTANT:
+ - IF USER PROHIBITS FROM USING THE `transformers`, DO NOT USE IT AND USE ONLY ALLOWED LIBRARIES.
  - Add comments to the code which explain the rationale for choosing a particular pretrained model.
  - Make sure that the code feeds the data in batches to the GPU for efficiency.
  - Use the `tqdm` library to show a progress bar for the feature extraction.
@@ -196,8 +213,13 @@ from sempipes.code_generation.safe_exec import safe_exec
 input_path = Path(sys.argv[1])
 output_path = Path(sys.argv[2])
 
-with open(input_path, "rb") as f:
-    data = pickle.load(f)
+try:
+    with open(input_path, "rb") as f:
+        data = pickle.load(f)
+except Exception as e:
+    with open(output_path, "wb") as f:
+        pickle.dump({"success": False, "error": f"Failed to load input: {str(e)}", "traceback": traceback.format_exc()}, f)
+    sys.exit(1)
 
 try:
     func = safe_exec(data["code"], "extract_features")
@@ -205,8 +227,14 @@ try:
     with open(output_path, "wb") as f:
         pickle.dump({"success": True, "result": result}, f)
 except Exception as e:
-    with open(output_path, "wb") as f:
-        pickle.dump({"success": False, "error": str(e), "traceback": traceback.format_exc()}, f)
+    try:
+        with open(output_path, "wb") as f:
+            pickle.dump({"success": False, "error": str(e), "traceback": traceback.format_exc()}, f)
+    except Exception as dump_error:
+        # If we can't even write the error, write to stderr as last resort
+        print(f"CRITICAL: Failed to write error output: {dump_error}", file=sys.stderr)
+        print(f"Original error: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
     sys.exit(1)
 """,
         str(input_path),
@@ -225,6 +253,16 @@ except Exception as e:
         if process.stdout is not None:
             for line in process.stdout:
                 print(line, end="", flush=True)
+        result = subprocess.run(cmd, capture_output=True, check=False, text=True)
+
+        # Check if output file exists and has content
+        if not output_path.exists() or output_path.stat().st_size == 0:
+            error_msg = "Subprocess crashed before writing output file."
+            if result.stderr:
+                error_msg += f"\nSubprocess stderr:\n{result.stderr}"
+            if result.stdout:
+                error_msg += f"\nSubprocess stdout:\n{result.stdout}"
+            raise RuntimeError(error_msg)
 
         # Wait for process to complete and get return code
         _return_code = process.wait()
@@ -251,10 +289,9 @@ def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.
         output_data = _execute_code_in_subprocess(input_path, output_path)
 
         if not output_data.get("success", False):
-            raise RuntimeError(
-                f"Feature extraction failed in subprocess: {output_data.get('error', 'Unknown error')}\n"
-                f"{output_data.get('traceback', '')}"
-            )
+            error_msg = f"Feature extraction failed in subprocess: {output_data.get('error', 'Unknown error')}\n"
+            error_msg += f"{output_data.get('traceback', '')}"
+            raise RuntimeError(error_msg)
 
         return output_data["result"]
 
@@ -422,6 +459,8 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 
                 code = generate_python_code_from_messages(messages)
 
+                print(code)
+
                 # Try to extract actual features
                 _try_to_execute(
                     df,
@@ -439,9 +478,11 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                     {"role": "assistant", "content": code},
                     {
                         "role": "user",
-                        "content": (f"Code execution failed with error: {type(e)} {e}.\n "
-                        f"Remember: Each codeblock must start with ```python and end with ```end!\n"
-                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n"),
+                        "content": (
+                            f"Code execution failed with error: {type(e)} {e}.\n "
+                            f"Remember: Each codeblock must start with ```python and end with ```end!\n"
+                            f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n"
+                        ),
                     },
                 ]
 
