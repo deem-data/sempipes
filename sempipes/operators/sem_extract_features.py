@@ -183,7 +183,7 @@ Generate Python code with method `extract_features(df: pd.DataFrame, features_to
 
 Data types of the columns that should be used for the feature generation: {json.dumps(modality_per_column, indent=2)}
 
-In the code, try to use the least loaded GPU if multiple GPUs are available.
+In the code, try to use the least loaded GPU if multiple GPUs are available. Prefer MPS (Metal Performance Shaders) for Apple Silicon devices if available, then CUDA, then CPU.
 
 """
     code_example = f"""
@@ -198,25 +198,37 @@ from transformers import (
     pipeline,
 )
 
-def pick_gpu_by_free_mem_torch():
-    assert torch.cuda.is_available(), "No CUDA device"
-    free = []
-    for i in range(torch.cuda.device_count()):
-        # returns (free, total) in bytes for that device
-        f, t = torch.cuda.mem_get_info(i)
-        free.append((f, i))
-    free.sort(reverse=True)
-    _, idx = free[0]
-    print(f"Chosen GPU: {{idx}}")
-    return idx
+def pick_device():
+    # Prefer MPS for Apple Silicon, then CUDA, then CPU
+    if torch.backends.mps.is_available():
+        print("Using MPS device")
+        return torch.device("mps")
+    elif torch.cuda.is_available():
+        # Find GPU with most free memory
+        free = []
+        for i in range(torch.cuda.device_count()):
+            f, t = torch.cuda.mem_get_info(i)
+            free.append((f, i))
+        free.sort(reverse=True)
+        _, idx = free[0]
+        print(f"Chosen GPU: {{idx}}")
+        return torch.device(f"cuda:{{idx}}")
+    else:
+        print("Using CPU")
+        return torch.device("cpu")
 
-gpu_idx = pick_gpu_by_free_mem_torch()
-device = torch.device(f"cuda:{{gpu_idx}}") # Use the selected GPU for model inference
+device = pick_device()
 
 features_to_extract = {features_to_extract}
 
 def extract_features(df: pd.DataFrame, features_to_extract: list[dict[str, object]]) -> pd.DataFrame:
     # Extract features using transformers and other libraries
+    # IMPORTANT: When creating pipeline, handle device parameter correctly:
+    # - For CUDA: use device=device.index (e.g., device=0 for cuda:0)
+    # - For MPS: use device=device (the device object itself, not device.index as MPS doesn't have index)
+    # - For CPU: use device=-1 or omit device parameter entirely (some versions prefer device=None)
+    # Example: pipe = pipeline(..., device=device if device.type != "cpu" else -1)
+    # Or: pipe = pipeline(..., device=0 if device.type == "cuda" else (device if device.type == "mps" else -1))
 
     ...
 
