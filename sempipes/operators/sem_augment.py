@@ -8,7 +8,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
-from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import batch_generate_json_retries, generate_python_code_from_messages
 from sempipes.logging import get_logger
@@ -282,8 +281,6 @@ Codeblock:
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
         if self._prefitted_state is not None:
             self.generated_code_ = self._prefitted_state["generated_code"]
-        elif get_config().prefer_empty_state_in_preview and self.eval_mode == "preview":
-            self.generated_code_ = self.empty_state()["generated_code"]
         else:
             logger.info(f"sempipes.sem_augment('{self.nl_prompt}', True, {self.number_of_rows_to_generate})")
 

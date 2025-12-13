@@ -2,9 +2,13 @@ import numpy as np
 import skrub
 from interpret.glassbox import ExplainableBoostingClassifier
 from sklearn.metrics import f1_score
-
+import json
 import sempipes
 from experiments.micromodels import as_dataframe
+
+
+with open("experiments/sivep/_sempipes_state.json", "r", encoding="utf-8") as f:
+    best_state = json.load(f)
 
 
 def create_pipeline():
@@ -58,9 +62,7 @@ def create_pipeline():
     return X.skb.apply(emo_ebm, y=y)
 
 
-sempipes.update_config(
-    llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0})
-)
+sempipes.update_config(llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0}))
 scores = []
 
 all_data = as_dataframe("experiments/micromodels/empathy.json").tail(2023)
@@ -71,6 +73,7 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
 
     env = pipeline.skb.get_data()
     env["posts_and_responses"] = all_data
+    env["sempipes_prefitted_state__response_features"] = best_state
 
     split = pipeline.skb.train_test_split(environment=env, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False)
@@ -80,4 +83,4 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     print(f"F1 score on {split_index}: {score}")
     scores.append(score)
 
-print("\nMean final score: ", np.mean(scores), np.std(scores))
+print("Mean final score: ", np.mean(scores), np.std(scores))

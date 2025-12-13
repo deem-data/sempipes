@@ -1,6 +1,5 @@
 from typing import Any
 import pandas as pd
-import skrub
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
@@ -9,7 +8,7 @@ from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.logging import get_logger
-from sempipes.operators.operators import ContextAwareMixin, EstimatorTransformer, OptimisableMixin, SemExtractFeaturesOperator
+from sempipes.operators.operators import ContextAwareMixin, OptimisableMixin
 
 logger = get_logger()
 
@@ -34,11 +33,15 @@ def _add_memorized_history(
                 "content": """
                 IMPORTANT: Try to generate code that extracts better features for the downstream model. Here are some things that you can try:
 
-                    - Try different pretrained models for the feature extraction
-                    - Adjust the hyperparameters of previously chosen pretrained models for the feature extraction
-                    - Try models with a larger maximum sequence length
+                    - Try to use a pretrained model specialized for the domain of the data.
+                    - Try different variants of pretrained models for the feature extraction.
+                    - Adjust the hyperparameters of previously chosen pretrained models for the feature extraction.
+                    - Try models with a larger maximum sequence length.
+                    - Try models with a larger number of parameters.
 
                 Below is a history of the code that has been generated and executed so far, together with the performance of the model.
+
+                IMPORTANT: Explain your reasoning for the code changes you made in comments of the code.
                 """,
             }
         ]
@@ -151,7 +154,7 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 ```end
 
 """
-    post_message = f"""
+    post_message = """
 
 IMPORTANT:
  - Add comments to the code which explain the rationale for choosing a particular pretrained model.
@@ -212,7 +215,7 @@ def _describe_column(column: pd.Series):
     return column_description
 
 
-class LLMFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
+class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
     def __init__(
         self, 
         nl_prompt: str, 
@@ -321,78 +324,9 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
         feature_extraction_func = safe_exec(code_to_execute, "extract_features")
 
         logger.info(f"Extracting features from {len(df)} rows")
-        import traceback
-        # Use a class-level counter to track call order
-        if not hasattr(LLMFeatureExtractor, '_transform_call_counter'):
-            LLMFeatureExtractor._transform_call_counter = 0
-        LLMFeatureExtractor._transform_call_counter += 1
-        call_num = LLMFeatureExtractor._transform_call_counter
-        print(f"###DEBUG -> transform called #{call_num}, self-id: {id(self)}, df-rows: {len(df)}")
-        print(f"###DEBUG -> call stack (showing last 16 frames):")
-        traceback.print_stack(limit=16)
-        print(f"###DEBUG -> code-hash: {hash(code_to_execute)}")
-
         df_with_features = feature_extraction_func(df.copy(deep=True))
-
         return df_with_features
 
 
-class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
-    def generate_features_extractor(
-        self,
-        nl_prompt: str,
-        input_columns: list[str],
-        output_columns: dict[str, str] | None = None,
-        _pipeline_summary: PipelineSummary | None | DataOp = None,
-        _prefitted_state: dict[str, Any] | DataOp | None = None,
-        _memory: list[dict[str, Any]] | DataOp | None = None,
-        _inspirations: list[dict[str, Any]] | DataOp | None = None,
-        **kwargs,
-    ) -> EstimatorTransformer:
-        return LLMFeatureExtractor(
-            nl_prompt=nl_prompt,
-            input_columns=input_columns,
-            output_columns=output_columns,
-            _pipeline_summary=_pipeline_summary,
-            _prefitted_state=_prefitted_state,
-            _memory=_memory,
-            _inspirations=_inspirations
-        )
 
 
-def sem_extract_features(
-    self: DataOp,
-    nl_prompt: str,
-    input_columns: list[str],
-    name: str,
-    output_columns: dict[str, str] | None = None,
-    **kwargs,
-) -> DataOp:
-
-    _pipeline_summary = skrub.var(f"sempipes_pipeline_summary__{name}", None)
-    _prefitted_state = skrub.var(f"sempipes_prefitted_state__{name}", None)
-    _memory = skrub.var(f"sempipes_memory__{name}", [])
-    _inspirations = skrub.var(f"sempipes_inspirations__{name}", [])
-
-    feature_extractor = SemExtractFeaturesLLM().generate_features_extractor(
-        nl_prompt, 
-        input_columns, 
-        output_columns, 
-        _pipeline_summary, 
-        _prefitted_state, 
-        _memory, 
-        _inspirations, 
-        **kwargs
-    )
-
-    result = self.skb.apply(feature_extractor, how="no_wrap")
-
-    # Workaround to make the fitted estimator available in the computational graph
-    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
-    result_with_name = result.skb.set_name(name)
-    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
-
-    def extract_result(tuple_of_data_ops):
-        return tuple_of_data_ops["result"]
-
-    return result_with_fitted_estimator.skb.apply_func(extract_result)

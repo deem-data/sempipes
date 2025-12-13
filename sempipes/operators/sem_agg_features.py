@@ -370,17 +370,7 @@ def sem_agg_features(  # pylint: disable=too-many-positional-arguments
         _inspirations=_inspirations,
     )
 
-    result = inputs.skb.apply(agg_joiner)
-
-    # Workaround to make the fitted estimator available in the computational graph
-    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
-    result_with_name = result.skb.set_name(name)
-    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
-
-    def extract_result(tuple_of_data_ops):
-        return tuple_of_data_ops["result"]
-
-    return result_with_fitted_estimator.skb.apply_func(extract_result)
+    return inputs.skb.apply(agg_joiner).skb.set_name(name)
 
 
 class LLMCodeGenSemAggJoinFeaturesOperator(SemAggFeaturesOperator):

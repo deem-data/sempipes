@@ -1,7 +1,9 @@
 import re
+
 from sempipes.logging import get_logger
 
 logger = get_logger()
+
 
 def _unwrap(text: str, prefix, suffix, suffix2) -> str:
     text = text.strip()

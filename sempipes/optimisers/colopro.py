@@ -1,5 +1,6 @@
 import time
 from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 import skrub
@@ -93,6 +94,8 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     num_hpo_iterations_per_trial: int = 10,
     pipeline_definition: Callable[..., DataOp] | None = None,
     run_name: str | None = None,
+    additional_env_variables: dict[str, Any] | None = None,
+    n_jobs_for_evaluation: int = -1,
 ) -> list[Outcome]:
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
@@ -100,6 +103,10 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
 
     env_for_evolution = dag_sink.skb.get_data()
     env_for_scoring = dag_sink.skb.get_data()
+
+    if additional_env_variables is not None:
+        env_for_evolution.update(additional_env_variables)
+        env_for_scoring.update(additional_env_variables)
 
     needs_hpo = _needs_hpo(dag_sink)
 
@@ -157,7 +164,9 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
         else:
             logger.info(f"COLOPRO> Evaluating pipeline via {cv}-fold cross-validation")
             pipeline = dag_sink.skb.make_learner(fitted=False)
-            cv_results = skrub.cross_validate(pipeline, env_for_scoring, cv=cv, scoring=scoring, n_jobs=-1)
+            cv_results = skrub.cross_validate(
+                pipeline, env_for_scoring, cv=cv, scoring=scoring, n_jobs=n_jobs_for_evaluation
+            )
             score = float(np.mean(cv_results["test_score"]))
         evaluation_end_time = time.time()
         logger.info(f"COLOPRO> Pipeline evaluation took {evaluation_end_time - evaluation_start_time:.2f} seconds")

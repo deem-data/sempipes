@@ -23,6 +23,11 @@ class EvolutionarySearch(SearchPolicy):
 
     def create_root_node(self, dag_sink: DataOp, operator_name: str):
         data_op = find_node_by_name(dag_sink, operator_name)
+        print(data_op)
+        assert data_op is not None
+        assert data_op._skrub_impl is not None
+        assert data_op._skrub_impl.estimator is not None
+
         empty_state = data_op._skrub_impl.estimator.empty_state()
 
         logger.info("EVO_SEARCH> Creating root node")

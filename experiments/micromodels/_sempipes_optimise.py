@@ -1,10 +1,10 @@
 import numpy as np
 import skrub
 from interpret.glassbox import ExplainableBoostingClassifier
-from sklearn.metrics import f1_score
 
 import sempipes
 from experiments.micromodels import as_dataframe
+from sempipes.optimisers import EvolutionarySearch, optimise_colopro
 
 
 def create_pipeline():
@@ -50,6 +50,18 @@ def create_pipeline():
         generate_via_code=True,
     )
 
+    # Hack until we figured out a way to generate default values for the empty state
+    def add_if_not_present(df):
+        if "sp_emotional_reaction_level" not in df.columns:
+            df["sp_emotional_reaction_level"] = np.random.rand(len(df)) * 2.0
+        if "sp_interpretation_level" not in df.columns:
+            df["sp_interpretation_level"] = np.random.rand(len(df)) * 2.0
+        if "sp_explorations_level" not in df.columns:
+            df["sp_explorations_level"] = np.random.rand(len(df)) * 2.0
+        return df
+
+    extracted = extracted.skb.apply_func(add_if_not_present)    
+
     X = extracted[["sp_emotional_reaction_level", "sp_interpretation_level", "sp_explorations_level"]]
 
     emo_ebm = ExplainableBoostingClassifier(
@@ -57,17 +69,33 @@ def create_pipeline():
     )
     return X.skb.apply(emo_ebm, y=y)
 
-all_data = as_dataframe("experiments/micromodels/empathy.json").tail(123)
-pipeline = create_pipeline()
+if __name__ == "__main__":
 
-env = pipeline.skb.get_data()
-env["posts_and_responses"] = all_data
+    validation_data = as_dataframe("experiments/micromodels/empathy.json").head(1000)
 
-split = pipeline.skb.train_test_split(environment=env, test_size=0.5, random_state=42)
-learner = pipeline.skb.make_learner(fitted=False)
-print("###DEBUG -> TRAINING")
-learner.fit(split["train"])
-print("###DEBUG -> PREDICTING")
-predictions = learner.predict(split["test"])
-score = f1_score(split["y_test"], predictions, average="micro")
-print(f"F1 score {score}")
+
+    sempipes.update_config(
+        llm_for_code_generation=sempipes.LLM(
+            name="gemini/gemini-2.5-flash",
+            parameters={"temperature": 2.0},
+        ),
+    )
+
+    pipeline = create_pipeline()
+
+    np.random.seed(42)
+
+    outcomes = optimise_colopro(
+        pipeline,
+        operator_name="response_features",
+        search=EvolutionarySearch(population_size=6),
+        num_trials=24,
+        scoring="f1_micro",
+        cv=5,
+        run_name="micromodels",
+        additional_env_variables={"posts_and_responses": validation_data},
+        n_jobs_for_evaluation=3,
+    )
+
+    best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
+    print(best_outcome.state["generated_code"])
