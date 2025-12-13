@@ -1,9 +1,6 @@
 import warnings
 
 import numpy as np
-import warnings
-
-import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
@@ -35,7 +32,7 @@ for seed in [42, 1337, 2025, 7321, 98765]:
     augmented_train = pd.concat([train, extra_samples], ignore_index=True)
     augmented_train_labels = augmented_train.due_to_covid
     augmented_train = augmented_train.drop(columns=["due_to_covid"])
-    
+
     train_labels = train.due_to_covid
     train = train.drop(columns=["due_to_covid"])
 

@@ -48,6 +48,15 @@ def _generate_code_from_messages(messages: list[dict]) -> str:
 
     # TODO add proper error handling
     raw_code = response.choices[0].message["content"]
+
+    if raw_code is None:
+        logger.error("No code generated")
+        print("#" * 80)
+        print(messages)
+        print("#" * 80)
+        print(response)
+        print("#" * 80)
+
     return raw_code
 
 

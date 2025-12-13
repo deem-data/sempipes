@@ -15,18 +15,10 @@ from sempipes.operators.sem_agg_features import sem_agg_features  # pylint: disa
 from sempipes.operators.sem_gen_features_caafe import sem_gen_features  # pylint: disable=wrong-import-position
 from sempipes.operators.sem_clean import sem_clean  # pylint: disable=wrong-import-position
 from sempipes.operators import sem_fillna  # pylint: disable=wrong-import-position
-from sempipes.config import get_config, LLM, update_config, detect_interactive_mode  # pylint: disable=wrong-import-position
-from sempipes.logging import get_logger  # pylint: disable=wrong-import-position
-from sempipes.interactive.inspection import inspect_generated_code  # pylint: disable=wrong-import-position
+from sempipes.config import get_config, LLM, update_config  # pylint: disable=wrong-import-position
 
 # Load environment variables from a .env file if present
 load_dotenv()
-
-# Detect if code is running in a Jupyter notebook, to determine the behavior of the preview mode.
-if detect_interactive_mode():
-    get_logger().info("Interactive mode detected, enabling code generation in preview mode.")
-    update_config(prefer_empty_state_in_preview=False)
-
 
 # Monkey-patch skrub DataOp to include our semantic operators
 DataOp.sem_fillna = sem_fillna
@@ -51,4 +43,4 @@ def as_y(op: DataOp, description: str):
     return op.skb.mark_as_y().skb.set_description(description)
 
 
-__all__ = ["as_X", "as_y", "sem_choose", "get_config", "update_config", "LLM", "inspect_generated_code"]
+__all__ = ["as_X", "as_y", "sem_choose", "get_config", "update_config", "LLM"]

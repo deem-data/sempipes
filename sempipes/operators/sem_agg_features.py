@@ -10,7 +10,6 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
-from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
@@ -225,13 +224,6 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
             self.generated_code_ = self._prefitted_state["generated_code"]
             return self
 
-        if self.eval_mode == "preview" and get_config().prefer_empty_state_in_preview:
-            logger.debug(
-                f"Using empty state during preview for sempipes.sem_agg_features('{prompt_preview}...', {self.how_many})"
-            )
-            self.generated_code_ = self.empty_state()["generated_code"]
-            return self
-
         samples = stacked_inputs["samples"]
         data_to_aggregate = stacked_inputs["data_to_aggregate"]
 
@@ -370,17 +362,7 @@ def sem_agg_features(  # pylint: disable=too-many-positional-arguments
         _inspirations=_inspirations,
     )
 
-    result = inputs.skb.apply(agg_joiner)
-
-    # Workaround to make the fitted estimator available in the computational graph
-    fitted_estimator = result.skb.applied_estimator.skb.set_name(f"sempipes_fitted_estimator__{name}")
-    result_with_name = result.skb.set_name(name)
-    result_with_fitted_estimator = skrub.as_data_op({"fitted_estimator": fitted_estimator, "result": result_with_name})
-
-    def extract_result(tuple_of_data_ops):
-        return tuple_of_data_ops["result"]
-
-    return result_with_fitted_estimator.skb.apply_func(extract_result)
+    return inputs.skb.apply(agg_joiner).skb.set_name(name)
 
 
 class LLMCodeGenSemAggJoinFeaturesOperator(SemAggFeaturesOperator):

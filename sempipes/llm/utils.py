@@ -1,5 +1,9 @@
 import re
 
+from sempipes.logging import get_logger
+
+logger = get_logger()
+
 
 def _unwrap(text: str, prefix, suffix, suffix2) -> str:
     text = text.strip()
@@ -28,4 +32,7 @@ def unwrap_json(text: str) -> str:
 
 
 def unwrap_python(text: str) -> str:
+    if text is None:
+        logger.error("Response text to unwrap is None")
+        return None
     return _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")

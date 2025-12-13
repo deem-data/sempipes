@@ -1,29 +1,27 @@
-import pandas as pd
+import logging
 import warnings
-from experiments.sivep import DATA_DESCRIPTION
-import sempipes
-import skrub
+
 import numpy as np
+import pandas as pd
+import skrub
 from xgboost import XGBClassifier
+
+import sempipes
+from experiments.sivep import DATA_DESCRIPTION
 from sempipes.optimisers import EvolutionarySearch, optimise_colopro
 
 warnings.filterwarnings("ignore")
 
-import logging
 logging.getLogger("sdv").setLevel(logging.ERROR)
 
-def _pipeline(raw_data, seed):
 
+def _pipeline(raw_data, seed):
     data = skrub.var("data", raw_data)
 
-    patients = (
-        data.drop(columns="due_to_covid", errors="ignore")
-            .skb.set_description(DATA_DESCRIPTION)
-            .skb.mark_as_X()
-    )
+    patients = data.drop(columns="due_to_covid", errors="ignore").skb.set_description(DATA_DESCRIPTION).skb.mark_as_X()
 
     labels = (
-        data['due_to_covid']
+        data["due_to_covid"]
         .skb.set_description("Indicator whether the severe acute respiratory infections originated from COVID-19.")
         .skb.mark_as_y()
     )
@@ -41,27 +39,24 @@ def _pipeline(raw_data, seed):
 
     def only_indegenous_for_evaluation(df, eval_mode=skrub.eval_mode()):
         if eval_mode == "predict" or eval_mode == "score":
-           filtered_df = df[df.cs_raca == 5]
-           return filtered_df
+            filtered_df = df[df.cs_raca == 5]
+            return filtered_df
         else:
-           return df
+            return df
 
     augmented_data_maybe_filtered = augmented_data.skb.apply_func(only_indegenous_for_evaluation)
-    
-    X = augmented_data_maybe_filtered.drop(columns="due_to_covid", errors="ignore")
-    y = augmented_data_maybe_filtered['due_to_covid']
 
+    X = augmented_data_maybe_filtered.drop(columns="due_to_covid", errors="ignore")
+    y = augmented_data_maybe_filtered["due_to_covid"]
 
     X_encoded = X.skb.apply(skrub.TableVectorizer())
 
     predictions = X_encoded.skb.apply(XGBClassifier(eval_metric="logloss", random_state=seed), y=y)
 
-
     return predictions
 
 
 if __name__ == "__main__":
-
     df = pd.read_csv("experiments/sivep/validation.csv")
     df = df.sample(frac=0.5, random_state=42)
 
@@ -70,9 +65,9 @@ if __name__ == "__main__":
     # Remove influenza cases
     df = df[~df.classi_fin.isin([1])]
     # Target label: SRAG due to covid
-    df['due_to_covid'] = df.classi_fin==5
-    
-    df = df.drop(columns=['classi_fin', 'evolucao', 'vacina_cov', 'cs_sexo', 'dt_evoluca', 'dt_interna'])
+    df["due_to_covid"] = df.classi_fin == 5
+
+    df = df.drop(columns=["classi_fin", "evolucao", "vacina_cov", "cs_sexo", "dt_evoluca", "dt_interna"])
 
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
@@ -92,7 +87,7 @@ if __name__ == "__main__":
         num_trials=24,
         scoring="roc_auc",
         cv=5,
-        run_name="sivep"
+        run_name="sivep",
     )
 
     best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
