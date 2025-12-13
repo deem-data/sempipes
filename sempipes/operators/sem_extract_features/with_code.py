@@ -1,22 +1,21 @@
 from typing import Any
+
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
-from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.inspection.pipeline_summary import PipelineSummary
+from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
 from sempipes.operators.operators import ContextAwareMixin, OptimisableMixin
+from sempipes.operators.sem_extract_features._shared import SYSTEM_PROMPT, build_output_columns_to_generate_llm
 
 logger = get_logger()
 
 
 _MAX_RETRIES = 5
-_SYSTEM_PROMPT = """
-You are an expert data scientist, assisting with feature extraction from multi-modal data such as text/images/audio.
-"""
 
 
 def _add_memorized_history(
@@ -76,13 +75,9 @@ def _add_memorized_history(
             ]
 
 
-
 def _get_code_feature_generation_message(
-    columns_to_generate: list[str], 
-    column_descriptions, 
-    features_to_extract: list[dict]
+    columns_to_generate: list[str], column_descriptions, features_to_extract: list[dict]
 ) -> str:
-
     column_description_prompt = ""
     for column, properties in column_descriptions.items():
         column_description_prompt += (
@@ -91,12 +86,10 @@ def _get_code_feature_generation_message(
             f" - Modality: {properties['modality']}\n"
             f" - Samples: {properties['samples']}\n"
         )
-        if properties['modality'] == "text":
+        if properties["modality"] == "text":
             column_description_prompt += f" - Max words per value: {properties['max_words']}\n"
             column_description_prompt += f" - Mean words per value: {properties['mean_words']}\n"
-        column_description_prompt += "\n"     
-
-
+        column_description_prompt += "\n"
 
     task_prompt = f"""
 Your goal is to help a data scientist generate Python code for the feature generation/extraction from multi-modal data. You need to extract information from text, image, or audio data. 
@@ -112,7 +105,7 @@ Use the following columns as input for the feature extraction:
 
 {column_description_prompt}
 
-In the code, try to use the least loaded GPU if multiple GPUs are available.
+In the code, try to use the least loaded GPU if multiple GPUs are available. Prefer MPS (Metal Performance Shaders) for Apple Silicon devices if available, then CUDA, then CPU.
 
 """
     code_example = f"""
@@ -127,26 +120,38 @@ from transformers import (
     pipeline,
 )
 
-def pick_gpu_by_free_mem_torch():
-    assert torch.cuda.is_available(), "No CUDA device"
-    free = []
-    for i in range(torch.cuda.device_count()):
-        # returns (free, total) in bytes for that device
-        f, t = torch.cuda.mem_get_info(i)
-        free.append((f, i))
-    free.sort(reverse=True)
-    _, idx = free[0]
-    print(f"Chosen GPU: {{idx}}")
-    return idx
 
-gpu_idx = pick_gpu_by_free_mem_torch()
-device = torch.device(f"cuda:{{gpu_idx}}") # Use the selected GPU for model inference
+def pick_device():
+    # Prefer MPS for Apple Silicon, then CUDA, then CPU
+    if torch.backends.mps.is_available():
+        print("Using MPS device")
+        return torch.device("mps")
+    elif torch.cuda.is_available():
+        # Find GPU with most free memory
+        free = []
+        for i in range(torch.cuda.device_count()):
+            f, t = torch.cuda.mem_get_info(i)
+            free.append((f, i))
+        free.sort(reverse=True)
+        _, idx = free[0]
+        print(f"Chosen GPU: {{idx}}")
+        return torch.device(f"cuda:{{idx}}")
+    else:
+        print("Using CPU")
+        return torch.device("cpu")
+
+device = pick_device()
 
 features_to_extract = {features_to_extract}
 
 def extract_features(df: pd.DataFrame) -> pd.DataFrame:
     # Extract features using transformers and other libraries
-
+    # IMPORTANT: When creating a pipeline, handle the device parameter correctly:
+    # - For CUDA: use device=device.index (e.g., device=0 for cuda:0)
+    # - For MPS: use device=device (the device object itself, not device.index as MPS doesn't have index)
+    # - For CPU: use device=-1 or omit device parameter entirely (some versions prefer device=None)
+    # Example: pipe = pipeline(..., device=device if device.type != "cpu" else -1)
+    # Or: pipe = pipeline(..., device=0 if device.type == "cuda" else (device if device.type == "mps" else -1))
     ...
 
     # Add features to the original df as new columns
@@ -167,9 +172,7 @@ Codeblock:
     return task_prompt + code_example + post_message
 
 
-def _try_to_execute(
-    df: pd.DataFrame, code_to_execute: str, generated_columns: list[str]
-) -> None:
+def _try_to_execute(df: pd.DataFrame, code_to_execute: str, generated_columns: list[str]) -> None:
     df_sample = df.head(50).copy(deep=True)
 
     feature_extraction_func = safe_exec(code_to_execute, "extract_features")
@@ -185,7 +188,6 @@ def _try_to_execute(
 
 
 def _describe_column(column: pd.Series):
-
     column_description = {
         "dtype": column.dtype,
         "modality": "text",
@@ -215,12 +217,12 @@ def _describe_column(column: pd.Series):
     return column_description
 
 
-class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
+class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):  # pylint: disable=too-many-ancestors
     def __init__(
-        self, 
-        nl_prompt: str, 
-        input_columns: list[str], 
-        output_columns: dict[str, str],
+        self,
+        nl_prompt: str,
+        input_columns: list[str],
+        output_columns: dict[str, str] | None,
         _pipeline_summary: PipelineSummary | None | DataOp = None,
         _prefitted_state: dict[str, Any] | DataOp | None = None,
         _memory: list[dict[str, Any]] | DataOp | None = None,
@@ -228,7 +230,8 @@ class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMix
     ) -> None:
         self.nl_prompt = nl_prompt
         self.input_columns = input_columns
-        self.output_columns = output_columns
+        self.output_columns_not_given = output_columns is None
+        self.output_columns = {} if output_columns is None else output_columns
         self._pipeline_summary = _pipeline_summary
         self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
@@ -236,30 +239,43 @@ class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMix
         self.generated_code_: str | None = None
 
     def empty_state(self):
-        return {
+        state = {
             "generated_code": """
 def extract_features(df: pd.DataFrame) -> pd.DataFrame:
     return df        
 """
         }
 
+        if self.output_columns_not_given:
+            state["generated_features"] = [
+                {"feature_name": "", "feature_prompt": self.nl_prompt, "input_columns": self.input_columns}
+            ]
+
+        return state
+
     def state_after_fit(self):
-        return {"generated_code": self.generated_code_}
+        state = {"generated_code": self.generated_code_}
+        if self.output_columns_not_given:
+            state["generated_features"] = self.output_columns
+
+        return state
 
     def memory_update_from_latest_fit(self):
         if self.generated_code_ is not None:
             return self.generated_code_
         return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
-
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
-
         if self._prefitted_state is not None:
             self.generated_code_ = self._prefitted_state["generated_code"]
+            if "generated_features" in self._prefitted_state:
+                self.output_columns = self._prefitted_state["generated_features"]
             return self
 
-        logger.info(f"sempipes.sem_extract_features('{self.input_columns}', '{list(self.output_columns.keys())}')")
+        if self.output_columns == {}:
+            _, self.output_columns = build_output_columns_to_generate_llm(df, self.input_columns, self.nl_prompt)
 
+        logger.info(f"sempipes.sem_extract_features('{self.input_columns}', '{list(self.output_columns.keys())}')")
 
         column_descriptions = {column: _describe_column(df[column]) for column in self.input_columns}
 
@@ -288,10 +304,9 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
         # Generate code for multi-modal data
         messages = []
         for attempt in range(1, _MAX_RETRIES + 1):
-
             try:
                 if attempt == 1:
-                    messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+                    messages += [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
                     _add_memorized_history(self._memory, messages, target_metric)
 
                 code = generate_python_code_from_messages(messages)
@@ -316,7 +331,6 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                     },
                 ]
 
-
     def transform(self, df):
         check_is_fitted(self, "generated_code_")
 
@@ -326,7 +340,3 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
         logger.info(f"Extracting features from {len(df)} rows")
         df_with_features = feature_extraction_func(df.copy(deep=True))
         return df_with_features
-
-
-
-

@@ -84,7 +84,7 @@ def _needs_hpo(dag_sink):
     return len(pipeline_choices["choices"]) > 0
 
 
-def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many-locals, too-many-statements
+def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many-locals, too-many-statements, too-many-arguments
     dag_sink: DataOp,
     operator_name: str,
     num_trials: int,

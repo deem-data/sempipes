@@ -60,7 +60,7 @@ def create_pipeline():
             df["sp_explorations_level"] = np.random.rand(len(df)) * 2.0
         return df
 
-    extracted = extracted.skb.apply_func(add_if_not_present)    
+    extracted = extracted.skb.apply_func(add_if_not_present)
 
     X = extracted[["sp_emotional_reaction_level", "sp_interpretation_level", "sp_explorations_level"]]
 
@@ -69,10 +69,9 @@ def create_pipeline():
     )
     return X.skb.apply(emo_ebm, y=y)
 
+
 if __name__ == "__main__":
-
     validation_data = as_dataframe("experiments/micromodels/empathy.json").head(1000)
-
 
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(

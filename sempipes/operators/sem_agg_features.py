@@ -10,7 +10,6 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
-from sempipes.config import get_config
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
@@ -223,13 +222,6 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
         if self._prefitted_state is not None:
             logger.debug(f"Using provided state for sempipes.sem_agg_features('{prompt_preview}...', {self.how_many})")
             self.generated_code_ = self._prefitted_state["generated_code"]
-            return self
-
-        if self.eval_mode == "preview" and get_config().prefer_empty_state_in_preview:
-            logger.debug(
-                f"Using empty state during preview for sempipes.sem_agg_features('{prompt_preview}...', {self.how_many})"
-            )
-            self.generated_code_ = self.empty_state()["generated_code"]
             return self
 
         samples = stacked_inputs["samples"]
