@@ -1585,3 +1585,14 @@ ROC AUC score for minority group on seed 98765: 0.6736694677871148
 
 Mean final score:  0.6821401636554545 0.029612097145793867
 ```
+
+mini-swe-agent
+```console
+ROC AUC score for minority group on seed 42: 0.6633390705679861
+ROC AUC score for minority group on seed 1337: 0.7272978959025471
+ROC AUC score for minority group on seed 2025: 0.6550671550671551
+ROC AUC score for minority group on seed 7321: 0.6027851458885942
+ROC AUC score for minority group on seed 98765: 0.603874883286648
+
+Mean final score:  0.6504728301425862 0.045900375976491326
+```

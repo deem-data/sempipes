@@ -9,15 +9,18 @@ from sempipes.llm.llm import (
     get_generic_message,
 )
 from sempipes.logging import get_logger
-
-from sempipes.operators.sem_extract_features._shared import Modality, _get_modality, create_file_url, build_output_columns_to_generate_llm, SYSTEM_PROMPT
+from sempipes.operators.sem_extract_features._shared import (
+    SYSTEM_PROMPT,
+    Modality,
+    _get_modality,
+    build_output_columns_to_generate_llm,
+    create_file_url,
+)
 
 logger = get_logger()
 
 
 _MAX_RETRIES = 5
-
-
 
 
 def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) -> tuple[str, str]:
@@ -48,11 +51,7 @@ def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) ->
 
 
 class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
-    def __init__(
-        self, nl_prompt: str, 
-        input_columns: list[str], 
-        output_columns: dict[str, str] | None
-    ) -> None:
+    def __init__(self, nl_prompt: str, input_columns: list[str], output_columns: dict[str, str] | None) -> None:
         self.nl_prompt = nl_prompt
         self.input_columns = input_columns
         self.output_columns = {} if output_columns is None else output_columns
@@ -79,7 +78,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                 if modality == Modality.TEXT:
                     context_prompt += f"\nTextual column `{input_column}`: {row[input_column]}."
 
-                elif modality == Modality.AUDIO:                    
+                elif modality == Modality.AUDIO:
                     audio, audio_format = create_file_url(row[input_column])
                     audios.append({"type": "input_audio", "input_audio": {"data": audio, "format": audio_format}})
 
@@ -99,16 +98,16 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         return context
 
-
-
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
         # Determine modalities of input columns
         self.modality_per_column = {column: _get_modality(df[column]) for column in self.input_columns}
 
         if self.output_columns == {}:
             # Ask LLM which features to generate given input columns
-            logger.info(f"sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')") 
-            self.generated_features_, self.output_columns = build_output_columns_to_generate_llm(df, self.input_columns, self.nl_prompt)
+            logger.info(f"sempipes.sem_extract_features('{self.input_columns}', '{self.nl_prompt}')")
+            self.generated_features_, self.output_columns = build_output_columns_to_generate_llm(
+                df, self.input_columns, self.nl_prompt
+            )
         else:
             # Use user-given columns
             logger.info(
@@ -124,9 +123,8 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
 
         return self
 
-
     def extract_features_with_llm(self, df):
-        # Construct prompts with multi-modal data        
+        # Construct prompts with multi-modal data
         prompts = []
         for _, row in df.iterrows():
             prompt = self._build_mm_generation_prompt(row=row)

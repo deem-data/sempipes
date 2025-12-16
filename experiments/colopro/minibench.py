@@ -9,6 +9,7 @@ from experiments.colopro._churn import ChurnPipeline
 from experiments.colopro._fraudbaskets import FraudBasketsPipeline
 from experiments.colopro._midwest import MidwestSurveyPipeline
 from experiments.colopro._traffic import TrafficPipeline
+from experiments.colopro._tweets import TweetsPipeline
 from sempipes.logging import get_logger
 from sempipes.optimisers import EvolutionarySearch, MonteCarloTreeSearch, TreeSearch
 
@@ -24,6 +25,7 @@ if __name__ == "__main__":
     logger = get_logger()
 
     pipelines = [
+        TweetsPipeline(),
         MidwestSurveyPipeline(),
         FraudBasketsPipeline(),
         ChurnPipeline(),
@@ -36,10 +38,10 @@ if __name__ == "__main__":
         "mct_search": MonteCarloTreeSearch(nodes_per_expansion=2, c=0.05),
     }
 
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 5:
         available_pipeline_names = [p.name for p in pipelines]
         print(
-            f"Error: You must provide a pipeline name as a command line argument. "
+            f"Error: You must provide a pipeline name, model name, a search name and a seed as a command line argument. "
             f"Available pipeline names: {', '.join(available_pipeline_names)}",
             file=sys.stderr,
         )
@@ -76,15 +78,19 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
+    seed = int(sys.argv[4])
+    seeds = [seed]
+
     sempipes.update_config(prefer_empty_state_in_preview=True)
 
-    seeds = [0, 42, 18102022, 1985, 748]
+    # seeds = [0, 42, 18102022, 1985, 748]
 
     llm = sempipes.LLM(name=model_name, parameters=model_parameters)
 
     setup = Setup(
         search=searches[search_name],
         num_trials=36,
+        cv=5,
         llm_for_code_generation=llm,
     )
 

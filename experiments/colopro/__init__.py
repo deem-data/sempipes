@@ -9,6 +9,7 @@ from experiments.colopro.test_pipeline import TestPipeline
 class Setup:
     search: SearchPolicy
     num_trials: int
+    cv: int
     llm_for_code_generation: LLM
 
 

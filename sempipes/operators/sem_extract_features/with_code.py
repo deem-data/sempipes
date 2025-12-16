@@ -1,3 +1,8 @@
+import pickle
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -5,7 +10,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
-from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.inspection.pipeline_summary import PipelineSummary
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
@@ -15,7 +19,7 @@ from sempipes.operators.sem_extract_features._shared import SYSTEM_PROMPT, build
 logger = get_logger()
 
 
-_MAX_RETRIES = 5
+_MAX_RETRIES = 10
 
 
 def _add_memorized_history(
@@ -172,11 +176,72 @@ Codeblock:
     return task_prompt + code_example + post_message
 
 
+# This is slow, but necessary to avoid that erroneous torch code poisons the current CUDA context.
+# For large datasets, it might make sense to use shared memory instead of serializing data to disk.
+def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.DataFrame:
+    """
+    Execute feature extraction code in a separate subprocess to isolate CUDA context failures.
+    """
+    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as input_file:
+        input_path = Path(input_file.name)
+        pickle.dump({"code": code_to_execute, "df": df_sample}, input_file)
+
+    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as output_file:
+        output_path = Path(output_file.name)
+
+    try:
+        cmd = [
+            sys.executable,
+            "-c",
+            """import pickle
+import sys
+import traceback
+from pathlib import Path
+from sempipes.code_generation.safe_exec import safe_exec
+
+input_path = Path(sys.argv[1])
+output_path = Path(sys.argv[2])
+
+with open(input_path, "rb") as f:
+    data = pickle.load(f)
+
+try:
+    func = safe_exec(data["code"], "extract_features")
+    result = func(data["df"])
+    with open(output_path, "wb") as f:
+        pickle.dump({"success": True, "result": result}, f)
+except Exception as e:
+    with open(output_path, "wb") as f:
+        pickle.dump({"success": False, "error": str(e), "traceback": traceback.format_exc()}, f)
+    sys.exit(1)
+""",
+            str(input_path),
+            str(output_path),
+        ]
+
+        subprocess.run(cmd, capture_output=True, check=False)
+
+        with open(output_path, "rb") as f:
+            output_data = pickle.load(f)
+
+        if not output_data.get("success", False):
+            raise RuntimeError(
+                f"Feature extraction failed in subprocess: {output_data.get('error', 'Unknown error')}\n"
+                f"{output_data.get('traceback', '')}"
+            )
+
+        return output_data["result"]
+
+    finally:
+        input_path.unlink(missing_ok=True)
+        output_path.unlink(missing_ok=True)
+
+
 def _try_to_execute(df: pd.DataFrame, code_to_execute: str, generated_columns: list[str]) -> None:
     df_sample = df.head(50).copy(deep=True)
 
-    feature_extraction_func = safe_exec(code_to_execute, "extract_features")
-    extracted_sample = feature_extraction_func(df_sample)
+    # Execute in subprocess to isolate potential CUDA context failures
+    extracted_sample = _execute_in_subprocess(code_to_execute, df_sample)
 
     expected_columns = generated_columns + list(df.columns)
 
@@ -331,12 +396,13 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                     },
                 ]
 
+        if self.generated_code_ is None:
+            logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
+            self.generated_code_ = self.empty_state()["generated_code"]
+
     def transform(self, df):
         check_is_fitted(self, "generated_code_")
 
-        code_to_execute = self.generated_code_
-        feature_extraction_func = safe_exec(code_to_execute, "extract_features")
-
         logger.info(f"Extracting features from {len(df)} rows")
-        df_with_features = feature_extraction_func(df.copy(deep=True))
+        df_with_features = _execute_in_subprocess(self.generated_code_, df.copy(deep=True))
         return df_with_features
