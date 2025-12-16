@@ -1,8 +1,10 @@
-from enum import Enum
-import json
 import base64
+import json
 import mimetypes
+from enum import Enum
+
 import pandas as pd
+
 from sempipes.llm.llm import generate_json_from_messages
 from sempipes.logging import get_logger
 
@@ -70,13 +72,8 @@ def _get_modality_prompts(
 
 
 def _get_feature_suggestion_message(
-    nl_prompt: str, 
-    input_columns: list[str], 
-    samples_text: str, 
-    samples_image: dict, 
-    samples_audio: dict
+    nl_prompt: str, input_columns: list[str], samples_text: str, samples_image: dict, samples_audio: dict
 ) -> list[dict]:
-
     task_prompt = f"""
     Your goal is to help a data scientist select which features can be generated from multi-modal data from a pandas dataframe for a machine learning script which they are developing. 
     You can make your decision for each column individually or for combinations of multiple columns. 
@@ -137,7 +134,7 @@ def _get_modality(column: pd.Series) -> Modality:
         and sample_of_column.str.endswith((".jpg", ".jpeg", ".png", ".bmp", ".gif"), na=False).all()
     ):
         return Modality.IMAGE
-    
+
     if (
         pd.api.types.is_string_dtype(sample_of_column)
         and sample_of_column.str.endswith(("wav", "mp3", "flac", "aac", "ogg"), na=False).all()
@@ -148,17 +145,13 @@ def _get_modality(column: pd.Series) -> Modality:
 
 
 def build_output_columns_to_generate_llm(
-    df: pd.DataFrame, 
-    input_columns: list[str],
-    nl_prompt: str
+    df: pd.DataFrame, input_columns: list[str], nl_prompt: str
 ) -> tuple[list[dict[str, object]], dict[str, str]]:
     # Determine modalities of input columns
     modality_per_column = {column: _get_modality(df[column]) for column in input_columns}
-    
+
     # Form prompts with examples
-    samples_str, samples_image, samples_audio = _get_modality_prompts(
-        df=df, modality_per_column=modality_per_column
-    )
+    samples_str, samples_image, samples_audio = _get_modality_prompts(df=df, modality_per_column=modality_per_column)
     messages = _get_feature_suggestion_message(
         nl_prompt=nl_prompt,
         input_columns=input_columns,
@@ -185,4 +178,3 @@ def build_output_columns_to_generate_llm(
             logger.info("Unable to parse some of the suggested features.")
 
     return generated_features, output_columns
-
