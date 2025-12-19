@@ -80,7 +80,7 @@ def _add_memorized_history(
 
 
 def _get_code_feature_generation_message(
-    columns_to_generate: list[str], column_descriptions, features_to_extract: list[dict]
+    nl_prompt: str, columns_to_generate: list[str], column_descriptions, features_to_extract: list[dict]
 ) -> str:
     column_description_prompt = ""
     for column, properties in column_descriptions.items():
@@ -97,7 +97,10 @@ def _get_code_feature_generation_message(
 
     task_prompt = f"""
 Your goal is to help a data scientist generate Python code for the feature generation/extraction from multi-modal data. You need to extract information from text, image, or audio data. 
-You can use any models from `transformers` library that can be used zero-shot, without additional fine-tuning. You are allowed to leverage modality-specific models for each modality.
+You can use any models from `transformers` library (version 4.57.1) that can be used zero-shot, without additional fine-tuning. You are allowed to leverage modality-specific models for each modality. If you need to read images from disk, you can use the `PIL` library for that, you are not allowed to import the `os` module.
+
+
+The data scientist wants you to take special care of the following: {nl_prompt}.
 
 You are provided the name of the features to extract, how to extract them, and from which columns within a pandas DataFrame `df`.
 
@@ -237,8 +240,15 @@ except Exception as e:
         output_path.unlink(missing_ok=True)
 
 
-def _try_to_execute(df: pd.DataFrame, code_to_execute: str, generated_columns: list[str]) -> None:
+def _try_to_execute(
+    df: pd.DataFrame, code_to_execute: str, generated_columns: list[str], print_code_to_console: bool
+) -> None:
     df_sample = df.head(50).copy(deep=True)
+
+    if print_code_to_console:
+        print("#################### Trying to execute code:")
+        print(code_to_execute)
+        print("#" * 80)
 
     # Execute in subprocess to isolate potential CUDA context failures
     extracted_sample = _execute_in_subprocess(code_to_execute, df_sample)
@@ -292,6 +302,7 @@ class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMix
         _prefitted_state: dict[str, Any] | DataOp | None = None,
         _memory: list[dict[str, Any]] | DataOp | None = None,
         _inspirations: list[dict[str, Any]] | DataOp | None = None,
+        print_code_to_console: bool = False,
     ) -> None:
         self.nl_prompt = nl_prompt
         self.input_columns = input_columns
@@ -302,6 +313,7 @@ class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMix
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
         self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
         self.generated_code_: str | None = None
+        self.print_code_to_console = print_code_to_console
 
     def empty_state(self):
         state = {
@@ -350,13 +362,22 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                 {"feature_name": new_feature, "feature_prompt": prompt, "input_columns": self.input_columns}
             )
 
-        self.synthesize_extraction_code(df, column_descriptions, features_to_extract)
+        self.synthesize_extraction_code(
+            df,
+            self.nl_prompt,
+            column_descriptions,
+            features_to_extract,
+            print_code_to_console=self.print_code_to_console,
+        )
 
         return self
 
-    def synthesize_extraction_code(self, df, column_descriptions, features_to_extract):
+    def synthesize_extraction_code(
+        self, df, nl_prompt, column_descriptions, features_to_extract, print_code_to_console: bool
+    ):
         # Construct prompts with multi-modal data
         prompt = _get_code_feature_generation_message(
+            nl_prompt=nl_prompt,
             columns_to_generate=list(self.output_columns.keys()),
             column_descriptions=column_descriptions,
             features_to_extract=features_to_extract,
@@ -381,6 +402,7 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                     df,
                     code,
                     generated_columns=list(self.output_columns.keys()),
+                    print_code_to_console=print_code_to_console,
                 )
 
                 self.generated_code_ = code

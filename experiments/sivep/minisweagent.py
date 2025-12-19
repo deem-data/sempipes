@@ -36,8 +36,10 @@ for seed in [42, 1337, 2025, 7321, 98765]:
         n_majority = train.shape[0] - indigenous_train.shape[0]
         n_indigenous = indigenous_train.shape[0]
         n_repeat = max(1, n_majority // max(1, n_indigenous))
-        train_aug = pd.concat([train] + [indigenous_train]*n_repeat, ignore_index=True)
-        train_labels_aug = pd.concat([train["due_to_covid"]] + [indigenous_train["due_to_covid"]]*n_repeat, ignore_index=True)
+        train_aug = pd.concat([train] + [indigenous_train] * n_repeat, ignore_index=True)
+        train_labels_aug = pd.concat(
+            [train["due_to_covid"]] + [indigenous_train["due_to_covid"]] * n_repeat, ignore_index=True
+        )
         train = train_aug
         train_labels = train_labels_aug
     ###

@@ -5,14 +5,13 @@ from sempipes.logging import get_logger
 logger = get_logger()
 
 
-def _unwrap(text: str, prefix, suffix, suffix2) -> str:
+def _unwrap(text: str, prefix, suffixes) -> str:
     text = text.strip()
     if text.startswith(prefix):
         text = text[len(prefix) :]
-    if text.endswith(suffix):
-        text = text[: -len(suffix)]
-    if text.endswith(suffix2):
-        text = text[: -len(suffix2)]
+    for suffix in suffixes:
+        if text.endswith(suffix):
+            text = text[: -len(suffix)]
     text = text.strip()
     # remove lines starting with ``` or ```python (ignoring leading spaces)
     lines = text.splitlines(keepends=True)
@@ -28,11 +27,9 @@ def unwrap_json(text: str) -> str:
 
     # Remove comments (// ... until end of line)
     text = re.sub(r"//.*", "", text)
-    return _unwrap(text=text, prefix="```json", suffix="```", suffix2="```end")
+    return _unwrap(text=text, prefix="```json", suffixes=["```", "```end", "\nend"])
 
 
-def unwrap_python(text: str) -> str:
-    if text is None:
-        logger.error("Response text to unwrap is None")
-        return None
-    return _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")
+def unwrap_python(text: str | None) -> str:
+    assert text is not None, "Response text to unwrap is None"
+    return _unwrap(text=text, prefix="```python", suffixes=["```", "```end", "\nend"])

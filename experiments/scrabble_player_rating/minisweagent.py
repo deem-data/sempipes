@@ -26,27 +26,27 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
 
     ### MINI-SWE-AGENT ###
     # List of known bots
-    bots = ['HastyBot', 'BetterBot', 'STEEBot']
+    bots = ["HastyBot", "BetterBot", "STEEBot"]
 
     # Filter out bot players
-    df_humans = train[~train['nickname'].isin(bots)].copy()
+    df_humans = train[~train["nickname"].isin(bots)].copy()
 
     # Features and target
-    X_train = df_humans[['score']]  # Only 'score' is available as a feature
-    y_train = df_humans['rating']
+    X_train = df_humans[["score"]]  # Only 'score' is available as a feature
+    y_train = df_humans["rating"]
 
     # Train a regression model
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
     ###
 
-    X_test = test[test_non_bot_mask][['score']]
-    y_test = test[test_non_bot_mask]['rating']
+    X_test = test[test_non_bot_mask][["score"]]
+    y_test = test[test_non_bot_mask]["rating"]
 
     # Predict on the test set
     y_pred = model.predict(X_test)
-    #y_true = test[test_non_bot_mask]["rating"]
-    rmse = sqrt(mean_squared_error(y_test, y_pred))#[test_non_bot_mask]))
+    # y_true = test[test_non_bot_mask]["rating"]
+    rmse = sqrt(mean_squared_error(y_test, y_pred))  # [test_non_bot_mask]))
     print(f"RMSE on split {split_index}: {rmse}")
     scores.append(rmse)
 
