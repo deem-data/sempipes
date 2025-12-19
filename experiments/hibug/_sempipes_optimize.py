@@ -59,9 +59,7 @@ df = df[["idx", "image", "label", "prediction"]]
 
 
 def score_annotations(estimator, X, y=None, **kwargs):
-    # print(X.head())
     to_score = estimator.predict(X)
-    # print(to_score.head())
     if len(to_score.columns) <= 4:
         return 0.0001
 

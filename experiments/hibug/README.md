@@ -1,6 +1,6 @@
 
 
-Download and unpack the images for the celeba datasets into the folder `experiments/hibug/img_align_celeba`
+Download and unpack the images for the celeba dataset into the folder `experiments/hibug/img_align_celeba`
 
 https://www.kaggle.com/datasets/jessicali9530/celeba-dataset?select=img_align_celeba
 
