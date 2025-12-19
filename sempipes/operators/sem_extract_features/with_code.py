@@ -184,6 +184,7 @@ Codeblock:
 def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.DataFrame:
     """
     Execute feature extraction code in a separate subprocess to isolate CUDA context failures.
+    Streams console output from the subprocess to the invoking process in real-time.
     """
     with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as input_file:
         input_path = Path(input_file.name)
@@ -222,7 +223,21 @@ except Exception as e:
             str(output_path),
         ]
 
-        subprocess.run(cmd, capture_output=True, check=False)
+        # Use Popen to stream output in real-time
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,  # Merge stderr into stdout
+            universal_newlines=True,
+            bufsize=1,  # Line buffered
+        )
+
+        # Stream output line by line
+        for line in process.stdout:
+            print(line, end="", flush=True)
+
+        # Wait for process to complete and get return code
+        _return_code = process.wait()
 
         with open(output_path, "rb") as f:
             output_data = pickle.load(f)
