@@ -1,4 +1,6 @@
+import inspect
 import json
+import types
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
@@ -44,3 +46,9 @@ def load_trajectory_from_json(json_path: Path) -> Trajectory:
 
     # pylint: disable=no-member
     return Trajectory.from_json(data)  # type: ignore
+
+
+def serialize_scoring(scoring: str | types.FunctionType) -> str:
+    if isinstance(scoring, types.FunctionType):
+        return inspect.getsource(scoring)
+    return str(scoring)

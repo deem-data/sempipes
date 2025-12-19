@@ -28,6 +28,7 @@ class SemExtractFeaturesLLM(SemExtractFeaturesOperator):
                 _prefitted_state=_prefitted_state,
                 _memory=_memory,
                 _inspirations=_inspirations,
+                print_code_to_console=kwargs.get("print_code_to_console", False),
             )
 
         # TODO: Should be made optimizable as well...

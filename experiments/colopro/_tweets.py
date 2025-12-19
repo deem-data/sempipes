@@ -30,7 +30,6 @@ class TweetsPipeline(TestPipeline):
         X = dataset.X.iloc[:600]
         y = dataset.y.iloc[:600] == "Toxic"
 
-
         return _pipeline(), X, y
 
     def pipeline_with_train_data(self, seed) -> DataOp:

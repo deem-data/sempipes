@@ -14,7 +14,7 @@ from sempipes.operators.operators import OptimisableMixin
 from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.optimisers.greedy_tree_search import TreeSearch
 from sempipes.optimisers.search_policy import Outcome, SearchNode, SearchPolicy
-from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json
+from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
 
 logger = get_logger()
 
@@ -179,7 +179,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
         optimizer_args={
             "operator_name": operator_name,
             "num_trials": num_trials,
-            "scoring": scoring,
+            "scoring": serialize_scoring(scoring),
             "cv": str(cv),
             "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,
         },

@@ -30,6 +30,7 @@ The target is the violation type, which can be 'Warning' or 'Citation'
 """
 
 
+# TODO this needs to be refactored to skip preview execution
 class TrafficPipeline(TestPipeline):
     @property
     def name(self) -> str:
