@@ -273,7 +273,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
                 code_to_execute = "\n".join(self.generated_code_)
                 code_to_execute += "\n\n" + code
 
-                new_columns, removed_columns = _try_to_execute(df, code_to_execute)
+                new_columns, removed_columns = _try_to_execute(df.copy(deep=True), code_to_execute)
 
                 self.generated_code_.append(code)
                 self.new_columns_ = new_columns
@@ -300,7 +300,7 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         df_copy_for_logging = df.copy(deep=True)
 
         try:
-            df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df})
+            df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df.copy(deep=True)})
         except Exception as e:
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             error_folder = f".sem_gen_features_error_{timestamp}"

@@ -89,6 +89,10 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
         X.append([emo_feat, interp_feat, expl_feat])
         y.append(int(entry["emotional_reactions"]["level"]))  # Target is emotional_reactions level
 
+    # Added since first 1k entries are used as validation set
+    X = X[:2023]
+    y = y[:2023]
+
     X = np.array(X)
     y = np.array(y)
 
