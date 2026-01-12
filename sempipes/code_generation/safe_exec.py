@@ -1,22 +1,31 @@
+# pylint: disable=import-error
+# These are optional dev dependencies that may not be installed in all environments
 import ast
 import builtins
 import collections
 import dataclasses
 import datetime
 import json
+import pathlib
 import re
 import typing
+import urllib
 from collections.abc import Iterable
 from typing import Any
 
+import huggingface_hub
 import numpy
+import open_clip
 import pandas as pd
 import PIL
 import scipy
 import sdv
 import sklearn
 import skrub
+import soundfile
+import tensorflow
 import torch
+import torchaudio
 import tqdm
 import transformers
 
@@ -42,6 +51,13 @@ _ALLOWED_MODULES = [
     "tqdm",
     "scipy",
     "sdv",
+    "torchaudio",
+    "soundfile",
+    "pathlib",
+    "open_clip",
+    "urllib",
+    "tensorflow",
+    "huggingface_hub",
 ]
 
 
@@ -95,12 +111,15 @@ def safe_exec(
         "object": object,
         "Exception": Exception,
         "BaseException": BaseException,
+        "ImportError": ImportError,
         "next": next,
         "ValueError": ValueError,
         "TypeError": TypeError,
         "SyntaxError": SyntaxError,
         "enumerate": enumerate,
         "print": print,
+        "getattr": getattr,
+        "hasattr": hasattr,
     }
 
     safe_globals = {
@@ -124,6 +143,13 @@ def safe_exec(
         "tqdm": tqdm,
         "scipy": scipy,
         "sdv": sdv,
+        "torchaudio": torchaudio,
+        "soundfile": soundfile,
+        "pathlib": pathlib,
+        "open_clip": open_clip,
+        "urllib": urllib,
+        "tensorflow": tensorflow,
+        "huggingface_hub": huggingface_hub,
     }
 
     # We need a single dict to allow function definitions inside the code

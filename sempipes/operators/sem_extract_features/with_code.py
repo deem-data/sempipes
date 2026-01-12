@@ -179,25 +179,12 @@ Codeblock:
     return task_prompt + code_example + post_message
 
 
-# This is slow, but necessary to avoid that erroneous torch code poisons the current CUDA context.
-# For large datasets, it might make sense to use shared memory instead of serializing data to disk.
-def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.DataFrame:
-    """
-    Execute feature extraction code in a separate subprocess to isolate CUDA context failures.
-    Streams console output from the subprocess to the invoking process in real-time.
-    """
-    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as input_file:
-        input_path = Path(input_file.name)
-        pickle.dump({"code": code_to_execute, "df": df_sample}, input_file)
-
-    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as output_file:
-        output_path = Path(output_file.name)
-
-    try:
-        cmd = [
-            sys.executable,
-            "-c",
-            """import pickle
+def _execute_code_in_subprocess(input_path: Path, output_path: Path) -> dict[str, Any]:
+    """Execute code in a subprocess and return the output data."""
+    cmd = [
+        sys.executable,
+        "-c",
+        """import pickle
 import sys
 import traceback
 from pathlib import Path
@@ -219,28 +206,46 @@ except Exception as e:
         pickle.dump({"success": False, "error": str(e), "traceback": traceback.format_exc()}, f)
     sys.exit(1)
 """,
-            str(input_path),
-            str(output_path),
-        ]
+        str(input_path),
+        str(output_path),
+    ]
 
-        # Use Popen to stream output in real-time
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,  # Merge stderr into stdout
-            universal_newlines=True,
-            bufsize=1,  # Line buffered
-        )
-
+    # Use Popen to stream output in real-time
+    with subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,  # Merge stderr into stdout
+        universal_newlines=True,
+        bufsize=1,  # Line buffered
+    ) as process:
         # Stream output line by line
-        for line in process.stdout:
-            print(line, end="", flush=True)
+        if process.stdout is not None:
+            for line in process.stdout:
+                print(line, end="", flush=True)
 
         # Wait for process to complete and get return code
         _return_code = process.wait()
 
-        with open(output_path, "rb") as f:
-            output_data = pickle.load(f)
+    with open(output_path, "rb") as f:
+        return pickle.load(f)
+
+
+# This is slow, but necessary to avoid that erroneous torch code poisons the current CUDA context.
+# For large datasets, it might make sense to use shared memory instead of serializing data to disk.
+def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.DataFrame:
+    """
+    Execute feature extraction code in a separate subprocess to isolate CUDA context failures.
+    Streams console output from the subprocess to the invoking process in real-time.
+    """
+    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as input_file:
+        input_path = Path(input_file.name)
+        pickle.dump({"code": code_to_execute, "df": df_sample}, input_file)
+
+    with tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=".pkl") as output_file:
+        output_path = Path(output_file.name)
+
+    try:
+        output_data = _execute_code_in_subprocess(input_path, output_path)
 
         if not output_data.get("success", False):
             raise RuntimeError(
@@ -292,7 +297,7 @@ def _describe_column(column: pd.Series):
         column_description["modality"] = "image"
     elif (
         pd.api.types.is_string_dtype(sample_of_column)
-        and sample_of_column.str.endswith(("wav", "mp3", "flac", "aac", "ogg"), na=False).all()
+        and sample_of_column.str.endswith((".wav", ".mp3", ".flac", ".aac", ".ogg"), na=False).all()
     ):
         column_description["modality"] = "audio"
 
@@ -404,6 +409,7 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 
         # Generate code for multi-modal data
         messages = []
+        code = None  # Initialize code to avoid UnboundLocalError
         for attempt in range(1, _MAX_RETRIES + 1):
             try:
                 if attempt == 1:
@@ -424,14 +430,25 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                 break
             except Exception as e:  # pylint: disable=broad-except
                 logger.error(f"An error occurred in attempt {attempt}: {e}", exc_info=True)
-                messages += [
-                    {"role": "assistant", "content": code},
-                    {
-                        "role": "user",
-                        "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
-                    },
-                ]
+                # Only add code to messages if it was successfully generated
+                if code is not None:
+                    messages += [
+                        {"role": "assistant", "content": code},
+                        {
+                            "role": "user",
+                            "content": f"Code execution failed with error: {type(e)} {e}.\n "
+                            f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
+                        },
+                    ]
+                else:
+                    # If code generation failed, add error message without code
+                    messages += [
+                        {
+                            "role": "user",
+                            "content": f"Code generation failed with error: {type(e)} {e}.\n "
+                            f"Please generate the feature extraction code:\n```python\n",
+                        },
+                    ]
 
         if self.generated_code_ is None:
             logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
