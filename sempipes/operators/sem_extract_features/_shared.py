@@ -115,9 +115,15 @@ def _get_feature_suggestion_message(
             content.append({"type": "image_url", "image_url": {"url": image}})
 
     for column, audios in samples_audio.items():
-        content.append({"type": "text", "text": f"Samples of image column `{column}`:"})
-        for audio, audio_format in audios:
-            content.append({"type": "input_audio", "input_audio": {"data": audio, "format": audio_format}})
+        content.append({"type": "text", "text": f"Samples of audio column `{column}`:"})
+        for audio_data_url, audio_format in audios:
+            # litellm expects raw base64 string
+            if isinstance(audio_data_url, str) and audio_data_url.startswith("data:"):
+                # Extract base64 part after the comma
+                audio_base64 = audio_data_url.split(",", 1)[1] if "," in audio_data_url else audio_data_url
+            else:
+                audio_base64 = audio_data_url
+            content.append({"type": "input_audio", "input_audio": {"data": audio_base64, "format": audio_format}})
 
     content.append({"type": "text", "text": response_example})
 
@@ -137,7 +143,7 @@ def _get_modality(column: pd.Series) -> Modality:
 
     if (
         pd.api.types.is_string_dtype(sample_of_column)
-        and sample_of_column.str.endswith(("wav", "mp3", "flac", "aac", "ogg"), na=False).all()
+        and sample_of_column.str.endswith((".wav", ".mp3", ".flac", ".aac", ".ogg"), na=False).all()
     ):
         return Modality.AUDIO
 

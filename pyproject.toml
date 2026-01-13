@@ -47,6 +47,10 @@ scib-metrics = "^0.5.7"
 interpret = "^0.2.7"
 sentence-transformers = "^5.1.2"
 tabpfn = "^6.0.5"
+open-clip-torch = "^2.24.0"
+soundfile = "^0.12.1"
+tensorflow = "^2.18.0"
+torchaudio = "^2.8.0"
 
 [build-system]
 requires = ["poetry-core"]
