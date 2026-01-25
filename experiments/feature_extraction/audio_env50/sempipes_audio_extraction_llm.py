@@ -213,10 +213,15 @@ def extract_with_repeats_sempipes(
 
 
 if __name__ == "__main__":
-    sempipes.update_config(batch_size_for_batch_processing=10)
-    sempipes.update_config(llm_for_batch_processing=sempipes.LLM(name="gemini/gemini-2.5-flash"))
+    sempipes.update_config(batch_size_for_batch_processing=30)
+    sempipes.update_config(llm_for_batch_processing=sempipes.LLM(name="gemini-2.5-flash"))
 
-    df = load_sounds_dataset("1000")
+    gemini_credentials_path = "/Users/olgaovcharenko/.config/gcloud/application_default_credentials.json"
+    os.environ["GEMINI_CREDENTIALS_PATH"] = gemini_credentials_path
+    os.environ["VERTEXAI_PROJECT"] = "bq-mm-benchmark"
+    os.environ["VERTEXAI_LOCATION"] = "us-central1"
+
+    df = load_sounds_dataset("10000")
     print(f"\nLoaded dataset with {len(df)} rows")
     print(f"Columns: {list(df.columns)}")
 

@@ -73,8 +73,8 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
                 f"\n {i+1}. Generate value of a column named `{feature_name}`. {feature_prompt}. "
                 f"For generation you use the follwing context and columns: {input_columns}."
             )
-            # Process each input column
-            self._process_input_columns(row, input_columns, context_prompt, audios, images)
+            # Process each input column (update context_prompt for text inputs)
+            context_prompt = self._process_input_columns(row, input_columns, context_prompt, audios, images)
 
         value_prompt = "".join(value_prompt_parts)
         pre_message, post_message = _get_pre_post_feature_generation_messages(
@@ -108,6 +108,7 @@ class LLMFeatureExtractor(BaseEstimator, TransformerMixin):
             elif modality == Modality.IMAGE:
                 image, _ = create_file_url(row[input_column])
                 images.append({"type": "image_url", "image_url": {"url": image}})
+        return context_prompt
 
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
         # Determine modalities of input columns
