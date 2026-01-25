@@ -33,7 +33,14 @@ class FraudBasketsPipeline(TestPipeline):
         fraudulent_baskets = all_baskets[all_baskets.fraud_flag == 1]
 
         baskets = pd.concat([nonfraudulent_baskets.iloc[:4000], fraudulent_baskets.iloc[:1000]])
-        return _pipeline(baskets, dataset["products"])
+
+        additional_env_variables = {
+            "data": baskets[["ID"]],
+            "labels": baskets["fraud_flag"],
+            "products": dataset["products"],
+        }
+
+        return _pipeline(), additional_env_variables
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_credit_fraud()
@@ -44,13 +51,19 @@ class FraudBasketsPipeline(TestPipeline):
 
         baskets = pd.concat([nonfraudulent_baskets.iloc[:4000], fraudulent_baskets.iloc[:1000]])
         train_baskets, _ = train_test_split(baskets, test_size=TestPipeline.TEST_SIZE, random_state=seed)
-        return _pipeline(train_baskets, dataset["products"])
 
+        additional_env_variables = {
+            "data": train_baskets[["ID"]],
+            "labels": train_baskets["fraud_flag"],
+            "products": dataset["products"],
+        }
 
-def _pipeline(flagged_baskets, basket_products) -> skrub.DataOp:
-    products = skrub.var("products", basket_products)
-    baskets = skrub.var("baskets", flagged_baskets[["ID"]])
-    labels = skrub.var("fraud_flags", flagged_baskets["fraud_flag"])
+        return _pipeline(), additional_env_variables
+
+def _pipeline() -> skrub.DataOp:
+    products = skrub.var("products")#products", basket_products)
+    baskets = skrub.var("data")#baskets", flagged_baskets[["ID"]])
+    labels = skrub.var("labels")#fraud_flags", flagged_baskets["fraud_flag"])
 
     baskets = baskets.skb.mark_as_X().skb.set_description("Potentially fraudulent shopping baskets of products")
     labels = labels.skb.mark_as_y().skb.set_description(

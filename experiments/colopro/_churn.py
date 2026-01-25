@@ -12,7 +12,6 @@ from experiments.colopro import TestPipeline
 warnings.filterwarnings("ignore")
 
 
-# TODO this needs to be refactored to skip preview execution
 class ChurnPipeline(TestPipeline):
     @property
     def name(self) -> str:
@@ -32,7 +31,14 @@ class ChurnPipeline(TestPipeline):
         all_transactions = pd.read_csv("experiments/colopro/churn_transactions.csv")
 
         all_customers = all_customers[:10000]
-        return _pipeline(all_customers, all_transactions)
+
+        additional_env_variables = {
+            "data": all_customers[["CustomerID"]],
+            "labels": all_customers["has_churned"],
+            "transactions": all_transactions,
+        }
+
+        return _pipeline(), additional_env_variables
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         all_customers = pd.read_csv("experiments/colopro/churn_customers.csv")
@@ -40,13 +46,20 @@ class ChurnPipeline(TestPipeline):
 
         all_customers = all_customers[:10000]
         train_customers, _ = train_test_split(all_customers, test_size=TestPipeline.TEST_SIZE, random_state=seed)
-        return _pipeline(train_customers, all_transactions)
+
+        additional_env_variables = {
+            "data": train_customers[["CustomerID"]],
+            "labels": train_customers["has_churned"],
+            "transactions": all_transactions,
+        }
+        return _pipeline(), additional_env_variables
 
 
-def _pipeline(labeled_customers, customer_transactions) -> skrub.DataOp:
-    customer_ids = skrub.var("customers", labeled_customers[["CustomerID"]])
-    churned = skrub.var("churned", labeled_customers["has_churned"])
-    transactions = skrub.var("transactions", customer_transactions)
+def _pipeline() -> skrub.DataOp:
+    transactions = skrub.var("transactions")
+
+    customer_ids = skrub.var("data")
+    churned = skrub.var("labels")
 
     customer_ids = sempipes.as_X(customer_ids, "Identifiers of customers")
     churned = sempipes.as_y(churned, "Churn status per customer")

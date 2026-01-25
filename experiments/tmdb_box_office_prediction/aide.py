@@ -9,6 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
+    np.random.seed(seed)
     all_df = pd.read_csv("experiments/tmdb_box_office_prediction/data.csv")
     train_df, test_df = sklearn.model_selection.train_test_split(all_df, test_size=0.5, random_state=seed)
 
@@ -59,7 +60,7 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
 
     X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = lgb.LGBMRegressor(verbose=-1)
+    model = lgb.LGBMRegressor(verbose=-1, random_state=seed)
     model.fit(X_train, y_train)
 
     test_encoded_features = encoder.transform(test_df[categorical_features]).toarray()

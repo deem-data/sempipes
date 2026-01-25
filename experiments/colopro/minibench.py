@@ -12,6 +12,7 @@ from experiments.colopro._traffic import TrafficPipeline
 from experiments.colopro._tweets import TweetsPipeline
 from sempipes.logging import get_logger
 from sempipes.optimisers import EvolutionarySearch, MonteCarloTreeSearch, TreeSearch
+from sempipes.optimisers.random_search import RandomSearch
 
 warnings.filterwarnings("ignore")
 
@@ -35,7 +36,8 @@ if __name__ == "__main__":
     searches = {
         "tree_search": TreeSearch(min_num_drafts=2),
         "evo_search": EvolutionarySearch(population_size=6),
-        "mct_search": MonteCarloTreeSearch(nodes_per_expansion=2, c=0.05),
+        "mct_search": MonteCarloTreeSearch(c=0.5),
+        "random_search": RandomSearch(),
     }
 
     if len(sys.argv) < 5:
@@ -61,7 +63,7 @@ if __name__ == "__main__":
     elif sys.argv[2] == "qwen":
         model_name = "ollama/qwen2.5-coder:32b"
         model_temperature = 0.8
-        model_parameters = {"temperature": model_temperature, "api_base": "http://localhost:12000"}
+        model_parameters = {"temperature": model_temperature, "api_base": "http://localhost:11434"}
     else:
         print(
             f"Error: Invalid model name: {sys.argv[2]}",

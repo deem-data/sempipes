@@ -24,11 +24,12 @@ seed = 42
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 for fold_index, (train_idx, test_idx) in enumerate(kf.split(data)):
-    np.random.seed(seed)
-    random.seed(seed)
     train = data.iloc[train_idx]
     test = data.iloc[test_idx]
-    #train, test = train_test_split(data, test_size=0.5, random_state=seed)
+    np.random.seed(seed)
+    random.seed(seed)
+
+   #train, test = train_test_split(data, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
     env_train = pipeline.skb.get_data()
     env_train["data"] = train

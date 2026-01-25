@@ -36,7 +36,12 @@ class MidwestSurveyPipeline(TestPipeline):
         X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
 
-        return _pipeline(X, X_description, y, y_description)
+        env_variables = {
+            "data": X,
+            "labels": y,
+        }
+
+        return _pipeline(X_description, y_description), env_variables
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_midwest_survey()
@@ -51,15 +56,20 @@ class MidwestSurveyPipeline(TestPipeline):
         X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
 
-        return _pipeline(X_train, X_description, y_train, y_description)
+        env_variables = {
+            "data": X_train,
+            "labels": y_train,
+        }
+
+        return _pipeline(X_description, y_description), env_variables
 
 
-def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
-    responses = skrub.var("response", X)
+def _pipeline(X_description, y_description) -> skrub.DataOp:
+    responses = skrub.var("data")
     responses = responses.skb.set_description(X_description)
 
-    labels = skrub.var("labels", y)
-    labels = labels.skb.set_name(y_description)
+    labels = skrub.var("labels")
+    labels = labels.skb.set_description(y_description)
 
     responses = responses.skb.mark_as_X()
     labels = labels.skb.mark_as_y()

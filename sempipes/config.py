@@ -17,7 +17,7 @@ class LLM:
 @dataclass(frozen=True)
 class Config:
     llm_for_code_generation: LLM = LLM(
-        name="openai/gpt-4.1",
+        name="gemini/gemini-2.5-flash",
         parameters={"temperature": 0.0},
     )
     llm_for_batch_processing: LLM = LLM(

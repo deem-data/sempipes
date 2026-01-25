@@ -19,14 +19,13 @@ def rmsle(y, y_predicted):
     return np.sqrt(mean_squared_error(y, y_predicted))
 
 
-def sempipes_pipeline(data_file):
-    all_data_initial = pd.read_csv(data_file)
+def sempipes_pipeline():
     with open(
         "experiments/house_prices_advanced_regression_techniques/data_description.txt", "r", encoding="utf-8"
     ) as f:
         data_description = f.read()
 
-    data = skrub.var("data", all_data_initial).skb.subsample(n=100)
+    data = skrub.var("data")#.skb.subsample(n=100)
 
     data = data.drop(["Alley", "PoolQC", "Fence", "MiscFeature"], axis=1)
 
@@ -161,6 +160,10 @@ def sempipes_pipeline(data_file):
 
     lgbm_predictions = X.skb.apply(lgbm, y=target)
     xgb_predictions = X.skb.apply(xgb, y=target)
+
+    mode = skrub.eval_mode()
+    lgbm_predictions = lgbm_predictions.skb.apply_func(lambda pred, m: 0 if m == "fit" else pred, m=mode)
+    xgb_predictions = xgb_predictions.skb.apply_func(lambda pred, m: 0 if m == "fit" else pred, m=mode)
 
     predictions = xgb_predictions * 0.45 + lgbm_predictions * 0.55
     return predictions
