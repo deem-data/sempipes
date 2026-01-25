@@ -48,6 +48,11 @@ def _build_code_prompt(nl_prompt: str, df: pd.DataFrame, columns: list[str], dat
     
     The data scientist wants you to take special care of the following: {nl_prompt}.
 
+    IMPORTANT: If you use sklearn's IterativeImputer, you MUST use an estimator that supports the `return_std` parameter in its `predict()` method. 
+    Examples of compatible estimators: BayesianRidge, GaussianProcessRegressor. 
+    DO NOT use RandomForestRegressor or other tree-based estimators with IterativeImputer as they do not support `return_std`.
+    If you need to use RandomForestRegressor, use it directly for prediction, not with IterativeImputer.
+
     Provide only a single Python method `def clean_columns(df, columns):` and returns a cleaned df.
 
     The preview of current column values is: {_build_df_sample(df)}.
@@ -203,11 +208,17 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
                 break
             except Exception as e:  # pylint: disable=broad-except
                 print(f"\t> An error occurred in attempt {attempt}:", e)
+                error_msg = f"Code execution failed with error: {type(e)} {e}."
+                # Provide specific guidance for IterativeImputer + RandomForestRegressor error
+                if "return_std" in str(e) and ("ForestRegressor" in str(e) or "RandomForest" in str(e)):
+                    error_msg += "\n\nCRITICAL: IterativeImputer requires an estimator that supports `return_std` in predict(). "
+                    error_msg += "RandomForestRegressor does NOT support this. Use BayesianRidge() or another compatible estimator instead. "
+                    error_msg += "Example: IterativeImputer(estimator=BayesianRidge(), ...)"
                 messages += [
                     {"role": "assistant", "content": code},
                     {
                         "role": "user",
-                        "content": f"Code execution failed with error: {type(e)} {e}.\nCode: ```python{code}```\nPlease generate corrected code:\n```python\n",
+                        "content": f"{error_msg}\nCode: ```python{code}```\nPlease generate corrected code:\n```python\n",
                     },
                 ]
 
