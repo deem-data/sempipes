@@ -123,7 +123,7 @@ def run(chestxray_df: pd.DataFrame):
 
 # Load data
 load_dotenv()
-dataset_size = "1000"
+dataset_size = "10000"
 csv_path = f"tests/data/chestxray-dataset-{dataset_size}/chestxray.csv"
 chestxray_df = pd.read_csv(csv_path, on_bad_lines="skip", encoding="utf-8")
 

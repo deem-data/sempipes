@@ -212,10 +212,10 @@ def extract_with_repeats_sempipes(
 
 
 if __name__ == "__main__":
-    sempipes.update_config(batch_size_for_batch_processing=10)
+    sempipes.update_config(batch_size_for_batch_processing=20)
     sempipes.update_config(llm_for_batch_processing=sempipes.LLM(name="gemini/gemini-2.5-flash"))
 
-    df = load_chestxray_dataset("1000")
+    df = load_chestxray_dataset("10000")
     print(f"\nLoaded dataset with {len(df)} rows")
     print(f"Columns: {list(df.columns)}")
 

@@ -79,6 +79,10 @@ def extract_clause_type_with_sempipes(df: pd.DataFrame, text_column: str = "clau
     Returns:
         Tuple of (DataFrame with extracted_clause_type column added, total cost in USD for code generation)
     """
+    # Work on a copy and add a stable row id for alignment in downstream joins
+    df = df.copy()
+    df["_row_id"] = np.arange(len(df))
+
     # Filter out NaN/empty values
     valid_mask = df[text_column].notna() & (df[text_column].astype(str).str.strip() != "")
     df_minimal = df[[text_column]].copy()
@@ -248,9 +252,9 @@ def extract_with_repeats_sempipes(
 
 if __name__ == "__main__":
     sempipes.update_config(batch_size_for_batch_processing=10)
-    sempipes.update_config(llm_for_code_generation=sempipes.LLM(name="gemini/gemini-3-flash-preview"))
+    sempipes.update_config(llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash"))
 
-    df = load_contracts_dataset("1000")
+    df = load_contracts_dataset("10000")
     print(f"\nLoaded dataset with {len(df)} rows")
     print(f"Columns: {list(df.columns)}")
 

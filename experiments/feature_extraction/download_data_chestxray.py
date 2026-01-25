@@ -81,7 +81,7 @@ print(f"Found {len(class_dirs)} classes: {[d.name for d in class_dirs]}")
 
 # Sample images from each class
 random.seed(42)
-total_samples = 1000
+total_samples = 10000
 samples_per_class = total_samples // len(class_dirs)
 remaining_samples = total_samples % len(class_dirs)
 
@@ -120,11 +120,19 @@ for class_dir in class_dirs:
         num_samples += 1
         remaining_samples -= 1
 
-    # Sample images
-    num_samples = min(num_samples, len(image_files))
-    sampled_images = random.sample(image_files, num_samples)
-
-    print(f"Class {class_name}: sampling {num_samples} from {len(image_files)} images")
+    # Sample images (with replacement if the class is too small)
+    if num_samples <= len(image_files):
+        sampled_images = random.sample(image_files, num_samples)
+        print(f"Class {class_name}: sampling {num_samples} from {len(image_files)} images")
+    else:
+        # Take all unique images, then top up by sampling with replacement.
+        sampled_images = list(image_files)
+        extra = num_samples - len(image_files)
+        sampled_images.extend(random.choices(image_files, k=extra))
+        print(
+            f"Class {class_name}: sampling {num_samples} from {len(image_files)} images "
+            f"(with replacement for {extra})"
+        )
 
     # Copy images and record metadata
     for image_file in sampled_images:

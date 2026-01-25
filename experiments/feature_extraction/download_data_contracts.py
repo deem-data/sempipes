@@ -42,7 +42,7 @@ print(f"Loaded dataset with {len(df)} rows")
 print(f"Columns: {df.columns.tolist()}")
 
 # Take a stratified subsample based on clause_type
-sample_size = min(1000, len(df))
+sample_size = min(10000, len(df))
 df_subsample, _ = train_test_split(df, train_size=sample_size, stratify=df["clause_type"], random_state=42)
 df_subsample = df_subsample.reset_index(drop=True)
 
