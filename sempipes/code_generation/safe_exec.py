@@ -9,6 +9,7 @@ import json
 import pathlib
 import re
 import typing
+import unicodedata
 import urllib
 from collections.abc import Iterable
 from typing import Any
@@ -28,6 +29,7 @@ import torch
 import torchaudio
 import tqdm
 import transformers
+import unidecode
 
 _ALLOWED_MODULES = [
     "numpy",
@@ -58,6 +60,8 @@ _ALLOWED_MODULES = [
     "urllib",
     "tensorflow",
     "huggingface_hub",
+    "unicodedata",
+    "unidecode",
 ]
 
 
@@ -108,6 +112,8 @@ def safe_exec(
         "round": round,
         "zip": zip,
         "sorted": sorted,
+        "filter": filter,
+        "bin": bin,
         "object": object,
         "Exception": Exception,
         "BaseException": BaseException,
@@ -120,6 +126,10 @@ def safe_exec(
         "print": print,
         "getattr": getattr,
         "hasattr": hasattr,
+        "callable": callable,
+        "setattr": setattr,
+        "type": type,
+        "repr": repr,
     }
 
     safe_globals = {
@@ -150,6 +160,8 @@ def safe_exec(
         "urllib": urllib,
         "tensorflow": tensorflow,
         "huggingface_hub": huggingface_hub,
+        "unicodedata": unicodedata,
+        "unidecode": unidecode,
     }
 
     # We need a single dict to allow function definitions inside the code

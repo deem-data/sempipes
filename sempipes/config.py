@@ -20,10 +20,7 @@ class Config:
         name="gemini/gemini-2.5-flash",
         parameters={"temperature": 0.0},
     )
-    llm_for_batch_processing: LLM = LLM(
-        name="ollama/gpt-oss:120b",
-        parameters={"api_base": "http://localhost:11434", "temperature": 0.0},
-    )
+    llm_for_batch_processing: LLM = LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0})
     batch_size_for_batch_processing: int = 20
 
 

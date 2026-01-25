@@ -62,6 +62,7 @@ indent-width = 4
 target-version = "py312"
 exclude = [
     "experiments/tmdb_box_office_prediction/kaggle3.py",
+    "experiments/sigmod/sempipes_sustech/",
 ]
 
 [tool.ruff.lint]

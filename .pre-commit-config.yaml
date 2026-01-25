@@ -1,16 +1,19 @@
-exclude: ^comparisons/single_cell_analysis/aide_qr.py$
+exclude: ^comparisons/single_cell_analysis/aide_qr.py$|^experiments/sigmod/
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.2
     hooks:
       - id: ruff
         args: [--fix]
+        exclude: ^experiments/sigmod/
       - id: ruff-format
+        exclude: ^experiments/sigmod/
   - repo: https://github.com/pylint-dev/pylint
     rev: v3.3.8
     hooks:
       - id: pylint
         args: [sempipes]
+        exclude: ^experiments/sigmod/
         additional_dependencies:
           - skrub==0.6.1
           - plotly==6.3.0
