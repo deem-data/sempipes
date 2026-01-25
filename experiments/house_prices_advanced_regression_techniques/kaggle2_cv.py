@@ -5,7 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_log_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 
 warnings.filterwarnings("ignore")
 
@@ -17,11 +17,16 @@ def rmsle(y, y_predicted):
 
 
 scores = []
-for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
+seed = 42
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data_initial)):
+    train = all_data_initial.iloc[train_idx]
+    test = all_data_initial.iloc[test_idx]
     np.random.seed(seed)
     random.seed(seed)
 
-    train, test = train_test_split(all_data_initial, test_size=0.5, random_state=seed)
+    #`train, test = train_test_split(all_data_initial, test_size=0.5, random_state=seed)
 
     data = pd.concat([train.iloc[:, :-1], test], axis=0)
     data = data.drop(columns=["Id", "Street", "PoolQC", "Utilities"], axis=1)
@@ -200,7 +205,7 @@ for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
     final_predictions = 0.3 * lgbm_preds + 0.3 * gbr_preds + 0.1 * xgb_preds + 0.3 * ridge_cv_preds
     final_predictions = final_predictions + 0.007 * final_predictions
     score = rmsle(y_test, final_predictions)
-    print(f"RMSLE on {split_index}: {score}")
+    print(f"RMSLE on {fold_index}: {score}")
     scores.append(score)
 
 print("\nMean final score: ", np.mean(scores), np.std(scores))

@@ -56,7 +56,12 @@ class TrafficPipeline(TestPipeline):
         X_description = _DESCRIPTION
         y_description = _TARGET_DESCRIPTION
 
-        return _pipeline(X, X_description, y, y_description)
+        additional_env_variables = {
+            "data": X,
+            "labels": y,
+        }
+
+        return _pipeline(X_description, y_description), additional_env_variables
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_traffic_violations()
@@ -74,15 +79,20 @@ class TrafficPipeline(TestPipeline):
         X_description = dataset.metadata["description"]
         y_description = dataset.metadata["target"]
 
-        return _pipeline(X_train, X_description, y_train, y_description)
+        additional_env_variables = {
+            "data": X_train,
+            "labels": y_train,
+        }
+
+        return _pipeline(X_description, y_description), additional_env_variables
 
 
-def _pipeline(X, X_description, y, y_description) -> skrub.DataOp:
-    records = skrub.var("records", X)
+def _pipeline(X_description, y_description) -> skrub.DataOp:
+    records = skrub.var("data")
     records = records.skb.set_description(X_description)
 
-    labels = skrub.var("labels", y)
-    labels = labels.skb.set_name(y_description)
+    labels = skrub.var("labels")
+    labels = labels.skb.set_description(y_description)
 
     records = records.skb.mark_as_X()
     labels = labels.skb.mark_as_y()

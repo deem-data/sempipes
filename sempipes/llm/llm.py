@@ -47,6 +47,7 @@ def _generate_code_from_messages(messages: list[dict]) -> str:
     )
 
     # TODO add proper error handling
+    # TODO add warnings if truncation occured
     raw_code = response.choices[0].message["content"]
 
     if raw_code is None:

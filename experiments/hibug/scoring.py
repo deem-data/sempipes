@@ -17,6 +17,20 @@ def score_sempipes(attributes):
     accuracy, std = score(attributes, sempipes_matches)
     return accuracy, std
 
+def score_sempipes_optimized(attributes):
+    sempipes_matches = [
+        ("Male", "gender", "male"),
+        ("Heavy_Makeup", "makeup", "yes"),
+        ("Pale_Skin", "skin_color", "light"),
+        ("Black_Hair", "hair_color", "black"),
+        ("Brown_Hair", "hair_color", "brown"),
+        ("Blond_Hair", "hair_color", "blonde"),
+        ("No_Beard", "beard", "no"),
+        ("Young", "age", "young"),
+    ]
+
+    accuracy, std = score(attributes, sempipes_matches)
+    return accuracy, std
 
 def score_hibug():
     hibug_matches = [
@@ -63,4 +77,4 @@ if __name__ == "__main__":
 
     print("Hibug annotation accuracy:", score_hibug())
     print("Sempipes annotation accuracy:", score_sempipes(sempipes))
-    print("Sempipes optimized annotation accuracy:", score_sempipes(sempipes_optimized))
+    print("Sempipes optimized annotation accuracy:", score_sempipes_optimized(sempipes_optimized))

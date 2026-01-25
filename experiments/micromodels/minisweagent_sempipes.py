@@ -7,7 +7,7 @@ from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
 def sempipes_pipeline():
-    data = skrub.var("responses")
+    data = skrub.var("responses").skb.mark_as_X()
     y = data["emotional_reaction_level"].skb.mark_as_y()
     data = data[["response_post"]].skb.mark_as_X()
 

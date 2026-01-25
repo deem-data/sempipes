@@ -8,7 +8,8 @@ from xgboost import XGBClassifier
 
 import sempipes
 from experiments.sivep import DATA_DESCRIPTION
-from sempipes.optimisers import EvolutionarySearch, optimise_colopro
+from sempipes.optimisers import optimise_colopro
+from sempipes.optimisers.montecarlo_tree_search import MonteCarloTreeSearch
 
 warnings.filterwarnings("ignore")
 
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     outcomes = optimise_colopro(
         pipeline,
         operator_name="augment_data",
-        search=EvolutionarySearch(population_size=6),
+        search=MonteCarloTreeSearch(c=0.5),#EvolutionarySearch(population_size=6),
         num_trials=24,
         scoring="roc_auc",
         cv=5,

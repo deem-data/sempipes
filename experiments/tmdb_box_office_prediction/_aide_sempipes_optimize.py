@@ -4,9 +4,8 @@ import pandas as pd
 import sempipes
 import skrub
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_squared_log_error
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
+from sempipes.optimisers import optimise_colopro
+from sempipes.optimisers.evolutionary_search import EvolutionarySearch
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
@@ -48,30 +47,24 @@ if __name__ == "__main__":
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
-            parameters={"temperature": 0.0},
+            parameters={"temperature": 2.0},
         ),
     )
 
-    scores = []
-    for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
-        print(f"Split {split_index}")
-        np.random.seed(seed)
-        all_df = pd.read_csv("experiments/tmdb_box_office_prediction/data.csv")
-        train_df, test_df = train_test_split(all_df, test_size=0.5, random_state=seed)
+    validation_data = pd.read_csv("experiments/tmdb_box_office_prediction/validation.csv")
 
-        predictions = sempipes_pipeline()
-        learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
+    pipeline = sempipes_pipeline()
 
-        env_train = predictions.skb.get_data()    
-        env_train["data"] = train_df
-        env_test = predictions.skb.get_data()   
-        env_test["data"] = test_df
+    outcomes = optimise_colopro(
+        pipeline,
+        "additional_movie_features",
+        num_trials=24,
+        search=EvolutionarySearch(population_size=6),
+        scoring="neg_root_mean_squared_error",
+        cv=10,
+        additional_env_variables={"data": validation_data},
+    )
 
-        learner.fit(env_train)
-        y_pred = learner.predict(env_test)
+    best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
+    print("\n".join(best_outcome.state["generated_code"]))
 
-        rmsle = np.sqrt(mean_squared_log_error(test_df["revenue"], np.expm1(y_pred)))
-        print(f"RMSLE on split {split_index}: {rmsle}")
-        scores.append(rmsle)
-
-print("\nMean final score: ", np.mean(scores), np.std(scores))

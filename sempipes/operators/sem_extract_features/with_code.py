@@ -173,7 +173,10 @@ IMPORTANT:
  - Make sure that the code feeds the data in batches to the GPU for efficiency.
  - Use the `tqdm` library to show a progress bar for the feature extraction.
 
-Each codeblock ends with ```end and starts with "```python"
+IMPORTANT: 
+ - Each codeblock must start with ```python and end with ```end! Otherwise, the code will not be executed correctly.
+ - The codeblock must be a valid Python code block, with no additional text
+ - Do not add any other text to the codeblock, only the code itself! If you need to add comments, add them inside the codeblock as properly formatted python comments.
 Codeblock:
 """
     return task_prompt + code_example + post_message
@@ -404,6 +407,7 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 
         # Generate code for multi-modal data
         messages = []
+        code = ""
         for attempt in range(1, _MAX_RETRIES + 1):
             try:
                 if attempt == 1:
@@ -428,8 +432,9 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                     {"role": "assistant", "content": code},
                     {
                         "role": "user",
-                        "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
+                        "content": (f"Code execution failed with error: {type(e)} {e}.\n "
+                        f"Remember: Each codeblock must start with ```python and end with ```end!\n"
+                        f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n"),
                     },
                 ]
 

@@ -1,4 +1,12 @@
 import sempipes
+
+from sempipes.optimisers.trajectory import load_trajectory_from_json
+
+trajectory = load_trajectory_from_json(".experiments/scrabble_player_rating/colopro_20251223_161127_cdd5f54b.json")
+best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
+
+
+import sempipes
 import skrub    
 from math import sqrt
 import numpy as np
@@ -79,12 +87,14 @@ if __name__ == "__main__":
         env_train["data"] = train
         env_train["games"] = games
         env_train["turns"] = turns
+        env_train["sempipes_prefitted_state__player_features"] = best_outcome.state
 
         env_test = predictions.skb.get_data()    
         env_test["data"] = test
         env_test["games"] = games
         env_test["turns"] = turns
-
+        env_test["sempipes_prefitted_state__player_features"] = best_outcome.state
+        
         learner.fit(env_train)
         y_pred = learner.predict(env_test)
 

@@ -30,7 +30,12 @@ class TweetsPipeline(TestPipeline):
         X = dataset.X.iloc[:600]
         y = dataset.y.iloc[:600] == "Toxic"
 
-        return _pipeline(), X, y
+        env_variables = {
+            "data": X,
+            "labels": y,
+        }
+
+        return _pipeline(), env_variables
 
     def pipeline_with_train_data(self, seed) -> DataOp:
         dataset = skrub.datasets.fetch_toxicity()
@@ -40,7 +45,12 @@ class TweetsPipeline(TestPipeline):
 
         X_train, _, y_train, _ = train_test_split(X, y, train_size=TestPipeline.TEST_SIZE, random_state=seed)
 
-        return _pipeline(), X_train, y_train
+        env_variables = {
+            "data": X_train,
+            "labels": y_train,
+        }
+
+        return _pipeline(), env_variables
 
 
 def _pipeline() -> skrub.DataOp:
@@ -60,6 +70,8 @@ def _pipeline() -> skrub.DataOp:
         input_columns=["text"],
         name=TestPipeline.OPERATOR_NAME,
         output_columns=output_columns,
+        generate_via_code=True,
+        print_code_to_console=True,
     )
 
     encoded_tweets = labeled_tweets.skb.apply(TableVectorizer())

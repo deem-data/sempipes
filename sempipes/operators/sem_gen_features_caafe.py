@@ -23,7 +23,7 @@ from sempipes.operators.operators import (
 
 logger = get_logger()
 
-_MAX_RETRIES = 5
+_MAX_RETRIES = 10
 _SYSTEM_PROMPT = (
     "You are an expert datascientist assistant solving Kaggle problems. "
     "You answer only by generating code. Answer as concisely as possible."

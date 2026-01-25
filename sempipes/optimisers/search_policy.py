@@ -49,6 +49,7 @@ class SearchPolicy(ABC):
     ):
         pass
 
+    # This must be simplified to return a single search node    
     @abstractmethod
     def create_next_search_nodes(self) -> list[SearchNode]:
         pass

@@ -18,9 +18,17 @@ class SearchNodeStatistics:
 
 
 class MonteCarloTreeSearch(SearchPolicy):
-    def __init__(self, nodes_per_expansion=2, c: float = 1.5):
+    def __init__(
+        self, 
+        nodes_per_expansion=1, 
+        c: float = 1.41, 
+        root_children: int = 3, 
+        max_non_root_children: int = 2
+    ):
         self.c = c
         self.nodes_per_expansion = nodes_per_expansion
+        self.root_children = root_children
+        self.max_non_root_children = max_non_root_children
         self.min_score = float("inf")
         self.max_score = -float("inf")
         self.root_node: SearchNode | None = None
@@ -28,7 +36,7 @@ class MonteCarloTreeSearch(SearchPolicy):
         self.search_node_stats: dict[int, SearchNodeStatistics] = {}
 
     def clone_empty(self) -> SearchPolicy:
-        return MonteCarloTreeSearch(nodes_per_expansion=self.nodes_per_expansion, c=self.c)
+        return MonteCarloTreeSearch(nodes_per_expansion=self.nodes_per_expansion, c=self.c, root_children=self.root_children, max_non_root_children=self.max_non_root_children)
 
     def create_root_node(self, dag_sink: DataOp, operator_name: str):
         data_op = find_node_by_name(dag_sink, operator_name)
@@ -84,12 +92,14 @@ class MonteCarloTreeSearch(SearchPolicy):
         self.max_score = max(self.max_score, score)
 
         assert search_node.trial is not None
-        self.search_node_stats[search_node.trial] = SearchNodeStatistics(scores=[score])
+        if search_node.trial not in self.search_node_stats:
+            self.search_node_stats[search_node.trial] = SearchNodeStatistics()
+        self.search_node_stats[search_node.trial].scores.append(score)
         self._back_propagate(search_node, score)
 
     def _uct(self, search_node: SearchNode) -> float:
         parent_node_outcome = next(
-            filter(lambda outcome: outcome.search_node.trial is search_node.parent_trial, self.outcomes), None
+            filter(lambda outcome: outcome.search_node.trial == search_node.parent_trial, self.outcomes), None
         )
         assert parent_node_outcome is not None
         parent_node = parent_node_outcome.search_node
@@ -102,11 +112,15 @@ class MonteCarloTreeSearch(SearchPolicy):
             (score - self.min_score) / (self.max_score - self.min_score + 1e-8) for score in node_stats.scores
         ]
 
-        w_i = np.mean(normalized_scores)
+        w_i = np.sum(normalized_scores)
         n_i = node_stats.visits()
         N_i = parent_node_stats.visits()
         assert n_i > 0
         assert N_i > 0
+
+        print((
+            f"\t UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} ->"
+            f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {((w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i))}"))
 
         return (w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i)
 
@@ -116,12 +130,19 @@ class MonteCarloTreeSearch(SearchPolicy):
         ]
 
         if not children:
+            print(f"\t Expannding childless node {current_node.trial}")
             return current_node
 
-        uct_values = [self._uct(child) for child in children]
-        best_child = children[np.argmax(uct_values)]
-
-        return self._traverse(best_child)
+        if current_node.trial == _ROOT_TRIAL and len(children) < self.root_children:
+            print(f"\t Expanding root node {current_node.trial} with {len(children)} children")
+            return current_node
+        elif len(children) < self.max_non_root_children:
+            print(f"\t Expanding non-root node {current_node.trial} with {len(children)} children")
+            return current_node
+        else:
+            uct_values = [self._uct(child) for child in children]
+            best_child = children[np.argmax(uct_values)]
+            return self._traverse(best_child)
 
     def create_next_search_nodes(self) -> list[SearchNode]:
         assert self.root_node is not None

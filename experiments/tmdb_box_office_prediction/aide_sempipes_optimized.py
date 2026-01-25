@@ -6,7 +6,7 @@ import skrub
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_log_error
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
+from sempipes.optimisers.trajectory import load_trajectory_from_json
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
@@ -52,6 +52,9 @@ if __name__ == "__main__":
         ),
     )
 
+    trajectory = load_trajectory_from_json(".experiments/tmdb_box_office_prediction/colopro_20251224_031718_eb74114e.json")
+    best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
+
     scores = []
     for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
         print(f"Split {split_index}")
@@ -64,9 +67,11 @@ if __name__ == "__main__":
 
         env_train = predictions.skb.get_data()    
         env_train["data"] = train_df
+        env_train["sempipes_prefitted_state__additional_movie_features"] = best_outcome.state
         env_test = predictions.skb.get_data()   
         env_test["data"] = test_df
-
+        env_test["sempipes_prefitted_state__additional_movie_features"] = best_outcome.state
+        
         learner.fit(env_train)
         y_pred = learner.predict(env_test)
 

@@ -1,26 +1,31 @@
 import warnings
-
+import pandas as pd
 import sempipes
 from experiments.house_prices_advanced_regression_techniques._sempipes_impl2 import sempipes_pipeline2
 from sempipes.optimisers import optimise_colopro
+from sempipes.optimisers.montecarlo_tree_search import MonteCarloTreeSearch
 
 warnings.filterwarnings("ignore")
 
 sempipes.update_config(
     llm_for_code_generation=sempipes.LLM(
-        name="openai/gpt-4.1",
-        parameters={"temperature": 0.8},
+        name="gemini/gemini-2.5-flash",
+        parameters={"temperature": 2.0},
     ),
 )
 
-pipeline = sempipes_pipeline2("experiments/house_prices_advanced_regression_techniques/validation.csv")
+data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/validation.csv")
+
+pipeline = sempipes_pipeline2()
 
 outcomes = optimise_colopro(
     pipeline,
     "house_features",
     num_trials=24,
     scoring="neg_root_mean_squared_log_error",
+    search=MonteCarloTreeSearch(c=0.5),
     cv=5,
+    additional_env_variables={"data": data},
 )
 
 best_outcome = max(outcomes, key=lambda x: x.score)

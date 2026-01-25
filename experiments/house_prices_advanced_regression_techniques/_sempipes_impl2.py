@@ -80,14 +80,13 @@ def rmsle(y, y_predicted):
     return np.sqrt(mean_squared_error(y, y_predicted))
 
 
-def sempipes_pipeline2(data_file):
-    all_data_initial = pd.read_csv(data_file)
+def sempipes_pipeline2():
     with open(
         "experiments/house_prices_advanced_regression_techniques/data_description.txt", "r", encoding="utf-8"
     ) as f:
         data_description = f.read()
 
-    data = skrub.var("data", all_data_initial).skb.subsample(n=100)
+    data = skrub.var("data")
 
     data = data.drop(["Id", "Street", "PoolQC", "Utilities"], axis=1)
 
@@ -113,4 +112,10 @@ def sempipes_pipeline2(data_file):
     data = data.skb.apply(SimpleImputer(strategy="constant", fill_value="N/A"), cols=s.categorical())
 
     X = data.skb.apply(skrub.TableVectorizer())
+
+    def clean_column_names(df):
+        df.columns = df.columns.str.replace(r"[^A-Za-z0-9_]+", "_", regex=True)
+        return df
+
+    X = X.skb.apply_func(clean_column_names)
     return X.skb.apply(RegressorEnsemble(), y=y)
