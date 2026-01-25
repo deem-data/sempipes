@@ -13,7 +13,7 @@ from litellm import completion_cost
 import sempipes
 
 
-def load_sounds_dataset(dataset_size: str = "1000"):
+def load_sounds_dataset(dataset_size: str = "10000"):
     data_path = f"tests/data/sounds-dataset-{dataset_size}/sounds.csv"
     df = pd.read_csv(data_path, engine="python", on_bad_lines="skip", encoding="utf-8")
     return df
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     sempipes.update_config(batch_size_for_batch_processing=10)
     sempipes.update_config(llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash"))
 
-    df = load_sounds_dataset("1000")
+    df = load_sounds_dataset("10000")
     print(f"\nLoaded dataset with {len(df)} rows")
     print(f"Columns: {list(df.columns)}")
 

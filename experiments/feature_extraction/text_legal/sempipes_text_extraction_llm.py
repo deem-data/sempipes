@@ -87,6 +87,10 @@ def extract_clause_type_with_sempipes(df: pd.DataFrame, text_column: str = "clau
     Returns:
         Tuple of (DataFrame with extracted_clause_type column added, total cost in USD for LLM extraction)
     """
+    # Work on a copy and add a stable row id for alignment in downstream joins
+    df = df.copy()
+    df["_row_id"] = np.arange(len(df))
+
     # Filter out NaN/empty values
     valid_mask = df[text_column].notna() & (df[text_column].astype(str).str.strip() != "")
     df_minimal = df[[text_column]].copy()
@@ -187,13 +191,18 @@ def extract_with_repeats_sempipes(
 
         total_cost += repeat_cost
 
-        df = df.sort_values(by="id").reset_index(drop=True)
-        result_df = result_df.sort_values(by="id").reset_index(drop=True)
+        # Do NOT reorder or sort. Keep the original row order for alignment.
+        df = df.reset_index(drop=True)
+        result_df = result_df.reset_index(drop=True)
 
         # Debug prints and sum matches calculation
         if "clause_type" in df.columns and "extracted_clause_type" in result_df.columns:
-            print(df[["id", "clause_type"]])
-            print(result_df[["id", "extracted_clause_type"]])
+            preview_cols = ["id", "clause_type"] if "id" in df.columns else ["clause_type"]
+            preview_cols_result = (
+                ["id", "extracted_clause_type"] if "id" in result_df.columns else ["extracted_clause_type"]
+            )
+            print(df[preview_cols].head(10))
+            print(result_df[preview_cols_result].head(10))
 
             sum_matches = sum(
                 df["clause_type"].astype(str).str.strip().str.lower()
@@ -212,18 +221,22 @@ def extract_with_repeats_sempipes(
 
 if __name__ == "__main__":
     sempipes.update_config(batch_size_for_batch_processing=10)
-    sempipes.update_config(llm_for_batch_processing=sempipes.LLM(name="gemini/gemini-2.5-flash"))
+    sempipes.update_config(llm_for_batch_processing=sempipes.LLM(name="gemini-2.5-flash"))
 
-    df = load_contracts_dataset("1000")
+    df = load_contracts_dataset("10000")
     print(f"\nLoaded dataset with {len(df)} rows")
     print(f"Columns: {list(df.columns)}")
 
     text_column = "clause_text"
-    num_repeats = 5
+    num_repeats = 1
     try:
         all_results, accuracies, total_cost = extract_with_repeats_sempipes(
             df, text_column=text_column, num_repeats=num_repeats
         )
+        print("Results=" * 80)
+        print(all_results)
+        print("DF=" * 80)
+        print(df)
 
         result_df = all_results[-1]
 

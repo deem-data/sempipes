@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import palimpzest as pz
 import pandas as pd
@@ -53,8 +55,8 @@ def run(pz_config: pz.QueryProcessorConfig, contracts_df: pd.DataFrame):
 
 
 # Load data
-load_dotenv()
-dataset_size = "1000"
+# load_dotenv()
+dataset_size = "10000"
 csv_path = f"tests/data/contracts-dataset-{dataset_size}/contracts.csv"
 contracts_df = pd.read_csv(csv_path, on_bad_lines="skip", encoding="utf-8")
 

@@ -89,8 +89,8 @@ def run(pz_config: pz.QueryProcessorConfig, sounds_df: pd.DataFrame):
 
 # Load data
 load_dotenv()
-dataset_size = "1000"
-csv_path = f"tests/data/sounds-dataset-{dataset_size}/sounds.csv"
+dataset_size = "10000"
+csv_path = f"tests/data/esc50-dataset-{dataset_size}/sounds.csv"
 sounds_df = pd.read_csv(csv_path, on_bad_lines="skip", encoding="utf-8")
 
 print(f"\nLoaded dataset with {len(sounds_df)} rows")
