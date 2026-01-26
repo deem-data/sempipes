@@ -14,6 +14,7 @@ import urllib
 from collections.abc import Iterable
 from typing import Any
 
+import autogluon
 import huggingface_hub
 import numpy
 import open_clip
@@ -31,7 +32,6 @@ import tqdm
 import transformers
 import unidecode
 import xgboost
-import autogluon
 
 _ALLOWED_MODULES = [
     "numpy",
@@ -130,7 +130,6 @@ def safe_exec(
         "enumerate": enumerate,
         "print": print,
         "getattr": getattr,
-        "hasattr": hasattr,
         "callable": callable,
         "setattr": setattr,
         "type": type,

@@ -18,13 +18,7 @@ class SearchNodeStatistics:
 
 
 class MonteCarloTreeSearch(SearchPolicy):
-    def __init__(
-        self, 
-        nodes_per_expansion=1, 
-        c: float = 1.41, 
-        root_children: int = 3, 
-        max_non_root_children: int = 2
-    ):
+    def __init__(self, nodes_per_expansion=1, c: float = 1.41, root_children: int = 3, max_non_root_children: int = 2):
         self.c = c
         self.nodes_per_expansion = nodes_per_expansion
         self.root_children = root_children
@@ -36,7 +30,12 @@ class MonteCarloTreeSearch(SearchPolicy):
         self.search_node_stats: dict[int, SearchNodeStatistics] = {}
 
     def clone_empty(self) -> SearchPolicy:
-        return MonteCarloTreeSearch(nodes_per_expansion=self.nodes_per_expansion, c=self.c, root_children=self.root_children, max_non_root_children=self.max_non_root_children)
+        return MonteCarloTreeSearch(
+            nodes_per_expansion=self.nodes_per_expansion,
+            c=self.c,
+            root_children=self.root_children,
+            max_non_root_children=self.max_non_root_children,
+        )
 
     def create_root_node(self, dag_sink: DataOp, operator_name: str):
         data_op = find_node_by_name(dag_sink, operator_name)
@@ -118,9 +117,12 @@ class MonteCarloTreeSearch(SearchPolicy):
         assert n_i > 0
         assert N_i > 0
 
-        print((
-            f"\t UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} ->"
-            f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {((w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i))}"))
+        print(
+            (
+                f"\t UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} ->"
+                f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {((w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i))}"
+            )
+        )
 
         return (w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i)
 
@@ -136,13 +138,12 @@ class MonteCarloTreeSearch(SearchPolicy):
         if current_node.trial == _ROOT_TRIAL and len(children) < self.root_children:
             print(f"\t Expanding root node {current_node.trial} with {len(children)} children")
             return current_node
-        elif len(children) < self.max_non_root_children:
+        if len(children) < self.max_non_root_children:
             print(f"\t Expanding non-root node {current_node.trial} with {len(children)} children")
             return current_node
-        else:
-            uct_values = [self._uct(child) for child in children]
-            best_child = children[np.argmax(uct_values)]
-            return self._traverse(best_child)
+        uct_values = [self._uct(child) for child in children]
+        best_child = children[np.argmax(uct_values)]
+        return self._traverse(best_child)
 
     def create_next_search_nodes(self) -> list[SearchNode]:
         assert self.root_node is not None

@@ -1,0 +1,68 @@
+data_dir: data/
+desc_file: null
+goal: The task is to perform blocking for Entity Resolution, i.e., quickly filter
+  out non-matches (tuple pairs that are unlikely to represent the same real-world
+  entity) in a limited time to generate a small candidate set that contains a limited
+  number of tuple pairs for matching. Solve the task on two product datasets. Each
+  dataset is made of a list of instances (rows) and a list of properties describing
+  them (columns). For each dataset Di, you are provided with the following resources
+  Xi a subset of the instances in Di, Yi matching pairs in Xi x Xi (the pairs not
+  in Yi are non-matching pairs), blocking requirements is the size of the generated
+  candidate set (i.e., the number of tuple pairs in the candidate set). Note that
+  matching pairs in Yi are transitively closed (i.e., if A matches with B and B matches
+  with C, then A matches with C). For a matching pair id1 and id2 with id1 < id2,
+  Yi only includes (id1, id2) and does not include (id2, id1). Your goal is to write
+  a program that generates, for each Xi dataset, a candidate set of tuple pairs for
+  matching Xi with Xi. The output must be stored in a CSV file containing the ids
+  of tuple pairs in the candidate set. The CSV file must have two columns left_instance_id
+  and right_instance_id and the output file must be named output.csv. The separator
+  must be the comma. Note that we do not consider the trivial equi-joins (tuple pairs
+  with left_instance_id = right_instance_id) as true matches. For a pair id1 and id2
+  (assume id1 < id2), please only include (id1, id2) and dont include (id2, id1).
+  Solutions will be evaluated over the complete dataset Di that is not available yet.
+  Both samples of Xi and Yi datasets are in CSV format in data/ folder. There is a
+  baseline solution available in blocking.py. For each dataset Di, we will compute
+  resulting recall score (#true matches in output set/#matches in ground truth) to
+  evaluate the solution. For dataset X1, Y1 the candidate set seize is 1000000, for
+  X2, Y2 - 2000000. Make sure to include exactly 1000000 pairs for dataset X1 and
+  2000000 pairs for dataset X2. In evaluation, we expect output.csv to include exactly
+  3000000 tuple pairs. We expect the first 1000000 pairs are for dataset X1, and the
+  remaining pairs are for dataset X2. Try to split the problem into two parts (1)
+  feature extraction and (2) blocking using these features. For feature extraction
+  you can try regexes, rules, while for blocking Jaccard similarity or LSH can help.
+  In data/blocking.py, you are given an baseline implementation that you should outperform.
+  DO NOT USE solutions that evaluate all possible pairs since test data contains 3
+  millions rows and it is not feasible due to time and memory constraints, try more
+  complex approaches that can run <30 minutes for 3 million products. YOU ARE FORBIDDEN
+  TO ENUMERATE OR CALCULATE SIMILARITY BETWEEN ALL PAIRS. Hash the products into buckets
+  before running comparisons. You are prohibited to read Yi and use it for candidate
+  pair generation.
+eval: Recall score (#true matches in output set/#matches in ground truth)
+log_dir: logs/2-attractive-fantastic-cormorant/
+workspace_dir: workspaces/2-attractive-fantastic-cormorant/
+preprocess_data: true
+copy_data: true
+exp_name: 2-attractive-fantastic-cormorant
+exec:
+  timeout: 3600
+  agent_file_name: runfile.py
+  format_tb_ipython: false
+generate_report: true
+report:
+  model: gpt-4.1
+  temp: 1.0
+agent:
+  steps: 20
+  k_fold_validation: 5
+  expose_prediction: false
+  data_preview: true
+  code:
+    model: o4-mini
+    temp: 0.5
+  feedback:
+    model: gpt-4.1-mini
+    temp: 0.5
+  search:
+    max_debug_depth: 3
+    debug_prob: 0.5
+    num_drafts: 5

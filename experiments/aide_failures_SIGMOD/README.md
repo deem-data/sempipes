@@ -1,0 +1,1 @@
+Most of AIDE runs produced all pairs solutions that are infeasible for the competition data where millions of records should be processed within 30 minutes.

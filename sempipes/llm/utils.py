@@ -31,7 +31,7 @@ def unwrap_json(text: str) -> str:
 
 
 def unwrap_python(text: str) -> str:
-    result = _unwrap(text=text, prefix="```python", suffix="```", suffix2="```end")
+    result = _unwrap(text=text, prefix="```python", suffixes=["```", "```end"])
     # Remove any standalone "end" statements that might have been generated
     lines = result.splitlines()
     # Remove trailing empty lines and "end" statements

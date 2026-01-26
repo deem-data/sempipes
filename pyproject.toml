@@ -50,14 +50,11 @@ scib-metrics = "^0.5.7"
 interpret = "^0.2.7"
 sentence-transformers = "^5.1.2"
 tabpfn = "^6.0.5"
-<<<<<<< HEAD
 open-clip-torch = "^2.24.0"
 soundfile = "^0.12.1"
 tensorflow = "^2.18.0"
 torchaudio = "^2.8.0"
-=======
 fancyimpute = "^0.7.0"
->>>>>>> 8c33201 (Add missing values experiment)
 
 [build-system]
 requires = ["poetry-core"]

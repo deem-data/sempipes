@@ -55,10 +55,10 @@ class RandomSearch(SearchPolicy):
 
     def create_next_search_nodes(self) -> list[SearchNode]:
         assert self.root_node is not None
-        
+
         outcome_to_evolve = [outcome for outcome in self.outcomes if outcome.search_node == self.root_node][0]
 
-        logger.info(f"RANDOM_SEARCH> Creating new node")
+        logger.info("RANDOM_SEARCH> Creating new node")
         updated_memory = copy.deepcopy(outcome_to_evolve.search_node.memory)
         updated_memory.append({"update": outcome_to_evolve.memory_update, "score": outcome_to_evolve.score})
         next_node = SearchNode(
