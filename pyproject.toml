@@ -10,6 +10,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
+# Core dependencies for pipeline operations
 skrub = "^0.6.2"
 plotly = "^6.3.0"
 graphviz = "^0.21"
@@ -17,15 +18,17 @@ litellm = "^1.76.1"
 networkx = "^3.5"
 python-dotenv = "^1.1.1"
 tqdm = "^4.67.1"
-torch = {version = "^2.8.0", source = "pypi"}
+torch = {version = "^2.9.0", source = "pypi"}  # Updated to 2.9.x for compatibility
 transformers = "^4.57.1"
 dataclasses-json = "^0.6.7"
 scipy = "^1.16.3"
 logging = "^0.4.9.6"
 sdv = "^1.29.1"
-# scikit-learn is a transitive dependency from skrub (>=1.2.1)
-# tabpfn requires >= 1.6.0
-# Array API compatibility is handled programmatically in sempipes/__init__.py
+# Dependencies required by code_generation/safe_exec.py
+autogluon = "^1.5.0"
+soundfile = "^0.13.0"
+torchaudio = "^2.9.0"  # Must match torch version
+unidecode = "^1.4.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"
@@ -50,10 +53,9 @@ scib-metrics = "^0.5.7"
 interpret = "^0.2.7"
 sentence-transformers = "^5.1.2"
 tabpfn = "^6.0.5"
-open-clip-torch = "^2.24.0"
-soundfile = "^0.12.1"
-tensorflow = "^2.18.0"
-torchaudio = "^2.8.0"
+# open-clip-torch removed: conflicts with autogluon's timm requirement
+# tensorflow removed: too slow to import (30+ seconds), breaks interactive use
+# Should be imported conditionally in safe_exec.py if needed
 fancyimpute = "^0.7.0"
 
 [build-system]

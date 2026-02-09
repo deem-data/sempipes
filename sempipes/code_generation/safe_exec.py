@@ -17,7 +17,6 @@ from typing import Any
 import autogluon
 import huggingface_hub
 import numpy
-import open_clip
 import pandas as pd
 import PIL
 import scipy
@@ -25,7 +24,6 @@ import sdv
 import sklearn
 import skrub
 import soundfile
-import tensorflow
 import torch
 import torchaudio
 import tqdm
@@ -58,9 +56,7 @@ _ALLOWED_MODULES = [
     "torchaudio",
     "soundfile",
     "pathlib",
-    "open_clip",
     "urllib",
-    "tensorflow",
     "huggingface_hub",
     "unicodedata",
     "unidecode",
@@ -160,9 +156,7 @@ def safe_exec(
         "torchaudio": torchaudio,
         "soundfile": soundfile,
         "pathlib": pathlib,
-        "open_clip": open_clip,
         "urllib": urllib,
-        "tensorflow": tensorflow,
         "huggingface_hub": huggingface_hub,
         "unicodedata": unicodedata,
         "unidecode": unidecode,
