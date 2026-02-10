@@ -28,8 +28,23 @@ def test_sem_fillna():
     num_mismatches = (salaries_imputed["department"] != salaries["department"]).sum()
     num_non_filled = salaries_imputed["department"].isna().sum()
 
-    print(salaries["department"])
-    print(salaries_imputed["department"])
-
     assert num_non_filled == 0
     assert num_mismatches < 10
+
+
+def test_sem_fillna_baskets_fraud():
+    ensure_default_config()
+
+    dataset = skrub.datasets.fetch_credit_fraud()
+    products = skrub.var("products", dataset.products)
+
+    products = products.sem_fillna(
+        target_column="make",
+        nl_prompt="Infer the manufacturer from relevant product-related attributes like title or description.",
+        impute_with_existing_values_only=True,
+    )
+
+    products = products.skb.eval()
+    num_non_filled = products["make"].isna().sum()
+
+    assert num_non_filled == 0
