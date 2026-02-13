@@ -25,7 +25,7 @@ def sempipes_pipeline():
     ) as f:
         data_description = f.read()
 
-    data = skrub.var("data")  # .skb.subsample(n=100)
+    data = skrub.var("data")
 
     data = data.drop(["Alley", "PoolQC", "Fence", "MiscFeature"], axis=1)
 

@@ -61,9 +61,6 @@ if __name__ == "__main__":
         train = all_data.iloc[train_idx]
         test = all_data.iloc[test_idx]
         np.random.seed(seed)
-        # Load the data
-        # all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
-        # train, test = train_test_split(all_data, test_size=0.5, random_state=seed)
 
         y_true = np.log(test["SalePrice"])
 

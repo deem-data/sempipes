@@ -7,11 +7,10 @@ from experiments.tmdb_box_office_prediction._sempipes_impl import sempipes_pipel
 
 data = pd.read_csv("experiments/tmdb_box_office_prediction/data.csv")
 
-pipeline = sempipes_pipeline()  # "experiments/tmdb_box_office_prediction/data.csv")
+pipeline = sempipes_pipeline()
 
 scores = []
 for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
-    # split = pipeline.skb.train_test_split(random_state=seed, test_size=0.5)
     train, test = train_test_split(data, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 

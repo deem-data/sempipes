@@ -37,7 +37,6 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(data)):
     np.random.seed(seed)
     random.seed(seed)
 
-    # data_train, data_test = train_test_split(data, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
     env_fit = pipeline.skb.get_data()

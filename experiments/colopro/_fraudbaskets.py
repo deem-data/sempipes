@@ -12,7 +12,6 @@ from experiments.colopro import TestPipeline
 warnings.filterwarnings("ignore")
 
 
-# TODO this needs to be refactored to skip preview execution
 class FraudBasketsPipeline(TestPipeline):
     @property
     def name(self) -> str:
@@ -62,9 +61,9 @@ class FraudBasketsPipeline(TestPipeline):
 
 
 def _pipeline() -> skrub.DataOp:
-    products = skrub.var("products")  # products", basket_products)
-    baskets = skrub.var("data")  # baskets", flagged_baskets[["ID"]])
-    labels = skrub.var("labels")  # fraud_flags", flagged_baskets["fraud_flag"])
+    products = skrub.var("products")
+    baskets = skrub.var("data")
+    labels = skrub.var("labels")
 
     baskets = baskets.skb.mark_as_X().skb.set_description("Potentially fraudulent shopping baskets of products")
     labels = labels.skb.mark_as_y().skb.set_description(

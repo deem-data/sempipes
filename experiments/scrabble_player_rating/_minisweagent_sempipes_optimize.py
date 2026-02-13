@@ -62,7 +62,6 @@ class PlayerBasedFolds:
         for k in range(self.n_splits):
             valid_players = player_folds[k]
             valid_player_game_ids = X[X.nickname.isin(valid_players)].game_id.unique()
-            # valid_idx = np.where(X.game_id.isin(valid_player_game_ids))[0]
             valid_idx = np.where((X.game_id.isin(valid_player_game_ids)) & (X.nickname.isin(valid_players)))[0]
             train_players = np.concatenate([player_folds[i] for i in range(self.n_splits) if i != k])
             train_player_game_ids = X[X.nickname.isin(train_players)].game_id.unique()

@@ -54,16 +54,10 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data)):
     # Log-transform target for evaluation
     log_transformer = FunctionTransformer(np.log1p, validate=True)
 
-    # train = all_data.iloc[train_idx]
-    # test = all_data.iloc[test_idx]
-
     X_train = X.iloc[train_idx]
     X_test = X.iloc[test_idx]
     y_train = y.iloc[train_idx]
     y_test = y.iloc[test_idx]
-
-    # Split data
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=seed)
 
     # Build pipeline
     pipeline = Pipeline(
