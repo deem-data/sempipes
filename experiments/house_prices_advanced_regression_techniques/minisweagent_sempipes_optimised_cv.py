@@ -1,18 +1,20 @@
 import math
-import sempipes
-import skrub
+
 import numpy as np
 import pandas as pd
-from sklearn.impute import SimpleImputer
+import skrub
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from skrub import selectors as s
 
+import sempipes
 from sempipes.optimisers.trajectory import load_trajectory_from_json
 
 trajectory = load_trajectory_from_json("experiments/house_prices_advanced_regression_techniques/swe.json")
 best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
+
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
@@ -51,6 +53,7 @@ if __name__ == "__main__":
     scores = []
     seed = 42
     from sklearn.model_selection import KFold
+
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
     all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
 
@@ -59,18 +62,18 @@ if __name__ == "__main__":
         test = all_data.iloc[test_idx]
         np.random.seed(seed)
         # Load the data
-        #all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
-        #train, test = train_test_split(all_data, test_size=0.5, random_state=seed)
+        # all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
+        # train, test = train_test_split(all_data, test_size=0.5, random_state=seed)
 
         y_true = np.log(test["SalePrice"])
 
         predictions = sempipes_pipeline()
         learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
 
-        env_train = predictions.skb.get_data()    
+        env_train = predictions.skb.get_data()
         env_train["data"] = train
         env_train["sempipes_prefitted_state__house_features"] = best_outcome.state
-        env_test = predictions.skb.get_data()   
+        env_test = predictions.skb.get_data()
         env_test["data"] = test
         env_test["sempipes_prefitted_state__house_features"] = best_outcome.state
         learner.fit(env_train)

@@ -211,7 +211,9 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
                 error_msg = f"Code execution failed with error: {type(e)} {e}."
                 # Provide specific guidance for IterativeImputer + RandomForestRegressor error
                 if "return_std" in str(e) and ("ForestRegressor" in str(e) or "RandomForest" in str(e)):
-                    error_msg += "\n\nCRITICAL: IterativeImputer requires an estimator that supports `return_std` in predict(). "
+                    error_msg += (
+                        "\n\nCRITICAL: IterativeImputer requires an estimator that supports `return_std` in predict(). "
+                    )
                     error_msg += "RandomForestRegressor does NOT support this. Use BayesianRidge() or another compatible estimator instead. "
                     error_msg += "Example: IterativeImputer(estimator=BayesianRidge(), ...)"
                 messages += [

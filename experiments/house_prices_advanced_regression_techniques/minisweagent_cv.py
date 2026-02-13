@@ -6,7 +6,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, StandardScaler
 
@@ -15,12 +15,11 @@ all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/
 
 scores = []
 seed = 42
-from sklearn.model_selection import KFold
+
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
 all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
 
 for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data)):
-
     data = all_data.copy(deep=True)
 
     ###
@@ -55,9 +54,8 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data)):
     # Log-transform target for evaluation
     log_transformer = FunctionTransformer(np.log1p, validate=True)
 
-    
-    #train = all_data.iloc[train_idx]
-    #test = all_data.iloc[test_idx]
+    # train = all_data.iloc[train_idx]
+    # test = all_data.iloc[test_idx]
 
     X_train = X.iloc[train_idx]
     X_test = X.iloc[test_idx]
@@ -65,7 +63,7 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data)):
     y_test = y.iloc[test_idx]
 
     # Split data
-    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=seed)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=seed)
 
     # Build pipeline
     pipeline = Pipeline(

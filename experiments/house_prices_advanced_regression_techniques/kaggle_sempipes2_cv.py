@@ -2,12 +2,13 @@ import random
 import warnings
 
 import numpy as np
+import pandas as pd
 from sklearn.metrics import mean_squared_log_error
 from sklearn.model_selection import KFold, train_test_split
 
 import sempipes  # pylint: disable=unused-import
 from experiments.house_prices_advanced_regression_techniques._sempipes_impl2 import sempipes_pipeline2
-import pandas as pd
+
 warnings.filterwarnings("ignore")
 
 
@@ -29,7 +30,7 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(data)):
     np.random.seed(seed)
     random.seed(seed)
 
-   #train, test = train_test_split(data, test_size=0.5, random_state=seed)
+    # train, test = train_test_split(data, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
     env_train = pipeline.skb.get_data()
     env_train["data"] = train

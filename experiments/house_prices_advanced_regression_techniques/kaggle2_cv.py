@@ -26,7 +26,7 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data_initial)):
     np.random.seed(seed)
     random.seed(seed)
 
-    #`train, test = train_test_split(all_data_initial, test_size=0.5, random_state=seed)
+    # `train, test = train_test_split(all_data_initial, test_size=0.5, random_state=seed)
 
     data = pd.concat([train.iloc[:, :-1], test], axis=0)
     data = data.drop(columns=["Id", "Street", "PoolQC", "Utilities"], axis=1)

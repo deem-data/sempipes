@@ -1,14 +1,17 @@
 import math
-import sempipes
-import skrub
+
 import numpy as np
 import pandas as pd
-from sklearn.impute import SimpleImputer
+import skrub
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from skrub import selectors as s
+
+import sempipes
+
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
@@ -56,9 +59,9 @@ if __name__ == "__main__":
         predictions = sempipes_pipeline()
         learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
 
-        env_train = predictions.skb.get_data()    
+        env_train = predictions.skb.get_data()
         env_train["data"] = train
-        env_test = predictions.skb.get_data()   
+        env_test = predictions.skb.get_data()
         env_test["data"] = test
 
         learner.fit(env_train)

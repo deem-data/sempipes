@@ -17,6 +17,7 @@ def score_sempipes(attributes):
     accuracy, std = score(attributes, sempipes_matches)
     return accuracy, std
 
+
 def score_sempipes_optimized(attributes):
     sempipes_matches = [
         ("Male", "gender", "male"),
@@ -31,6 +32,7 @@ def score_sempipes_optimized(attributes):
 
     accuracy, std = score(attributes, sempipes_matches)
     return accuracy, std
+
 
 def score_hibug():
     hibug_matches = [

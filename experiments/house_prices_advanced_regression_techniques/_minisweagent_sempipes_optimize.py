@@ -1,12 +1,14 @@
-import sempipes
-import skrub
 import numpy as np
 import pandas as pd
-from sklearn.impute import SimpleImputer
+import skrub
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
 from skrub import selectors as s
+
+import sempipes
 from sempipes.optimisers import optimise_colopro
 from sempipes.optimisers.evolutionary_search import EvolutionarySearch
+
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
@@ -45,7 +47,6 @@ if __name__ == "__main__":
     validation_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/validation.csv")
 
     pipeline = sempipes_pipeline()
-        
 
     outcomes = optimise_colopro(
         pipeline,
@@ -59,5 +60,3 @@ if __name__ == "__main__":
 
     best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
     print(best_outcome.state["generated_code"])
-
-
