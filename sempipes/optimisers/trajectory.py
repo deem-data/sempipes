@@ -21,7 +21,9 @@ class Trajectory:
     outcomes: list[Outcome]
 
 
-def save_trajectory_as_json(trajectory: Trajectory, run_name: str | None = None) -> Path:
+def save_trajectory_as_json(
+    trajectory: Trajectory, run_name: str | None = None, output_folder: Path | None = None
+) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     unique_id = str(uuid.uuid4())[:8]
 
@@ -31,11 +33,14 @@ def save_trajectory_as_json(trajectory: Trajectory, run_name: str | None = None)
 
     filename = f"{run_prefix}_{timestamp}_{unique_id}.json"
 
-    output_path = Path(".sempipes_trajectories") / filename
+    if output_folder is None:
+        output_folder = Path(".sempipes_trajectories")
+
+    output_path = output_folder / filename
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(trajectory.to_json(), f, indent=2, ensure_ascii=False)  # type: ignore
+        json.dump(trajectory.to_dict(), f, indent=2, ensure_ascii=False)  # type: ignore
 
     return output_path
 
@@ -45,7 +50,13 @@ def load_trajectory_from_json(json_path: Path) -> Trajectory:
         data = json.load(f)
 
     # pylint: disable=no-member
-    return Trajectory.from_json(data)  # type: ignore
+    # Handle both formats:
+    # - Old format: data is a string (double-serialized JSON)
+    # - New format: data is a dict (properly formatted JSON)
+    if isinstance(data, str):
+        return Trajectory.from_json(data)  # type: ignore
+    else:
+        return Trajectory.from_dict(data)  # type: ignore
 
 
 def serialize_scoring(scoring: str | types.FunctionType) -> str:
