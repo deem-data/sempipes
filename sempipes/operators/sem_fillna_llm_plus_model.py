@@ -184,22 +184,22 @@ Available columns: {selected_columns}. Special care: {nl_prompt}.
 
 Use sklearn models (RandomForestRegressor, LinearRegression, etc.) or imputers (IterativeImputer) or AutoGluon (TabularPredictor). 
 
-CRITICAL1: If you use AutoGluon's TabularPredictor, you need to set `time_limit` in `fit` to 300 seconds.
+CRITICAL 1: If you use AutoGluon's TabularPredictor, you need to set `time_limit` in `fit` to 10 seonds if user asks for a very fast method, otherwise set it to 300 seconds.
 
-CRITICAL2: Models must have `fit_transform` or `fit`/`predict` methods.
+CRITICAL 2: Models must have `fit_transform` or `fit`/`predict` methods.
 
-CRITICAL3: Do NOT write any training code. Only instantiate models. The training and evaluation will be handled elsewhere.
+CRITICAL 3: Do NOT write any training code. Only instantiate models. The training and evaluation will be handled elsewhere.
 
 Check that you use correct inputs for the models, e.g., pandas DataFrames vs numpy arrays.
 
 Ensure that you can handle both numeric and categorical columns that contain text.
 
-IMPORTANT1: The data has ALREADY been preprocessed (scaled/encoded) before being passed to these models. You MUST NOT add any further preprocessing, feature selection, or column-based transformations.
+IMPORTANT 1: The data has ALREADY been preprocessed (scaled/encoded) before being passed to these models. You MUST NOT add any further preprocessing, feature selection, or column-based transformations.
 IMPORTANT1b: Do NOT call `fit`, `fit_transform`, `predict`, or `transform`. Only instantiate model objects. Do NOT create dummy dataframes or use `df` in the code.
 Versions: sklearn {sklearn.__version__}, pandas {pd.__version__}, autogluon {ag_version}.
 You are NOT allowed to use `tempfile` library.
 
-IMPORTANT2: Always import IterativeImputer via `from sklearn.experimental import enable_iterative_imputer` first.
+IMPORTANT 2: Always import IterativeImputer via `from sklearn.experimental import enable_iterative_imputer` first.
 ```python
 from sklearn.experimental import enable_iterative_imputer # Always import IterativeImputer via this first
 from sklearn.impute import IterativeImputer
@@ -299,7 +299,7 @@ Codeblock:
         )
 
         scores = []
-        for idx, model_candidate in enumerate(suggested_models_and_imputers, 1):
+        for model_index, model_candidate in enumerate(suggested_models_and_imputers, 1):
             try:
                 is_pipeline = isinstance(model_candidate, Pipeline)
                 actual_model = model_candidate.steps[-1][1] if is_pipeline else model_candidate
@@ -337,9 +337,9 @@ Codeblock:
                     scores.append(score)
                 else:
                     scores.append(float("inf"))
-                print(f"Score for model {idx}: {scores[-1]}")
+                print(f"Score for model {model_index}: {scores[-1]}")
             except Exception as e:  # pylint: disable=broad-exception-caught
-                print(f"Error evaluating model {idx}: {e}")
+                print(f"Error evaluating model {model_index}: {e}")
                 scores.append(float("inf"))
 
         # Select and fit best model

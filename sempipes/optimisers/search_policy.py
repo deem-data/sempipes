@@ -53,11 +53,10 @@ class SearchPolicy(ABC):
     def create_next_search_node(self) -> SearchNode | None:
         """
         Create the next search node to explore.
-        
+
         Returns:
             SearchNode: The next node to explore, or None if no more nodes can be generated.
         """
-        pass
 
     @abstractmethod
     def get_outcomes(self) -> list[Outcome]:
