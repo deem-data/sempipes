@@ -53,7 +53,7 @@ class RandomSearch(SearchPolicy):
         )
         self.outcomes.append(outcome)
 
-    def create_next_search_nodes(self) -> list[SearchNode]:
+    def create_next_search_node(self) -> SearchNode | None:
         assert self.root_node is not None
 
         outcome_to_evolve = [outcome for outcome in self.outcomes if outcome.search_node == self.root_node][0]
@@ -69,7 +69,7 @@ class RandomSearch(SearchPolicy):
             parent_score=outcome_to_evolve.score,
         )
 
-        return [next_node]
+        return next_node
 
     def get_outcomes(self):
         return self.outcomes

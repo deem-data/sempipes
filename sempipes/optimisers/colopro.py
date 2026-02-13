@@ -126,9 +126,12 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             operator_memory_update = OptimisableMixin.EMPTY_MEMORY_UPDATE
         else:
             if len(search_node_queue) == 0:
-                next_search_nodes = search.create_next_search_nodes()
-                logger.info(f"COLOPRO> Generating {len(next_search_nodes)} new search node(s)")
-                search_node_queue.extend(next_search_nodes)
+                next_search_node = search.create_next_search_node()
+                if next_search_node is None:
+                    logger.warning("COLOPRO> Search policy returned None, no more nodes to generate")
+                    break
+                logger.info("COLOPRO> Generating new search node")
+                search_node_queue.append(next_search_node)
 
             search_node = search_node_queue.pop(0)
             search_node.trial = trial

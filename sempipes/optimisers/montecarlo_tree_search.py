@@ -6,7 +6,10 @@ import numpy as np
 from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 
+from sempipes.logging import get_logger
 from sempipes.optimisers.search_policy import _ROOT_TRIAL, Outcome, SearchNode, SearchPolicy
+
+logger = get_logger()
 
 
 @dataclass
@@ -18,9 +21,8 @@ class SearchNodeStatistics:
 
 
 class MonteCarloTreeSearch(SearchPolicy):
-    def __init__(self, nodes_per_expansion=1, c: float = 1.41, root_children: int = 3, max_non_root_children: int = 2):
+    def __init__(self, c: float = 1.41, root_children: int = 3, max_non_root_children: int = 2):
         self.c = c
-        self.nodes_per_expansion = nodes_per_expansion
         self.root_children = root_children
         self.max_non_root_children = max_non_root_children
         self.min_score = float("inf")
@@ -31,7 +33,6 @@ class MonteCarloTreeSearch(SearchPolicy):
 
     def clone_empty(self) -> SearchPolicy:
         return MonteCarloTreeSearch(
-            nodes_per_expansion=self.nodes_per_expansion,
             c=self.c,
             root_children=self.root_children,
             max_non_root_children=self.max_non_root_children,
@@ -41,7 +42,7 @@ class MonteCarloTreeSearch(SearchPolicy):
         data_op = find_node_by_name(dag_sink, operator_name)
         empty_state = data_op._skrub_impl.estimator.empty_state()
 
-        print("\tMCT_SEARCH> Creating root node")
+        logger.info("MCT_SEARCH> Creating root node")
         root_node = SearchNode(
             trial=_ROOT_TRIAL,
             parent_trial=None,
@@ -117,14 +118,13 @@ class MonteCarloTreeSearch(SearchPolicy):
         assert n_i > 0
         assert N_i > 0
 
-        print(
-            (
-                f"\t UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} ->"
-                f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {((w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i))}"
-            )
+        uct_value = (w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i)
+        logger.info(
+            f"UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} -> "
+            f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {uct_value}"
         )
 
-        return (w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i)
+        return uct_value
 
     def _traverse(self, current_node):
         children = [
@@ -132,20 +132,20 @@ class MonteCarloTreeSearch(SearchPolicy):
         ]
 
         if not children:
-            print(f"\t Expannding childless node {current_node.trial}")
+            logger.info(f"Expanding childless node {current_node.trial}")
             return current_node
 
         if current_node.trial == _ROOT_TRIAL and len(children) < self.root_children:
-            print(f"\t Expanding root node {current_node.trial} with {len(children)} children")
+            logger.info(f"Expanding root node {current_node.trial} with {len(children)} children")
             return current_node
         if len(children) < self.max_non_root_children:
-            print(f"\t Expanding non-root node {current_node.trial} with {len(children)} children")
+            logger.info(f"Expanding non-root node {current_node.trial} with {len(children)} children")
             return current_node
         uct_values = [self._uct(child) for child in children]
         best_child = children[np.argmax(uct_values)]
         return self._traverse(best_child)
 
-    def create_next_search_nodes(self) -> list[SearchNode]:
+    def create_next_search_node(self) -> SearchNode | None:
         assert self.root_node is not None
 
         node_to_evolve = self._traverse(self.root_node)
@@ -154,21 +154,18 @@ class MonteCarloTreeSearch(SearchPolicy):
         )
         assert corresponding_outcome is not None
 
-        print(f"\tMCT_SEARCH> Trying to improve node with score {corresponding_outcome.score}")
+        logger.info(f"MCT_SEARCH> Trying to improve node with score {corresponding_outcome.score}")
 
-        next_search_nodes = []
-        for _ in range(self.nodes_per_expansion):
-            updated_memory = copy.deepcopy(corresponding_outcome.search_node.memory)
-            updated_memory.append({"update": corresponding_outcome.memory_update, "score": corresponding_outcome.score})
-            next_node = SearchNode(
-                trial=None,
-                parent_trial=node_to_evolve.trial,
-                memory=updated_memory,
-                predefined_state=None,
-                parent_score=corresponding_outcome.score,
-            )
-            next_search_nodes.append(next_node)
-        return next_search_nodes
+        updated_memory = copy.deepcopy(corresponding_outcome.search_node.memory)
+        updated_memory.append({"update": corresponding_outcome.memory_update, "score": corresponding_outcome.score})
+        next_node = SearchNode(
+            trial=None,
+            parent_trial=node_to_evolve.trial,
+            memory=updated_memory,
+            predefined_state=None,
+            parent_score=corresponding_outcome.score,
+        )
+        return next_node
 
     def get_outcomes(self):
         return self.outcomes
