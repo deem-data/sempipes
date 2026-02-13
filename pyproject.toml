@@ -1,15 +1,16 @@
-[tool.poetry]
+[project]
 name = "sempipes"
 version = "0.0.1"
-description = ""
-authors = [
-    "Sebastian Schelter <schelter@tu-berlin.de>",
-    "Olga Ovcharenko <ovcharenko@tu-berlin.de>"
-]
+description = "Semantic data operators for ML pipelines"
 readme = "README.md"
+requires-python = ">=3.11,<3.13"
+authors = [
+    {name = "Sebastian Schelter", email = "schelter@tu-berlin.de"},
+    {name = "Olga Ovcharenko", email = "ovcharenko@tu-berlin.de"}
+]
+dynamic = ["dependencies"]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
 # Core dependencies for pipeline operations
 skrub = "^0.6.2"
 plotly = "^6.3.0"
@@ -18,7 +19,7 @@ litellm = "^1.76.1"
 networkx = "^3.5"
 python-dotenv = "^1.1.1"
 tqdm = "^4.67.1"
-torch = {version = "^2.9.0", source = "pypi"}  # Updated to 2.9.x for compatibility
+torch = "^2.9.0"  # Updated to 2.9.x for compatibility
 transformers = "^4.57.1"
 dataclasses-json = "^0.6.7"
 scipy = "^1.16.3"
