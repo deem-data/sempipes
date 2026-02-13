@@ -1,16 +1,18 @@
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
-import sempipes
 import skrub
 from sklearn.impute import SimpleImputer
+
+import sempipes
 from sempipes.optimisers import optimise_colopro
 from sempipes.optimisers.evolutionary_search import EvolutionarySearch
+
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
 
-    y = data["revenue"].skb.apply_func(np.log1p).skb.mark_as_y()    
+    y = data["revenue"].skb.apply_func(np.log1p).skb.mark_as_y()
     data = data.drop(columns=["revenue"])
 
     def cast_release_date(df):
@@ -21,7 +23,7 @@ def sempipes_pipeline():
     data = data.assign(
         release_year=lambda x: x["release_date"].dt.year,
         release_month=lambda x: x["release_date"].dt.month,
-        release_dayofweek=lambda x: x["release_date"].dt.dayofweek
+        release_dayofweek=lambda x: x["release_date"].dt.dayofweek,
     )
 
     data = data.skb.apply(SimpleImputer(strategy="median"), cols=["release_year", "release_month", "release_dayofweek"])
@@ -42,6 +44,7 @@ def sempipes_pipeline():
 
     predictions = X.skb.apply(model, y=y)
     return predictions
+
 
 if __name__ == "__main__":
     sempipes.update_config(
@@ -67,4 +70,3 @@ if __name__ == "__main__":
 
     best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
     print("\n".join(best_outcome.state["generated_code"]))
-

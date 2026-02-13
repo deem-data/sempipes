@@ -1,14 +1,15 @@
 import json
 import random
 import warnings
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from sklearn.metrics import mean_squared_log_error
+from sklearn.model_selection import KFold, train_test_split
 
 import sempipes  # pylint: disable=unused-import
 from experiments.house_prices_advanced_regression_techniques._sempipes_impl2 import sempipes_pipeline2
 from sempipes.optimisers.trajectory import load_trajectory_from_json
-from sklearn.model_selection import KFold, train_test_split
 
 warnings.filterwarnings("ignore")
 
@@ -16,9 +17,12 @@ warnings.filterwarnings("ignore")
 def rmsle(y, y_predicted):
     return np.sqrt(mean_squared_log_error(y, y_predicted))
 
+
 pipeline = sempipes_pipeline2()
 
-trajectory = load_trajectory_from_json(".experiments/househouse_prices_advanced_regression_techniques/colopro_20260102_064629_09325b55.json")
+trajectory = load_trajectory_from_json(
+    ".experiments/househouse_prices_advanced_regression_techniques/colopro_20260102_064629_09325b55.json"
+)
 best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
 
 data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
@@ -33,7 +37,6 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(data)):
     np.random.seed(seed)
     random.seed(seed)
 
-    #data_train, data_test = train_test_split(data, test_size=0.5, random_state=seed)
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
     env_fit = pipeline.skb.get_data()

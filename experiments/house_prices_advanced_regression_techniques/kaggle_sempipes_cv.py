@@ -1,12 +1,13 @@
-import warnings
 import random
-import pandas as pd
+import warnings
+
 import numpy as np
+import pandas as pd
+from sklearn.model_selection import KFold, train_test_split
 
 import sempipes  # pylint: disable=unused-import
 from experiments.house_prices_advanced_regression_techniques._sempipes_impl import rmsle, sempipes_pipeline
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
+
 warnings.filterwarnings("ignore")
 
 sempipes.update_config(
@@ -29,14 +30,14 @@ for fold_index, (train_idx, test_idx) in enumerate(kf.split(data)):
     test = data.iloc[test_idx]
     np.random.seed(seed)
     random.seed(seed)
-    
+
     learner = pipeline.skb.make_learner(fitted=False, keep_subsampling=False)
 
     train, test = train_test_split(data, test_size=0.5, random_state=seed)
 
     env_train = pipeline.skb.get_data()
-    env_train["data"] = train   
-    
+    env_train["data"] = train
+
     env_test = pipeline.skb.get_data()
     env_test["data"] = test
 

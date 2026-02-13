@@ -1,17 +1,19 @@
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
-import sempipes
 import skrub
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_log_error
 from sklearn.model_selection import train_test_split
+
+import sempipes
 from sempipes.optimisers.trajectory import load_trajectory_from_json
+
 
 def sempipes_pipeline():
     data = skrub.var("data").skb.mark_as_X()
 
-    y = data["revenue"].skb.apply_func(np.log1p).skb.mark_as_y()    
+    y = data["revenue"].skb.apply_func(np.log1p).skb.mark_as_y()
     data = data.drop(columns=["revenue"])
 
     def cast_release_date(df):
@@ -22,7 +24,7 @@ def sempipes_pipeline():
     data = data.assign(
         release_year=lambda x: x["release_date"].dt.year,
         release_month=lambda x: x["release_date"].dt.month,
-        release_dayofweek=lambda x: x["release_date"].dt.dayofweek
+        release_dayofweek=lambda x: x["release_date"].dt.dayofweek,
     )
 
     data = data.skb.apply(SimpleImputer(strategy="median"), cols=["release_year", "release_month", "release_dayofweek"])
@@ -44,6 +46,7 @@ def sempipes_pipeline():
     predictions = X.skb.apply(model, y=y)
     return predictions
 
+
 if __name__ == "__main__":
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
@@ -52,7 +55,9 @@ if __name__ == "__main__":
         ),
     )
 
-    trajectory = load_trajectory_from_json(".experiments/tmdb_box_office_prediction/colopro_20251224_031718_eb74114e.json")
+    trajectory = load_trajectory_from_json(
+        ".experiments/tmdb_box_office_prediction/colopro_20251224_031718_eb74114e.json"
+    )
     best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
 
     scores = []
@@ -65,13 +70,13 @@ if __name__ == "__main__":
         predictions = sempipes_pipeline()
         learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
 
-        env_train = predictions.skb.get_data()    
+        env_train = predictions.skb.get_data()
         env_train["data"] = train_df
         env_train["sempipes_prefitted_state__additional_movie_features"] = best_outcome.state
-        env_test = predictions.skb.get_data()   
+        env_test = predictions.skb.get_data()
         env_test["data"] = test_df
         env_test["sempipes_prefitted_state__additional_movie_features"] = best_outcome.state
-        
+
         learner.fit(env_train)
         y_pred = learner.predict(env_test)
 

@@ -10,12 +10,14 @@ from xgboost import XGBClassifier
 import sempipes
 from experiments.sivep import DATA_DESCRIPTION
 from sempipes.optimisers.trajectory import load_trajectory_from_json
+
 warnings.filterwarnings("ignore")
 
 
 trajectory = load_trajectory_from_json(".experiments/sivep/sivep_20260103_102904_b611e697.json")
 best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
 best_state = best_outcome.state
+
 
 def _pipeline(raw_data, seed):
     data = skrub.var("data", raw_data).skb.set_description(DATA_DESCRIPTION)

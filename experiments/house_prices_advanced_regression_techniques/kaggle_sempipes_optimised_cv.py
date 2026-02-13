@@ -1,8 +1,9 @@
 import json
 import warnings
+
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold, train_test_split
-import numpy as np
 
 import sempipes  # pylint: disable=unused-import
 from experiments.house_prices_advanced_regression_techniques._sempipes_impl import rmsle, sempipes_pipeline
@@ -12,7 +13,9 @@ warnings.filterwarnings("ignore")
 
 pipeline = sempipes_pipeline()
 
-trajectory = load_trajectory_from_json(".experiments/house_prices_advanced_regression_techniques/colopro_20260103_082657_6ff65fb9.json")
+trajectory = load_trajectory_from_json(
+    ".experiments/house_prices_advanced_regression_techniques/colopro_20260103_082657_6ff65fb9.json"
+)
 best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
 state = best_outcome.state
 

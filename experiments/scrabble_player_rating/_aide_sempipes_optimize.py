@@ -1,11 +1,13 @@
-import sempipes
-import skrub    
+import numpy as np
 import pandas as pd
+import skrub
 from sklearn.ensemble import RandomForestRegressor
+
+import sempipes
+from experiments.scrabble_player_rating import BOT_NAMES
 from sempipes.optimisers import optimise_colopro
 from sempipes.optimisers.evolutionary_search import EvolutionarySearch
-from experiments.scrabble_player_rating import BOT_NAMES
-import numpy as np
+
 
 def sempipes_pipeline():
     games = skrub.var("games")
@@ -14,8 +16,7 @@ def sempipes_pipeline():
     # Merge the datasets on game_id
     merged_data = data.join(games, on="game_id", rsuffix="_games")
     merged_data = merged_data.join(
-        turns.groupby("game_id").agg({"points": "sum"}).reset_index(),
-        on="game_id", rsuffix="_turns"
+        turns.groupby("game_id").agg({"points": "sum"}).reset_index(), on="game_id", rsuffix="_turns"
     )
 
     y = merged_data["rating"].skb.mark_as_y()
@@ -72,10 +73,10 @@ class PlayerBasedFolds:
             train_player_game_ids = X[X.nickname.isin(train_players)].game_id.unique()
             train_idx = np.where(X.game_id.isin(train_player_game_ids))[0]
 
-            yield train_idx, valid_idx    
+            yield train_idx, valid_idx
+
 
 if __name__ == "__main__":
-
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",

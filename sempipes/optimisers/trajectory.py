@@ -50,13 +50,11 @@ def load_trajectory_from_json(json_path: Path) -> Trajectory:
         data = json.load(f)
 
     # pylint: disable=no-member
-    # Handle both formats:
-    # - Old format: data is a string (double-serialized JSON)
-    # - New format: data is a dict (properly formatted JSON)
+    # Handle old buggy format as well...
     if isinstance(data, str):
         return Trajectory.from_json(data)  # type: ignore
-    else:
-        return Trajectory.from_dict(data)  # type: ignore
+
+    return Trajectory.from_dict(data)  # type: ignore
 
 
 def serialize_scoring(scoring: str | types.FunctionType) -> str:

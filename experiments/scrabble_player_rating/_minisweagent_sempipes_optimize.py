@@ -1,11 +1,13 @@
-import sempipes
-import skrub    
+import numpy as np
 import pandas as pd
+import skrub
 from sklearn.ensemble import RandomForestRegressor
+
+import sempipes
+from experiments.scrabble_player_rating import BOT_NAMES
 from sempipes.optimisers import optimise_colopro
 from sempipes.optimisers.evolutionary_search import EvolutionarySearch
-from experiments.scrabble_player_rating import BOT_NAMES
-import numpy as np
+
 
 def sempipes_pipeline():
     data = skrub.var("data")
@@ -60,18 +62,15 @@ class PlayerBasedFolds:
         for k in range(self.n_splits):
             valid_players = player_folds[k]
             valid_player_game_ids = X[X.nickname.isin(valid_players)].game_id.unique()
-            #valid_idx = np.where(X.game_id.isin(valid_player_game_ids))[0]
-            valid_idx = np.where(
-                 (X.game_id.isin(valid_player_game_ids)) & (X.nickname.isin(valid_players))
-            )[0]
+            valid_idx = np.where((X.game_id.isin(valid_player_game_ids)) & (X.nickname.isin(valid_players)))[0]
             train_players = np.concatenate([player_folds[i] for i in range(self.n_splits) if i != k])
             train_player_game_ids = X[X.nickname.isin(train_players)].game_id.unique()
             train_idx = np.where(X.game_id.isin(train_player_game_ids))[0]
 
-            yield train_idx, valid_idx    
+            yield train_idx, valid_idx
+
 
 if __name__ == "__main__":
-
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",

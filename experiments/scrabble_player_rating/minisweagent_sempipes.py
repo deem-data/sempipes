@@ -1,11 +1,13 @@
 from math import sqrt
-import skrub
-import sempipes
+
 import numpy as np
 import pandas as pd
+import skrub
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
+
+import sempipes
 
 
 def sempipes_pipeline():
@@ -41,8 +43,8 @@ def sempipes_pipeline():
     predictions = X_final.skb.apply(model, y=y)
     return predictions
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -72,11 +74,11 @@ if __name__ == "__main__":
         predictions = sempipes_pipeline()
         learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
 
-        env_train = predictions.skb.get_data()    
+        env_train = predictions.skb.get_data()
         env_train["data"] = train
         env_train["games"] = games
 
-        env_test = predictions.skb.get_data()    
+        env_test = predictions.skb.get_data()
         env_test["data"] = test
         env_test["games"] = games
 
@@ -84,7 +86,7 @@ if __name__ == "__main__":
         y_pred = learner.predict(env_test)
 
         y_true = test[test_non_bot_mask]["rating"]
-        rmse = sqrt(mean_squared_error(y_true, y_pred))#[test_non_bot_mask]))
+        rmse = sqrt(mean_squared_error(y_true, y_pred))  # [test_non_bot_mask]))
         print(f"RMSE on split {split_index}: {rmse}")
         scores.append(rmse)
 

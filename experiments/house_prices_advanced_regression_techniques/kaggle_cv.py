@@ -5,9 +5,8 @@ import numpy as np
 import pandas as pd
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 from xgboost import XGBRegressor
-from sklearn.model_selection import KFold
 
 warnings.filterwarnings("ignore")
 
@@ -19,7 +18,6 @@ def rmsle(y, y_predicted):
 all_data_initial = pd.read_csv("experiments/house_prices_advanced_regression_techniques/data.csv")
 
 
-#for split_index, seed in enumerate([42, 1337, 2025, 7321, 98765]):
 df = all_data_initial.drop(["Alley", "PoolQC", "Fence", "MiscFeature"], axis=1)
 
 object_columns_df = df.select_dtypes(include=["object"])
@@ -51,13 +49,9 @@ columns_with_lowNA = [
     "SaleType",
 ]
 # fill missing values for each column (using its own most frequent value)
-object_columns_df[columns_with_lowNA] = object_columns_df[columns_with_lowNA].fillna(
-    object_columns_df.mode().iloc[0]
-)
+object_columns_df[columns_with_lowNA] = object_columns_df[columns_with_lowNA].fillna(object_columns_df.mode().iloc[0])
 
-numerical_columns_df["GarageYrBlt"] = numerical_columns_df["GarageYrBlt"].fillna(
-    numerical_columns_df["YrSold"] - 35
-)
+numerical_columns_df["GarageYrBlt"] = numerical_columns_df["GarageYrBlt"].fillna(numerical_columns_df["YrSold"] - 35)
 numerical_columns_df["LotFrontage"] = numerical_columns_df["LotFrontage"].fillna(68)
 
 numerical_columns_df = numerical_columns_df.fillna(0)
@@ -136,8 +130,6 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 for fold_index, (train_idx, test_idx) in enumerate(kf.split(df_final)):
     df_train = df_final.iloc[train_idx]
     df_test = df_final.iloc[test_idx]
-
-    #df_train, df_test = train_test_split(df_final, test_size=0.5, random_state=seed)
 
     y_train = np.log1p(df_train["SalePrice"])
     x_train = df_train.drop(["SalePrice"], axis=1)

@@ -1,19 +1,18 @@
-import sempipes
+from math import sqrt
 
+import numpy as np
+import pandas as pd
+import skrub
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+
+import sempipes
 from sempipes.optimisers.trajectory import load_trajectory_from_json
 
 trajectory = load_trajectory_from_json(".experiments/scrabble_player_rating/colopro_20251223_161127_cdd5f54b.json")
 best_outcome = max(trajectory.outcomes, key=lambda x: (x.score, -x.search_node.trial))
 
-
-import sempipes
-import skrub    
-from math import sqrt
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
 
 def sempipes_pipeline():
     games = skrub.var("games")
@@ -22,8 +21,7 @@ def sempipes_pipeline():
     # Merge the datasets on game_id
     merged_data = data.join(games, on="game_id", rsuffix="_games")
     merged_data = merged_data.join(
-        turns.groupby("game_id").agg({"points": "sum"}).reset_index(),
-        on="game_id", rsuffix="_turns"
+        turns.groupby("game_id").agg({"points": "sum"}).reset_index(), on="game_id", rsuffix="_turns"
     )
 
     y = merged_data["rating"].skb.mark_as_y()
@@ -51,8 +49,8 @@ def sempipes_pipeline():
 
     return predictions
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -83,18 +81,18 @@ if __name__ == "__main__":
         predictions = sempipes_pipeline()
         learner = predictions.skb.make_learner(fitted=False, keep_subsampling=False)
 
-        env_train = predictions.skb.get_data()    
+        env_train = predictions.skb.get_data()
         env_train["data"] = train
         env_train["games"] = games
         env_train["turns"] = turns
         env_train["sempipes_prefitted_state__player_features"] = best_outcome.state
 
-        env_test = predictions.skb.get_data()    
+        env_test = predictions.skb.get_data()
         env_test["data"] = test
         env_test["games"] = games
         env_test["turns"] = turns
         env_test["sempipes_prefitted_state__player_features"] = best_outcome.state
-        
+
         learner.fit(env_train)
         y_pred = learner.predict(env_test)
 

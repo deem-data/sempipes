@@ -15,7 +15,6 @@ all_data = pd.read_csv("experiments/house_prices_advanced_regression_techniques/
 
 scores = []
 seed = 42
-from sklearn.model_selection import KFold
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 for fold_index, (train_idx, test_idx) in enumerate(kf.split(all_data)):
