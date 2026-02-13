@@ -57,7 +57,7 @@ class EvolutionarySearch(SearchPolicy):
         )
         self.outcomes.append(outcome)
 
-    def create_next_search_nodes(self) -> list[SearchNode]:
+    def create_next_search_node(self) -> SearchNode | None:
         assert self.root_node is not None
 
         best_population = sorted(self.outcomes, key=lambda x: x.score, reverse=True)[: self.population_size]
@@ -81,7 +81,7 @@ class EvolutionarySearch(SearchPolicy):
             parent_score=outcome_to_evolve.score,
         )
 
-        return [next_node]
+        return next_node
 
     def get_outcomes(self):
         return self.outcomes

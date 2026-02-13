@@ -50,7 +50,7 @@ class TreeSearch(SearchPolicy):
         )
         self.outcomes.append(outcome)
 
-    def create_next_search_nodes(self) -> list[SearchNode]:
+    def create_next_search_node(self) -> SearchNode | None:
         assert self.root_node is not None
         nodes_with_children = {outcome.search_node.parent_trial for outcome in self.outcomes}
         unprocessed_draft_nodes = [
@@ -63,11 +63,11 @@ class TreeSearch(SearchPolicy):
         if num_unprocessed_draft_nodes < self.min_num_drafts:  # pylint: disable=no-else-return
             logger.info("TREE_SEARCH> Drafting new node")
             next_search_node = self._draft()
-            return [next_search_node]
+            return next_search_node
         else:
             next_search_node = self._improve_best()
             logger.info(f"TREE_SEARCH> Trying to improve node with score {next_search_node.parent_score}")
-            return [next_search_node]
+            return next_search_node
 
     def _draft(self) -> SearchNode:
         root_outcome = next(filter(lambda outcome: outcome.search_node is self.root_node, self.outcomes), None)
