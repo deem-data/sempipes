@@ -59,7 +59,7 @@ def _get_prompt(  # pylint: disable=too-many-locals
         top_inspirations = sorted(inspirations, key=lambda x: x["score"], reverse=True)[:3]
 
         for i, inspiration in enumerate(top_inspirations):
-            code = "\n".join(inspiration["state"]["generated_code"])
+            code = inspiration["state"]["generated_code"]
             score = inspiration["score"]
             inspiration_examples += f"Example {i+1}:\n```python\n{code}\n```\nScore: {score:.4f}\n\n"
 
@@ -101,36 +101,36 @@ Description of the dataset in `df` (column dtypes might be inaccurate):
 Columns in `df` (true feature dtypes listed here, categoricals encoded as int):
 {samples}
 
-This code was written by an expert datascientist working to improve predictions. It is a snippet of code that adds 
-new columns to the dataset. Number of samples (rows) in training dataset: {int(len(df))}
+This code was written by an expert datascientist working to improve predictions. Number of samples (rows) in training dataset: {int(len(df))}
 
 {task_description}
-Additional columns add new semantic information, that is they use real world knowledge on the dataset. They can e.g. 
+Additional columns add new semantic information, that is they use real world knowledge on the dataset. They can e.g.
 be feature combinations, transformations, aggregations where the new column is a function of the existing columns.
-The scale of columns and offset does not matter. Make sure all used columns exist. Follow the above description of 
+The scale of columns and offset does not matter. Make sure all used columns exist. Follow the above description of
 columns closely and consider the datatypes and meanings of classes.
-The {model_reference} will be trained on the dataset with the generated columns and evaluated on a holdout set. The 
+The {model_reference} will be trained on the dataset with the generated columns and evaluated on a holdout set. The
 evaluation metric is {target_metric}. The best performing code will be selected.
-Added columns can be used in other codeblocks.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
 {inspiration_examples}
 
-Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns. 
+Make sure that the code produces exactly the same columns when applied to a new dataframe with the same input columns.
 
-Code formatting for each added column:
-```python
-# (Feature name and description){usefulness}
+Generate a Python function called `_sem_gen_features` that takes a single argument `df` (a pandas DataFrame) and
+returns the modified DataFrame with up to {how_many} new feature columns added. Generate as many features as useful
+for the downstream {model_reference}, but as few as necessary to reach good performance.{usefulness}
+
+DO NOT INCLUDE EXAMPLE USAGE CODE. WRAP YOUR RESPONSE CODE IN ```python and ```.
+
+MAKE SURE THAT THE NEW COLUMNS HAVE MEANINGFUL NAMES.
+
+EXPLAIN YOUR RATIONALE FOR CHOOSING FEATURES IN COMMENTS IN THE PYTHON CODE. For each newly generated
+feature, add a comment to the code that describes the feature, explains why you chose it and why this feature adds
+useful real world knowledge for the downstream model. Include input samples in the comment, e.g.:
+# (Feature name and description)
 # Input samples: (Three samples of the columns used in the following code, e.g. '{df.columns[0]}':
-{list(df.iloc[:3, 0].values)}, '{df.columns[1]}': {list(df.iloc[:3, 1].values)}, ...)
-(Some pandas code using {df.columns[0]}', '{df.columns[1]}', ... to add a new column for each row in df)
-```end
-
-Each codeblock generates up to {how_many} useful columns. Generate as many features as useful for downstream 
-{model_reference}, but as few as necessary to reach good performance.
-Each codeblock ends with ```end and starts with "```python"
-Codeblock:
+# {list(df.iloc[:3, 0].values)}, '{df.columns[1]}': {list(df.iloc[:3, 1].values)}, ...)
 """
 
 
@@ -158,7 +158,6 @@ def _build_prompt_from_df(
 def _add_memorized_history(
     memory: list[dict[str, Any]] | None,
     messages: list[dict[str, str]],
-    generated_code: list[str],
     target_metric: str,
 ) -> None:
     if memory is not None and len(memory) > 0:
@@ -174,36 +173,43 @@ def _add_memorized_history(
                 improvement = memorized_score - current_score
 
             if improvement > 0.0:
-                generated_code.append(memorized_code)
-                add_feature_sentence = "The code was executed and changes to ´df´ were kept."
+                add_feature_sentence = (
+                    "The code was executed and improved the downstream performance. "
+                    "You may choose to copy from this previous version of the code for the next version of the code."
+                )
                 current_score = memorized_score
             else:
-                add_feature_sentence = f"The last code changes to ´df´ were discarded. " f"(Improvement: {improvement})"
+                add_feature_sentence = (
+                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
+                )
 
             messages += [
                 {"role": "assistant", "content": memorized_code},
                 {
                     "role": "user",
-                    "content": f"Performance after adding feature: {target_metric}={memorized_score:.5f}. "
+                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
                     f".{add_feature_sentence}\nNext codeblock:\n",
                 },
             ]
 
 
-def _try_to_execute(df: pd.DataFrame, code_to_execute: str) -> tuple[list[str], list[str]]:
+def _try_to_execute(df: pd.DataFrame, generated_code: str) -> pd.DataFrame:
     df_sample = df.head(100).copy(deep=True)
-    columns_before = df_sample.columns
-    df_sample_processed = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df_sample})
-    columns_after = df_sample_processed.columns
-    new_columns = list(sorted(set(columns_after) - set(columns_before)))
-    removed_columns = list(sorted(set(columns_before) - set(columns_after)))
+    columns_before = set(df_sample.columns)
 
-    changed_columns = f"Computed {len(new_columns)} new feature columns: {new_columns}, "
-    if len(removed_columns) > 0:
-        changed_columns += f"removed {len(removed_columns)} feature columns: {removed_columns}"
+    gen_features_func = safe_exec(generated_code, variable_to_return="_sem_gen_features")
+    result = gen_features_func(df_sample)
 
-    logger.info(changed_columns)
-    return new_columns, removed_columns
+    assert isinstance(result, pd.DataFrame), "_sem_gen_features must return a DataFrame"
+    assert result.shape[0] == df_sample.shape[0], "_sem_gen_features must not change number of rows"
+    assert columns_before.issubset(
+        set(result.columns)
+    ), f"Not all original columns retained: missing {columns_before - set(result.columns)}"
+
+    new_columns = sorted(set(result.columns) - columns_before)
+    logger.info(f"Computed {len(new_columns)} new feature columns: {new_columns}")
+
+    return result
 
 
 # pylint: disable=too-many-ancestors
@@ -225,19 +231,22 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
         self._memory: list[dict[str, Any]] | DataOp | None = _memory
         self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
-        self.generated_code_: list[str] = []
-        self.new_columns_: list[str] = []
-        self.removed_columns_: list[str] = []
+        self.generated_code_: str | None = None
 
     def empty_state(self):
-        return {"generated_code": []}
+        return {
+            "generated_code": """
+def _sem_gen_features(df):
+    return df
+"""
+        }
 
     def state_after_fit(self):
         return {"generated_code": self.generated_code_}
 
     def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None and len(self.generated_code_) > 0:
-            return self.generated_code_[-1]
+        if self.generated_code_ is not None:
+            return self.generated_code_
         return OptimisableMixin.EMPTY_MEMORY_UPDATE
 
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
@@ -252,34 +261,26 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
             f"Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
         )
 
+        prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._pipeline_summary, self._inspirations)
+
         target_metric = "accuracy"
         if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
             target_metric = self._pipeline_summary.target_metric
 
         messages = []
+
         for attempt in range(1, _MAX_RETRIES + 1):
-            code = ""
+            if attempt == 1:
+                messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+                _add_memorized_history(self._memory, messages, target_metric)
 
-            try:  # pylint: disable=too-many-try-statements
-                prompt = _build_prompt_from_df(
-                    df, self.nl_prompt, self.how_many, self._pipeline_summary, self._inspirations
-                )
+            code = generate_python_code_from_messages(messages)
+            try:
+                _try_to_execute(df.copy(deep=True), code)
 
-                if attempt == 1:
-                    messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                    _add_memorized_history(self._memory, messages, self.generated_code_, target_metric)
-
-                code = generate_python_code_from_messages(messages)
-                code_to_execute = "\n".join(self.generated_code_)
-                code_to_execute += "\n\n" + code
-
-                new_columns, removed_columns = _try_to_execute(df.copy(deep=True), code_to_execute)
-
-                self.generated_code_.append(code)
-                self.new_columns_ = new_columns
-                self.removed_columns_ = removed_columns
-
+                self.generated_code_ = code
                 break
+
             except Exception as e:  # pylint: disable=broad-except
                 logger.info(f"An error occurred in attempt {attempt}:", e)
                 logger.debug(f"{e}", exc_info=True)
@@ -288,39 +289,36 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
                     {
                         "role": "user",
                         "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        + f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n",
+                        + f"Code: ```python{code}```\n Retry and fix the errors!\n```python\n",
                     },
                 ]
+
+        if self.generated_code_ is None:
+            logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
+            self.generated_code_ = self.empty_state()["generated_code"]
 
         return self
 
     def transform(self, df):
-        check_is_fitted(self, ("generated_code_", "new_columns_", "removed_columns_"))
-        code_to_execute = "\n".join(self.generated_code_)
+        check_is_fitted(self, "generated_code_")
         df_copy_for_logging = df.copy(deep=True)
 
         try:
-            df = safe_exec(code_to_execute, "df", safe_locals_to_add={"df": df.copy(deep=True)})
+            gen_features_func = safe_exec(self.generated_code_, variable_to_return="_sem_gen_features")
+            df = gen_features_func(df.copy(deep=True))
         except Exception as e:
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             error_folder = f".sem_gen_features_error_{timestamp}"
             os.makedirs(error_folder, exist_ok=True)
             df_copy_for_logging.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
-            with open(os.path.join(error_folder, "executed_code.py"), "w", encoding="utf-8") as f:
-                f.write(code_to_execute)
+            if self.generated_code_ is not None:
+                with open(os.path.join(error_folder, "executed_code.py"), "w", encoding="utf-8") as f:
+                    f.write(self.generated_code_)
             stack_trace_file_path = os.path.join(error_folder, "stack_trace.txt")
             with open(stack_trace_file_path, "w", encoding="utf-8") as f:
                 traceback.print_exc(file=f)
             logger.error(f"Error occurred in transform: {e}", exc_info=True)
             raise e
-
-        for column in self.new_columns_:
-            assert column in df.columns, f"Expected new column '{column}' not found in transformed dataframe"
-
-        for column in self.removed_columns_:
-            assert (
-                column not in df.columns
-            ), f"Expected removed column '{column}' still present in transformed dataframe"
 
         return df
 
