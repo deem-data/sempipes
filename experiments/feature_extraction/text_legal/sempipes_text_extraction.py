@@ -1,8 +1,3 @@
-import os
-
-# Set SCIPY_ARRAY_API=1 to enable scipy array API compatibility. Must be set before any scipy/sklearn imports.
-os.environ.setdefault("SCIPY_ARRAY_API", "1")
-
 import dotenv
 
 dotenv.load_dotenv()

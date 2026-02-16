@@ -1,7 +1,3 @@
-import os
-
-os.environ.setdefault("SCIPY_ARRAY_API", "1")
-
 from contextlib import contextmanager
 from pathlib import Path
 

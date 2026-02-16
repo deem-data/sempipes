@@ -1,7 +1,3 @@
-import os
-
-# Set SCIPY_ARRAY_API=1 to enable scipy array API compatibility. Must be set before any scipy imports.
-os.environ.setdefault("SCIPY_ARRAY_API", "1")
 from dotenv import load_dotenv  # pylint: disable=wrong-import-position
 from skrub import DataOp  # pylint: disable=wrong-import-position
 from skrub._data_ops._skrub_namespace import SkrubNamespace  # pylint: disable=wrong-import-position
