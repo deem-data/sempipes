@@ -127,7 +127,10 @@ MAKE SURE THAT THE NEW COLUMNS HAVE MEANINGFUL NAMES.
 
 EXPLAIN YOUR RATIONALE FOR CHOOSING FEATURES IN COMMENTS IN THE PYTHON CODE. For each newly generated
 feature, add a comment to the code that describes the feature, explains why you chose it and why this feature adds
-useful real world knowledge for the downstream model.
+useful real world knowledge for the downstream model. Include input samples in the comment, e.g.:
+# (Feature name and description)
+# Input samples: (Three samples of the columns used in the following code, e.g. '{df.columns[0]}':
+# {list(df.iloc[:3, 0].values)}, '{df.columns[1]}': {list(df.iloc[:3, 1].values)}, ...)
 """
 
 
