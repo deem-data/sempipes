@@ -6,10 +6,10 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import EstimatorTransformer, SemCleanOperator
 
-_MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
     "You are a helpful assistant that generates data cleaning code. Use skrub, sklearn, pandas, and scipy libraries as needed."
     "Answer only with the Python code."
@@ -195,7 +195,7 @@ class LLMCleaner(BaseEstimator, TransformerMixin):
         messages = [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
 
         generated_code: list[str] = []
-        for attempt in range(1, _MAX_RETRIES + 1):
+        for attempt in range(1, get_config().max_retries_for_code_gen + 1):
             code = ""
             try:
                 code = generate_python_code_from_messages(messages)

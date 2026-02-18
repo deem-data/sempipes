@@ -17,10 +17,10 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import SemFillNAOperator
 
-_MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
     "You are a helpful assistant that generates code for the data imputation model. Answer only with the Python code."
 )
@@ -240,7 +240,7 @@ Codeblock:
         suggested_models_and_imputers = None
         last_exception = None
 
-        for attempt in range(1, _MAX_RETRIES + 1):
+        for attempt in range(1, get_config().max_retries_for_code_gen + 1):
             try:
                 code = generate_python_code_from_messages(messages)
                 code_to_execute = "\n".join(generated_code) + "\n\n" + code
@@ -275,7 +275,7 @@ Codeblock:
 
         if suggested_models_and_imputers is None:
             raise RuntimeError(
-                f"sem_fillna failed after {_MAX_RETRIES} attempts. "
+                f"sem_fillna failed after {get_config().max_retries_for_code_gen} attempts. "
                 "Generated code must define 'suggested_models_and_imputers' and run without errors. "
                 "Ensure models are trained only on rows where the target column is not missing "
                 "(e.g. dropna(subset=[target]) before fit)."

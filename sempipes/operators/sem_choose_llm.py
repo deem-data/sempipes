@@ -7,11 +7,10 @@ from sklearn.base import BaseEstimator
 from skrub import DataOp, selectors
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.inspection.runtime_summary import available_packages
 from sempipes.llm.llm import generate_python_code
 from sempipes.operators.operators import SemChoices, SemChooseOperator
-
-_MAX_RETRIES = 3
 
 
 def _default_of(estimator_cls, param_name):
@@ -33,7 +32,7 @@ class SemChooseLLM(SemChooseOperator):
         choice_name = choices.name
         for param_name, user_prompt in choices.params_and_prompts.items():
             previous_exceptions: list[str] = []
-            for attempt in range(1, _MAX_RETRIES + 1):
+            for attempt in range(1, get_config().max_retries_for_code_gen + 1):
                 try:
                     prompt = self._build_prompt(
                         estimator,
