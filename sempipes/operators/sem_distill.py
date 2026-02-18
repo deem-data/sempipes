@@ -3,13 +3,13 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import SemDistillDataOperator
 
 _SYSTEM_PROMPT = """
 You are an expert data scientist, assisting with data distillation and condensation. You answer by generating code.
 """
-_MAX_RETRIES = 5
 
 
 def _get_samples_from_df(df: pd.DataFrame, number_of_samples: int = 10) -> str:
@@ -88,7 +88,7 @@ Codeblock:
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
         print(f"--- sempipes.sem_distill('{self.nl_prompt}', {self.number_of_rows})")
         messages = []
-        for attempt in range(1, _MAX_RETRIES + 1):
+        for attempt in range(1, get_config().max_retries_for_code_gen + 1):
             code = ""
             try:
                 samples = _get_samples_from_df(X, number_of_samples=10)

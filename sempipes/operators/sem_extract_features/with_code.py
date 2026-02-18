@@ -6,90 +6,15 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.inspection.pipeline_summary import PipelineSummary
-from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
-from sempipes.operators.operators import ContextAwareMixin, OptimisableMixin
+from sempipes.operators.iterative_code_gen_base import IterativeCodeGenEstimator
 from sempipes.operators.sem_extract_features._shared import SYSTEM_PROMPT, build_output_columns_to_generate_llm
 
 logger = get_logger()
-
-
-_MAX_RETRIES = 10
-
-
-def _add_memorized_history(
-    memory: list[dict[str, Any]] | None,
-    messages: list[dict[str, str]],
-    target_metric: str,
-) -> None:
-    if memory is not None and len(memory) > 0:
-        current_score = None
-        # FIXME Maybe? Add more real world knowledge
-        messages += [
-            {
-                "role": "user",
-                "content": """
-                IMPORTANT: Try to generate code that extracts better features for the downstream model. Here are some things that you can try:
-
-                If user allows you to use the `transformers` library, you can try to use it to extract features:
-                    - Try to use a pretrained model specialized for the domain of the data.
-                    - Try different variants of pretrained models for the feature extraction.
-                    - Adjust the hyperparameters of previously chosen pretrained models for the feature extraction.
-                    - Try models with a larger maximum sequence length.
-                    - Try models with a larger number of parameters.
-                
-                If user prohibits you from using the `transformers` library:
-                    - Use advanced regex patterns with named groups, lookaheads/lookbehinds, and pattern combinations to extract structured information.
-                    - Apply domain-specific text processing techniques (e.g., keyword extraction, n-gram analysis, TF-IDF, character-level features).
-                    - Leverage pandas string methods (`.str.extract()`, `.str.contains()`, `.str.findall()`) for efficient pattern matching.
-                    - Extract statistical features from text (word counts, character counts, punctuation density, capitalization patterns).
-                    - Use rule-based feature engineering based on domain knowledge (e.g., date formats, email patterns, phone numbers, URLs).
-                    - Apply string similarity metrics (Levenshtein distance, Jaccard similarity) when comparing text values.
-                    - Create composite features by combining multiple extraction strategies and validate them against the feature requirements.
-                    - Add detailed comments explaining the extraction logic and why each pattern or rule was chosen.
-                    - If data is multi-lingual, try to have a list of multilingual synonyms or other techniques that DO NOT take too much time to compute.
-                    - Try to analyze the data and understand the patterns and use them to extract features.
-
-                Below is a history of the code that has been generated and executed so far, together with the performance of the model.
-
-                IMPORTANT: Explain your reasoning for the code changes you made in comments of the code.
-                """,
-            }
-        ]
-
-        for memory_line in memory:
-            memorized_code = memory_line["update"]
-            memorized_score = memory_line["score"]
-
-            if current_score is None:
-                improvement = abs(memorized_score)
-            else:
-                improvement = memorized_score - current_score
-
-            if improvement > 0.0:
-                positive_impact_sentence = (
-                    "The code was executed and improved the downstream performance. "
-                    "You may choose to copy from this previous version of the code for the next version of the code."
-                )
-                current_score = memorized_score
-            else:
-                positive_impact_sentence = (
-                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
-                )
-
-            messages += [
-                {"role": "assistant", "content": memorized_code},
-                {
-                    "role": "user",
-                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
-                    f".{positive_impact_sentence}\nNext codeblock:\n",
-                },
-            ]
 
 
 def _get_code_feature_generation_message(
@@ -109,7 +34,7 @@ def _get_code_feature_generation_message(
         column_description_prompt += "\n"
 
     task_prompt = f"""
-Your goal is to help a data scientist generate Python code for the feature generation/extraction from multi-modal data. You need to extract information from text, image, or audio data. 
+Your goal is to help a data scientist generate Python code for the feature generation/extraction from multi-modal data. You need to extract information from text, image, or audio data.
 You can use any models from `transformers` library (version 4.57.1) that can be used zero-shot, without additional fine-tuning. You are allowed to leverage modality-specific models for each modality. If you need to read images from disk, you can use the `PIL` library for that, you are not allowed to import the `os` module.
 
 
@@ -117,7 +42,7 @@ The data scientist wants you to take special care of the following: {nl_prompt}.
 
 You are provided the name of the features to extract, how to extract them, and from which columns within a pandas DataFrame `df`.
 
-Generate Python code with method `extract_features(df: pd.DataFrame) -> pd.DataFrame` for feature extraction using `transformers`, `torch` libraries. 
+Generate Python code with method `extract_features(df: pd.DataFrame) -> pd.DataFrame` for feature extraction using `transformers`, `torch` libraries.
 `extract_features` takes the original DataFrame `df`.
 `extract_features` returns the original dataframe with newly generated columns: {columns_to_generate}.
 
@@ -190,7 +115,7 @@ IMPORTANT:
  - Make sure that the code feeds the data in batches to the GPU for efficiency.
  - Use the `tqdm` library to show a progress bar for the feature extraction.
 
-IMPORTANT: 
+IMPORTANT:
  - Each codeblock must start with ```python and end with ```end! Otherwise, the code will not be executed correctly.
  - The codeblock must be a valid Python code block, with no additional text
  - Do not add any other text to the codeblock, only the code itself! If you need to add comments, add them inside the codeblock as properly formatted python comments.
@@ -300,7 +225,7 @@ def _execute_in_subprocess(code_to_execute: str, df_sample: pd.DataFrame) -> pd.
         output_path.unlink(missing_ok=True)
 
 
-def _try_to_execute(
+def _validate_in_subprocess(
     df: pd.DataFrame, code_to_execute: str, generated_columns: list[str], print_code_to_console: bool
 ) -> None:
     df_sample = df.head(50).copy(deep=True)
@@ -352,7 +277,9 @@ def _describe_column(column: pd.Series):
     return column_description
 
 
-class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):  # pylint: disable=too-many-ancestors
+class CodeBasedFeatureExtractor(IterativeCodeGenEstimator):  # pylint: disable=too-many-ancestors
+    _SYSTEM_PROMPT = SYSTEM_PROMPT
+
     def __init__(
         self,
         nl_prompt: str,
@@ -364,22 +291,17 @@ class CodeBasedFeatureExtractor(BaseEstimator, TransformerMixin, ContextAwareMix
         _inspirations: list[dict[str, Any]] | DataOp | None = None,
         print_code_to_console: bool = False,
     ) -> None:
-        self.nl_prompt = nl_prompt
+        super().__init__(nl_prompt, _pipeline_summary, _prefitted_state, _memory, _inspirations)
         self.input_columns = input_columns
         self.output_columns_not_given = output_columns is None
         self.output_columns = {} if output_columns is None else output_columns
-        self._pipeline_summary = _pipeline_summary
-        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
-        self._memory: list[dict[str, Any]] | DataOp | None = _memory
-        self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
-        self.generated_code_: str | None = None
         self.print_code_to_console = print_code_to_console
 
     def empty_state(self):
         state = {
             "generated_code": """
 def extract_features(df: pd.DataFrame) -> pd.DataFrame:
-    return df        
+    return df
 """
         }
 
@@ -390,6 +312,14 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 
         return state
 
+    def _load_prefitted_state(self) -> bool:
+        if self._prefitted_state is not None:
+            self.generated_code_ = self._prefitted_state["generated_code"]
+            if "generated_features" in self._prefitted_state:
+                self.output_columns = self._prefitted_state["generated_features"]
+            return True
+        return False
+
     def state_after_fit(self):
         state = {"generated_code": self.generated_code_}
         if self.output_columns_not_given:
@@ -397,16 +327,57 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
 
         return state
 
-    def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None:
-            return self.generated_code_
-        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+    def _memory_preamble_messages(self) -> list[dict[str, str]]:
+        return [
+            {
+                "role": "user",
+                "content": """
+                IMPORTANT: Try to generate code that extracts better features for the downstream model. Here are some things that you can try:
+
+                If user allows you to use the `transformers` library, you can try to use it to extract features:
+                    - Try to use a pretrained model specialized for the domain of the data.
+                    - Try different variants of pretrained models for the feature extraction.
+                    - Adjust the hyperparameters of previously chosen pretrained models for the feature extraction.
+                    - Try models with a larger maximum sequence length.
+                    - Try models with a larger number of parameters.
+
+                If user prohibits you from using the `transformers` library:
+                    - Use advanced regex patterns with named groups, lookaheads/lookbehinds, and pattern combinations to extract structured information.
+                    - Apply domain-specific text processing techniques (e.g., keyword extraction, n-gram analysis, TF-IDF, character-level features).
+                    - Leverage pandas string methods (`.str.extract()`, `.str.contains()`, `.str.findall()`) for efficient pattern matching.
+                    - Extract statistical features from text (word counts, character counts, punctuation density, capitalization patterns).
+                    - Use rule-based feature engineering based on domain knowledge (e.g., date formats, email patterns, phone numbers, URLs).
+                    - Apply string similarity metrics (Levenshtein distance, Jaccard similarity) when comparing text values.
+                    - Create composite features by combining multiple extraction strategies and validate them against the feature requirements.
+                    - Add detailed comments explaining the extraction logic and why each pattern or rule was chosen.
+                    - If data is multi-lingual, try to have a list of multilingual synonyms or other techniques that DO NOT take too much time to compute.
+                    - Try to analyze the data and understand the patterns and use them to extract features.
+
+                Below is a history of the code that has been generated and executed so far, together with the performance of the model.
+
+                IMPORTANT: Explain your reasoning for the code changes you made in comments of the code.
+                """,
+            }
+        ]
+
+    def _build_error_feedback_message(self, code: str, error: Exception) -> list[dict[str, str]]:
+        return [
+            {"role": "assistant", "content": code},
+            {
+                "role": "user",
+                "content": (
+                    f"Code execution failed with error: {type(error)} {error}.\n "
+                    f"Remember: Each codeblock must start with ```python and end with ```end!\n"
+                    f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n"
+                ),
+            },
+        ]
+
+    def _try_to_execute(self, code, df, generated_columns, print_code_to_console):  # pylint: disable=arguments-differ
+        _validate_in_subprocess(df, code, generated_columns, print_code_to_console)
 
     def fit(self, df: pd.DataFrame, y=None):  # pylint: disable=unused-argument
-        if self._prefitted_state is not None:
-            self.generated_code_ = self._prefitted_state["generated_code"]
-            if "generated_features" in self._prefitted_state:
-                self.output_columns = self._prefitted_state["generated_features"]
+        if self._load_prefitted_state():
             return self
 
         if self.output_columns == {}:
@@ -422,73 +393,16 @@ def extract_features(df: pd.DataFrame) -> pd.DataFrame:
                 {"feature_name": new_feature, "feature_prompt": prompt, "input_columns": self.input_columns}
             )
 
-        self.synthesize_extraction_code(
-            df,
-            self.nl_prompt,
-            column_descriptions,
-            features_to_extract,
-            print_code_to_console=self.print_code_to_console,
-        )
-
-        return self
-
-    def synthesize_extraction_code(
-        self, df, nl_prompt, column_descriptions, features_to_extract, print_code_to_console: bool
-    ):
-        # Construct prompts with multi-modal data
         prompt = _get_code_feature_generation_message(
-            nl_prompt=nl_prompt,
+            nl_prompt=self.nl_prompt,
             columns_to_generate=list(self.output_columns.keys()),
             column_descriptions=column_descriptions,
             features_to_extract=features_to_extract,
         )
 
-        target_metric = "accuracy"
-        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
-            target_metric = self._pipeline_summary.target_metric
+        self._iterative_code_generation(df, list(self.output_columns.keys()), self.print_code_to_console, prompt=prompt)
 
-        # Generate code for multi-modal data
-        messages = []
-
-        code = ""
-        for attempt in range(1, _MAX_RETRIES + 1):
-            try:
-                if attempt == 1:
-                    messages += [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                    _add_memorized_history(self._memory, messages, target_metric)
-
-                code = generate_python_code_from_messages(messages)
-
-                print(code)
-
-                # Try to extract actual features
-                _try_to_execute(
-                    df,
-                    code,
-                    generated_columns=list(self.output_columns.keys()),
-                    print_code_to_console=print_code_to_console,
-                )
-
-                self.generated_code_ = code
-                break
-            except Exception as e:  # pylint: disable=broad-except
-                logger.error(f"An error occurred in attempt {attempt}: {e}", exc_info=True)
-
-                messages += [
-                    {"role": "assistant", "content": code},
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Code execution failed with error: {type(e)} {e}.\n "
-                            f"Remember: Each codeblock must start with ```python and end with ```end!\n"
-                            f"Code: ```python{code}```\n Generate next feature (fixing error?):\n```python\n"
-                        ),
-                    },
-                ]
-
-        if self.generated_code_ is None:
-            logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
-            self.generated_code_ = self.empty_state()["generated_code"]
+        return self
 
     def transform(self, df):
         check_is_fitted(self, "generated_code_")

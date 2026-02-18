@@ -1,5 +1,4 @@
 # This code is based on Apache-licensed code from https://github.com/noahho/CAAFE/
-# TODO This class needs some serious refactoring
 import os
 import traceback
 from datetime import datetime
@@ -7,27 +6,18 @@ from typing import Any
 
 import pandas as pd
 import skrub
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.inspection.pipeline_summary import PipelineSummary
-from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
+from sempipes.operators.iterative_code_gen_base import IterativeCodeGenEstimator
 from sempipes.operators.operators import (
-    ContextAwareMixin,
-    OptimisableMixin,
     SemGenFeaturesOperator,
 )
 
 logger = get_logger()
-
-_MAX_RETRIES = 10
-_SYSTEM_PROMPT = (
-    "You are an expert datascientist assistant solving Kaggle problems. "
-    "You answer only by generating code. Answer as concisely as possible."
-)
 
 
 def _get_prompt(  # pylint: disable=too-many-locals
@@ -155,45 +145,7 @@ def _build_prompt_from_df(
     )
 
 
-def _add_memorized_history(
-    memory: list[dict[str, Any]] | None,
-    messages: list[dict[str, str]],
-    target_metric: str,
-) -> None:
-    if memory is not None and len(memory) > 0:
-        current_score = None
-
-        for memory_line in memory:
-            memorized_code = memory_line["update"]
-            memorized_score = memory_line["score"]
-
-            if current_score is None:
-                improvement = abs(memorized_score)
-            else:
-                improvement = memorized_score - current_score
-
-            if improvement > 0.0:
-                add_feature_sentence = (
-                    "The code was executed and improved the downstream performance. "
-                    "You may choose to copy from this previous version of the code for the next version of the code."
-                )
-                current_score = memorized_score
-            else:
-                add_feature_sentence = (
-                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
-                )
-
-            messages += [
-                {"role": "assistant", "content": memorized_code},
-                {
-                    "role": "user",
-                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
-                    f".{add_feature_sentence}\nNext codeblock:\n",
-                },
-            ]
-
-
-def _try_to_execute(df: pd.DataFrame, generated_code: str) -> pd.DataFrame:
+def _validate_generated_code(df: pd.DataFrame, generated_code: str) -> pd.DataFrame:
     df_sample = df.head(100).copy(deep=True)
     columns_before = set(df_sample.columns)
 
@@ -213,7 +165,12 @@ def _try_to_execute(df: pd.DataFrame, generated_code: str) -> pd.DataFrame:
 
 
 # pylint: disable=too-many-ancestors
-class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):
+class LLMFeatureGenerator(IterativeCodeGenEstimator):
+    _SYSTEM_PROMPT = (
+        "You are an expert datascientist assistant solving Kaggle problems. "
+        "You answer only by generating code. Answer as concisely as possible."
+    )
+
     def __init__(
         self,
         nl_prompt: str,
@@ -224,14 +181,9 @@ class LLMFeatureGenerator(BaseEstimator, TransformerMixin, ContextAwareMixin, Op
         _memory: list[dict[str, Any]] | DataOp | None = None,
         _inspirations: list[dict[str, Any]] | DataOp | None = None,
     ) -> None:
-        self.nl_prompt = nl_prompt
+        super().__init__(nl_prompt, _pipeline_summary, _prefitted_state, _memory, _inspirations)
         self.how_many = how_many
         self.eval_mode = eval_mode
-        self._pipeline_summary = _pipeline_summary
-        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
-        self._memory: list[dict[str, Any]] | DataOp | None = _memory
-        self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
-        self.generated_code_: str | None = None
 
     def empty_state(self):
         return {
@@ -241,67 +193,19 @@ def _sem_gen_features(df):
 """
         }
 
-    def state_after_fit(self):
-        return {"generated_code": self.generated_code_}
-
-    def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None:
-            return self.generated_code_
-        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+    def _try_to_execute(self, code, df):  # pylint: disable=arguments-differ
+        _validate_generated_code(df, code)
 
     def fit(self, df: pd.DataFrame, y=None, **fit_params):  # pylint: disable=unused-argument
-        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
-
-        if self._prefitted_state is not None:
-            logger.debug(f"Using provided state for sempipes.sem_gen_features('{prompt_preview}...', {self.how_many})")
-            self.generated_code_ = self._prefitted_state["generated_code"]
+        if self._load_prefitted_state():
             return self
 
-        logger.info(
-            f"Fitting sempipes.sem_gen_features('{prompt_preview}...', {self.how_many}) on dataframe of shape {df.shape} in mode '{self.eval_mode}'."
-        )
-
         prompt = _build_prompt_from_df(df, self.nl_prompt, self.how_many, self._pipeline_summary, self._inspirations)
-
-        target_metric = "accuracy"
-        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
-            target_metric = self._pipeline_summary.target_metric
-
-        messages = []
-
-        for attempt in range(1, _MAX_RETRIES + 1):
-            if attempt == 1:
-                messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                _add_memorized_history(self._memory, messages, target_metric)
-
-            code = generate_python_code_from_messages(messages)
-            try:
-                _try_to_execute(df.copy(deep=True), code)
-
-                self.generated_code_ = code
-                break
-
-            except Exception as e:  # pylint: disable=broad-except
-                logger.info(f"An error occurred in attempt {attempt}:", e)
-                logger.debug(f"{e}", exc_info=True)
-                messages += [
-                    {"role": "assistant", "content": code},
-                    {
-                        "role": "user",
-                        "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        + f"Code: ```python{code}```\n Retry and fix the errors!\n```python\n",
-                    },
-                ]
-
-        if self.generated_code_ is None:
-            logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
-            self.generated_code_ = self.empty_state()["generated_code"]
-
+        self._iterative_code_generation(df, prompt=prompt)
         return self
 
     def transform(self, df):
         check_is_fitted(self, "generated_code_")
-        df_copy_for_logging = df.copy(deep=True)
 
         try:
             gen_features_func = safe_exec(self.generated_code_, variable_to_return="_sem_gen_features")
@@ -310,7 +214,6 @@ def _sem_gen_features(df):
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             error_folder = f".sem_gen_features_error_{timestamp}"
             os.makedirs(error_folder, exist_ok=True)
-            df_copy_for_logging.to_csv(os.path.join(error_folder, "input_df.csv"), index=False)
             if self.generated_code_ is not None:
                 with open(os.path.join(error_folder, "executed_code.py"), "w", encoding="utf-8") as f:
                     f.write(self.generated_code_)

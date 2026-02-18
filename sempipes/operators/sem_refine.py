@@ -7,6 +7,7 @@ from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
+from sempipes.config import get_config
 from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.operators.operators import EstimatorTransformer, SemRefineOperator
 
@@ -22,7 +23,6 @@ class SemRefineWithLLM(SemRefineOperator):
         )
 
 
-_MAX_RETRIES = 5
 _SYSTEM_PROMPT = (
     "You are a helpful assistant, assisting data scientists with improving their data preparation code and, for instance, refinement code. "
     "You answer only by generating code. Answer as concisely as possible."
@@ -157,7 +157,7 @@ class LLMDeduplicator(BaseEstimator, TransformerMixin):
         self.value_counts_ = json.dumps(df[self.target_column].value_counts().to_dict())
 
         messages = []
-        for attempt in range(1, _MAX_RETRIES + 1):
+        for attempt in range(1, get_config().max_retries_for_code_gen + 1):
             code = ""
 
             try:

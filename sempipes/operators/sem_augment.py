@@ -9,17 +9,12 @@ from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.inspection.pipeline_summary import PipelineSummary
-from sempipes.llm.llm import batch_generate_json_retries, generate_python_code_from_messages
+from sempipes.llm.llm import batch_generate_json_retries
 from sempipes.logging import get_logger
+from sempipes.operators.iterative_code_gen_base import IterativeCodeGenEstimator
 from sempipes.operators.operators import ContextAwareMixin, OptimisableMixin, SemAugmentDataOperator
 
 logger = get_logger()
-
-_SYSTEM_PROMPT = """
-You are an expert data scientist, assisting with data augmentation. You answer by generating code or directly generating data.
-"""
-
-_MAX_RETRIES = 10
 
 
 def _get_samples_from_df(
@@ -66,7 +61,7 @@ class SemAugmentData(SemAugmentDataOperator):
         return DirectDataAugmentor(nl_prompt=nl_prompt, number_of_rows_to_generate=number_of_rows_to_generate)
 
 
-def _try_to_execute(df: pd.DataFrame, code_to_execute: str, number_of_rows_to_generate: int) -> None:
+def _validate_generated_code(df: pd.DataFrame, code_to_execute: str, number_of_rows_to_generate: int) -> None:
     df_sample = df.head(1000).copy(deep=True)
     columns_before = df_sample.columns
 
@@ -87,15 +82,35 @@ def _try_to_execute(df: pd.DataFrame, code_to_execute: str, number_of_rows_to_ge
     logger.debug(f"Generated {df_sample_processed.shape[0]} rows from a pd.DataFrame with {df_sample.shape[0]} rows.")
 
 
-def _add_memorized_history(
-    memory: list[dict[str, Any]] | None,
-    messages: list[dict[str, str]],
-    target_metric: str,
-) -> None:
-    if memory is not None and len(memory) > 0:
-        current_score = None
+class CodeDataAugmentor(IterativeCodeGenEstimator):  # pylint: disable=too-many-ancestors
+    _SYSTEM_PROMPT = """
+You are an expert data scientist, assisting with data augmentation. You answer by generating code or directly generating data.
+"""
 
-        messages += [
+    def __init__(
+        self,
+        nl_prompt: str,
+        number_of_rows_to_generate: int,
+        eval_mode: str = skrub.eval_mode(),
+        _pipeline_summary: PipelineSummary | None | DataOp = None,
+        _prefitted_state: dict[str, Any] | DataOp | None = None,
+        _memory: list[dict[str, Any]] | DataOp | None = None,
+        _inspirations: list[dict[str, Any]] | DataOp | None = None,
+    ) -> None:
+        super().__init__(nl_prompt, _pipeline_summary, _prefitted_state, _memory, _inspirations)
+        self.number_of_rows_to_generate = number_of_rows_to_generate
+        self.eval_mode = eval_mode
+
+    def empty_state(self):
+        return {
+            "generated_code": """
+def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
+    return df
+"""
+        }
+
+    def _memory_preamble_messages(self) -> list[dict[str, str]]:
+        return [
             {
                 "role": "user",
                 "content": """
@@ -112,71 +127,8 @@ def _add_memorized_history(
             }
         ]
 
-        for memory_line in memory:
-            memorized_code = memory_line["update"]
-            memorized_score = memory_line["score"]
-
-            if current_score is None:
-                improvement = abs(memorized_score)
-            else:
-                improvement = memorized_score - current_score
-
-            if improvement > 0.0:
-                add_feature_sentence = (
-                    "The code was executed and improved the downstream performance. "
-                    "You may choose to copy from this previous version of the code for the next version of the code."
-                )
-                current_score = memorized_score
-            else:
-                add_feature_sentence = (
-                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
-                )
-
-            messages += [
-                {"role": "assistant", "content": memorized_code},
-                {
-                    "role": "user",
-                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
-                    f".{add_feature_sentence}\nNext codeblock:\n",
-                },
-            ]
-
-
-class CodeDataAugmentor(BaseEstimator, TransformerMixin, ContextAwareMixin, OptimisableMixin):  # pylint: disable=too-many-ancestors
-    def __init__(
-        self,
-        nl_prompt: str,
-        number_of_rows_to_generate: int,
-        eval_mode: str = skrub.eval_mode(),
-        _pipeline_summary: PipelineSummary | None | DataOp = None,
-        _prefitted_state: dict[str, Any] | DataOp | None = None,
-        _memory: list[dict[str, Any]] | DataOp | None = None,
-        _inspirations: list[dict[str, Any]] | DataOp | None = None,
-    ) -> None:
-        self.nl_prompt = nl_prompt
-        self.number_of_rows_to_generate = number_of_rows_to_generate
-        self.eval_mode = eval_mode
-        self._pipeline_summary = _pipeline_summary
-        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
-        self._memory: list[dict[str, Any]] | DataOp | None = _memory
-        self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
-        self.generated_code_: str | None = None
-
-    def empty_state(self):
-        return {
-            "generated_code": """
-def augment_data(df: pandas.DataFrame) -> pandas.DataFrame:
-    return df        
-"""
-        }
-
-    def state_after_fit(self):
-        return {"generated_code": self.generated_code_}
-
-    def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None:
-            return self.generated_code_
-        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+    def _try_to_execute(self, code, df):  # pylint: disable=arguments-differ
+        _validate_generated_code(df, code, self.number_of_rows_to_generate)
 
     @staticmethod
     def _build_prompt_for_code_generation(
@@ -215,8 +167,8 @@ Columns in `df` (true feature dtypes listed here, categoricals encoded as int):
 Number of samples (rows) in training dataset: {int(len(df))}.
 Number of samples (rows) to augment: {int(number_of_rows_to_generate)}.
 
-You need to generate Python code for the data augmentation of the dataframe `df` that returns the original dataframe `df` with appended augmented rows. 
-The generated code should be a Python method `augment_data(df: pandas.DataFrame) -> pandas.DataFrame` that takes as input a pandas DataFrame and returns the same pandas DataFrame `df` with appended {number_of_rows_to_generate} new augmented rows`. 
+You need to generate Python code for the data augmentation of the dataframe `df` that returns the original dataframe `df` with appended augmented rows.
+The generated code should be a Python method `augment_data(df: pandas.DataFrame) -> pandas.DataFrame` that takes as input a pandas DataFrame and returns the same pandas DataFrame `df` with appended {number_of_rows_to_generate} new augmented rows`.
 
 The data scientist wants you to take special care of the following: {nl_prompt}.
 
@@ -279,62 +231,20 @@ Codeblock:
 """
 
     def fit_transform(self, X, y=None, **kwargs):  # pylint: disable=unused-argument
-        if self._prefitted_state is not None:
-            self.generated_code_ = self._prefitted_state["generated_code"]
-        else:
+        if not self._load_prefitted_state():
             logger.info(f"sempipes.sem_augment('{self.nl_prompt}', True, {self.number_of_rows_to_generate})")
 
-            target_metric = "accuracy"
-            if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
-                target_metric = self._pipeline_summary.target_metric
+            samples = _get_samples_from_df(X, number_of_samples=10)
+            prompt = self._build_prompt_for_code_generation(
+                df=X,
+                nl_prompt=self.nl_prompt,
+                samples=samples,
+                number_of_rows_to_generate=self.number_of_rows_to_generate,
+                pipeline_summary=self._pipeline_summary,
+                inspirations=self._inspirations,
+            )
 
-            messages = []
-            for attempt in range(1, _MAX_RETRIES + 1):
-                code = ""
-
-                try:  # pylint: disable=too-many-try-statements
-                    samples = _get_samples_from_df(X, number_of_samples=10)
-                    prompt = self._build_prompt_for_code_generation(
-                        df=X,
-                        nl_prompt=self.nl_prompt,
-                        samples=samples,
-                        number_of_rows_to_generate=self.number_of_rows_to_generate,
-                        pipeline_summary=self._pipeline_summary,
-                        inspirations=self._inspirations,
-                    )
-
-                    if attempt == 1:
-                        messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                        _add_memorized_history(self._memory, messages, target_metric)
-
-                    code = generate_python_code_from_messages(messages)
-
-                    print("#" * 80)
-                    print(f"{code}")
-                    print("#" * 80)
-
-                    _try_to_execute(X.copy(deep=True), code, self.number_of_rows_to_generate)
-
-                    self.generated_code_ = code
-                    break
-                except Exception as e:  # pylint: disable=broad-except
-                    logger.error(f"\t> An error occurred in attempt {attempt}: {e}")  # , exc_info=True)
-                    messages += [
-                        {"role": "assistant", "content": code},
-                        {
-                            "role": "user",
-                            "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                            f"Code: ```python{code}```\n Generate code again (fixing error?):\n```python\n",
-                        },
-                    ]
-
-        print(">" * 80)
-        print(f"{self.generated_code_}")
-        print(">" * 80)
-
-        if self.generated_code_ is None:
-            logger.warning("No working code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
-            self.generated_code_ = self.empty_state()["generated_code"]
+            self._iterative_code_generation(X, prompt=prompt)
 
         augmentation_func = safe_exec(self.generated_code_, "augment_data")
         df_augmented = augmentation_func(X.copy(deep=True))
@@ -374,7 +284,7 @@ Number of samples (rows) in training dataset: {int(len(df))}.
 Number of samples (rows) to augment: {int(number_of_rows_to_generate)}.
 
 You need to augment dataframe `df` by generating {int(number_of_rows_to_generate)} new rows that are similar to the existing data, but with variations and augmentations that make sense given the context of the data.
-Please provide the augmented data in a JSON array format, where each element in the array represents a new row to be added to the dataframe. 
+Please provide the augmented data in a JSON array format, where each element in the array represents a new row to be added to the dataframe.
 Each row should be a JSON object with key-value pairs corresponding to column names and their respective values.
 Please ensure that the data types of the values match the data types of the existing columns in the dataframe.
 The generated JSON array should be readable via `pandas.read_json(StringIO(_), orient='records')`.
@@ -422,7 +332,9 @@ Codeblock:
                 number_of_rows_to_generate=current_batch_size,
             )
 
-            all_messages.append([{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}])
+            all_messages.append(
+                [{"role": "system", "content": CodeDataAugmentor._SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+            )
 
         all_augmented_data = batch_generate_json_retries(all_messages)
 

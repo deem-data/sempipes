@@ -5,18 +5,15 @@ from typing import Any
 
 import pandas as pd
 import skrub
-from sklearn.base import TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 from skrub import DataOp
 
 from sempipes.code_generation.safe_exec import safe_exec
 from sempipes.inspection.pipeline_summary import PipelineSummary
-from sempipes.llm.llm import generate_python_code_from_messages
 from sempipes.logging import get_logger
+from sempipes.operators.iterative_code_gen_base import IterativeCodeGenEstimator
 from sempipes.operators.operators import (
-    ContextAwareMixin,
     EstimatorTransformer,
-    OptimisableMixin,
     SemAggFeaturesOperator,
 )
 
@@ -45,13 +42,6 @@ def _dataframe_mini_summary(df: pd.DataFrame, sample_size: int = 10) -> str:
     return "\n".join(summary_lines)
 
 
-_SYSTEM_PROMPT = (  # "You are an expert data scientist assistant helping data scientists write a data preprocessing pipeline for a predictive model. "
-    "You are an expert data scientist assistant solving Kaggle problems. "
-    "You answer only by generating code. Answer as concisely as possible."
-)
-_MAX_RETRIES = 5
-
-
 def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_prompt, how_many, inspirations):  # pylint: disable=too-many-positional-arguments
     left_df_summary = _dataframe_mini_summary(left_df)
     right_df_summary = _dataframe_mini_summary(right_df)
@@ -72,9 +62,9 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
             inspiration_examples += f"Example {i+1}:\n```python\n{code}\n```\nScore: {score:.4f}\n\n"
 
     return f"""
-        You need to extend a data preparation pipeline for a machine learning model with generating additional features for the training data. The code already has a dataframe with 
+        You need to extend a data preparation pipeline for a machine learning model with generating additional features for the training data. The code already has a dataframe with
         existing features and the goal is to left join another dataframe with the existing dataframe to generate more features. For that, you need
-        to decide which columns to include from the dataframe to join and how to aggregate them in a way that helps the downstream model. A single column can be 
+        to decide which columns to include from the dataframe to join and how to aggregate them in a way that helps the downstream model. A single column can be
         included multiple times with different aggregations.
 
         The dataframe with the existing training data looks as follows:
@@ -91,7 +81,7 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
 
         Here is the full output of df.describe(include='all') for the dataframe to join. You can use these statistics
         as constants for your aggregation functions if needed.
-        
+
         {right_df.describe(include='all').to_string()}
 
         Please take special care of the following:
@@ -100,66 +90,24 @@ def _build_prompt(left_df, right_df, left_join_column, right_join_column, nl_pro
 
         {inspiration_examples}
 
-        Generate a Python function called `_sem_agg_join` that takes four arguments: `left_join_column`, `left_df`, `right_join_column` and `right_df` 
+        Generate a Python function called `_sem_agg_join` that takes four arguments: `left_join_column`, `left_df`, `right_join_column` and `right_df`
         and conducts the desired left join and aggregations. Your code should generate {how_many} new features.
-        
+
         DO NOT INCLUDE EXAMPLE USAGE CODE. WRAP YOUR RESPONSE CODE IN ```python and ```.
 
         MAKE SURE THAT THE NEW COLUMNS HAVE MEANINGFUL NAMES.
-        
-        EXPLAIN YOUR RATIONALE FOR CHOOSING AGGREGATION FUNCTIONS IN COMMENTS IN THE PYTHON CODE. For each newly generated 
-        feature, add a comment to the code that describes the features, explains why you chose it and why this feature adds useful real world knowledge for the downstream model. 
+
+        EXPLAIN YOUR RATIONALE FOR CHOOSING AGGREGATION FUNCTIONS IN COMMENTS IN THE PYTHON CODE. For each newly generated
+        feature, add a comment to the code that describes the features, explains why you chose it and why this feature adds useful real world knowledge for the downstream model.
     """
 
 
-def _add_memorized_history(
-    memory: list[dict[str, Any]] | None,
-    messages: list[dict[str, str]],
-    target_metric: str,
-) -> None:
-    if memory is not None and len(memory) > 0:
-        current_score = None
-
-        for memory_line in memory:
-            memorized_code = memory_line["update"]
-            memorized_score = memory_line["score"]
-
-            if current_score is None:
-                improvement = abs(memorized_score)
-            else:
-                improvement = memorized_score - current_score
-
-            if improvement > 0.0:
-                add_feature_sentence = (
-                    "The code was executed and improved the downstream performance. "
-                    "You may choose to copy from this previous version of the code for the next version of the code."
-                )
-                current_score = memorized_score
-            else:
-                add_feature_sentence = (
-                    f"The last code changes did not improve performance. " f"(Improvement: {improvement})"
-                )
-
-            messages += [
-                {"role": "assistant", "content": memorized_code},
-                {
-                    "role": "user",
-                    "content": f"Performance for last code block: {target_metric}={memorized_score:.5f}. "
-                    f".{add_feature_sentence}\nNext codeblock:\n",
-                },
-            ]
-
-
-def _try_to_execute(generated_code, left_df, left_join_key, right_df, right_join_key):
+def _validate_generated_code(generated_code, left_df, left_join_key, right_df, right_join_key):
     agg_join_func = safe_exec(generated_code, variable_to_return="_sem_agg_join")
 
-    # print("#" * 80)
-    # print(generated_code)
-    # print("#" * 80)
-
-    left_sample = left_df.head(n=100)
+    left_sample = left_df.head(n=100).copy(deep=True)
     left_keys = left_sample[left_join_key].sample(frac=0.9, random_state=42)
-    right_sample = right_df[right_df[right_join_key].isin(left_keys)]
+    right_sample = right_df[right_df[right_join_key].isin(left_keys)].copy(deep=True)
     test_result = agg_join_func(left_join_key, left_sample, right_join_key, right_sample)
 
     if right_join_key != left_join_key and right_join_key in test_result.columns:
@@ -175,7 +123,12 @@ def _try_to_execute(generated_code, left_df, left_join_key, right_df, right_join
     return test_result
 
 
-class LLMCodeGenSemAggFeaturesEstimator(EstimatorTransformer, TransformerMixin, ContextAwareMixin, OptimisableMixin):  # pylint: disable=too-many-ancestors
+class LLMCodeGenSemAggFeaturesEstimator(IterativeCodeGenEstimator):  # pylint: disable=too-many-ancestors
+    _SYSTEM_PROMPT = (
+        "You are an expert data scientist assistant solving Kaggle problems. "
+        "You answer only by generating code. Answer as concisely as possible."
+    )
+
     def __init__(
         self,
         left_join_key: str,
@@ -188,48 +141,33 @@ class LLMCodeGenSemAggFeaturesEstimator(EstimatorTransformer, TransformerMixin, 
         _memory: list[dict[str, Any]] | DataOp | None = None,
         _inspirations: list[dict[str, Any]] | DataOp | None = None,
     ):
+        super().__init__(nl_prompt, _pipeline_summary, _prefitted_state, _memory, _inspirations)
         self.left_join_key = left_join_key
         self.right_join_key = right_join_key
-        self.nl_prompt = nl_prompt
         self.how_many = how_many
-        self.generated_code_: str | None = None
-
         self.eval_mode = eval_mode
-        self._pipeline_summary = _pipeline_summary
-        self._prefitted_state: dict[str, Any] | DataOp | None = _prefitted_state
-        self._memory: list[dict[str, Any]] | DataOp | None = _memory
-        self._inspirations: list[dict[str, Any]] | DataOp | None = _inspirations
 
     def empty_state(self):
         return {
             "generated_code": """
 def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
-    return left_df         
+    return left_df
 """
         }
 
-    def state_after_fit(self):
-        return {"generated_code": self.generated_code_}
-
-    def memory_update_from_latest_fit(self):
-        if self.generated_code_ is not None:
-            return self.generated_code_
-        return OptimisableMixin.EMPTY_MEMORY_UPDATE
+    def _try_to_execute(self, code, samples, data_to_aggregate):  # pylint: disable=arguments-differ
+        test_result = _validate_generated_code(
+            code, samples, self.left_join_key, data_to_aggregate, self.right_join_key
+        )
+        new_columns = [column for column in test_result.columns if column not in samples.columns]
+        logger.info(f"Computed {len(new_columns)} new feature columns: {new_columns}.")
 
     def fit(self, stacked_inputs, y=None) -> "LLMCodeGenSemAggFeaturesEstimator":  # pylint: disable=unused-argument
-        prompt_preview = self.nl_prompt[:40].replace("\n", " ").strip()
-
-        if self._prefitted_state is not None:
-            logger.debug(f"Using provided state for sempipes.sem_agg_features('{prompt_preview}...', {self.how_many})")
-            self.generated_code_ = self._prefitted_state["generated_code"]
+        if self._load_prefitted_state():
             return self
 
         samples = stacked_inputs["samples"]
         data_to_aggregate = stacked_inputs["data_to_aggregate"]
-
-        logger.info(
-            f"Fitting sempipes.sem_agg_features('{prompt_preview}...', {self.how_many}) on dataframes of shape {samples.shape} and {data_to_aggregate.shape} in mode '{self.eval_mode}'."
-        )
 
         prompt = _build_prompt(
             samples,
@@ -241,51 +179,7 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
             self._inspirations,
         )
 
-        target_metric = "accuracy"
-        if self._pipeline_summary is not None and self._pipeline_summary.target_metric is not None:
-            target_metric = self._pipeline_summary.target_metric
-
-        messages = []
-
-        for attempt in range(1, _MAX_RETRIES + 1):
-            if attempt == 1:
-                messages += [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
-                _add_memorized_history(self._memory, messages, target_metric)
-
-            logger.debug("#" * 80)
-            logger.debug(messages)
-            logger.debug("#" * 80)
-
-            code = generate_python_code_from_messages(messages)
-            try:
-                samples_copy = samples.copy(deep=True)
-                data_to_aggregate_copy = data_to_aggregate.copy(deep=True)
-                test_result = _try_to_execute(
-                    code, samples_copy, self.left_join_key, data_to_aggregate_copy, self.right_join_key
-                )
-                new_columns = [column for column in test_result.columns if column not in samples.columns]
-
-                logger.info(f"Computed {len(new_columns)} new feature columns: {new_columns}.")
-                self.generated_code_ = code
-                break
-
-            except Exception as e:  # pylint: disable=broad-except
-                logger.info(f"An error occurred in attempt {attempt}:", e)
-                logger.debug(f"{e}", exc_info=True)
-
-                messages += [
-                    {"role": "assistant", "content": code},
-                    {
-                        "role": "user",
-                        "content": f"Code execution failed with error: {type(e)} {e}.\n "
-                        + f"Code: ```python{code}```\n Retry and fix the errors!\n```python\n",
-                    },
-                ]
-
-        if self.generated_code_ is None:
-            logger.error(f"No code generated after {_MAX_RETRIES} retries. Falling back to empty state.")
-            self.generated_code_ = self.empty_state()["generated_code"]
-
+        self._iterative_code_generation(samples, data_to_aggregate, prompt=prompt)
         return self
 
     def transform(self, stacked_inputs) -> pd.DataFrame:
@@ -294,9 +188,6 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
         data_to_aggregate = stacked_inputs["data_to_aggregate"]
 
         num_samples_before = len(samples)
-        # This is expensive, but we keep it for now to better understand operator failures.
-        samples_copy_for_logging = samples.copy(deep=True)
-        data_to_aggregate_copy_for_logging = data_to_aggregate.copy(deep=True)
 
         try:
             # We have to copy the inputs, as some generated code might modify the data in-place.
@@ -310,8 +201,6 @@ def _sem_agg_join(left_join_column, left_df, right_join_column, right_df):
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             error_folder = f".sem_agg_features_error_{timestamp}"
             os.makedirs(error_folder, exist_ok=True)
-            samples_copy_for_logging.to_csv(os.path.join(error_folder, "samples.csv"), index=False)
-            data_to_aggregate_copy_for_logging.to_csv(os.path.join(error_folder, "data_to_aggregate.csv"), index=False)
             if self.generated_code_ is not None:
                 with open(os.path.join(error_folder, "executed_code.py"), "w", encoding="utf-8") as f:
                     f.write(self.generated_code_)

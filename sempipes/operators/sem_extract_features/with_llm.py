@@ -20,9 +20,6 @@ from sempipes.operators.sem_extract_features._shared import (
 logger = get_logger()
 
 
-_MAX_RETRIES = 5
-
-
 def _get_pre_post_feature_generation_messages(columns_to_generate: list[str]) -> tuple[str, str]:
     task_prompt = f"""
     Your goal is to help a data scientist generate features from multi-modal data.
