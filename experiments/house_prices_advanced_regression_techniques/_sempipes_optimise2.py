@@ -22,7 +22,6 @@ pipeline = sempipes_pipeline2()
 
 outcomes = optimise_colopro(
     pipeline,
-    "house_features",
     num_trials=24,
     scoring="neg_root_mean_squared_log_error",
     search=MonteCarloTreeSearch(c=0.5),

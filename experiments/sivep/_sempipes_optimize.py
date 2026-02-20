@@ -83,7 +83,6 @@ if __name__ == "__main__":
 
     outcomes = optimise_colopro(
         pipeline,
-        operator_name="augment_data",
         search=MonteCarloTreeSearch(c=0.5),
         num_trials=24,
         scoring="roc_auc",

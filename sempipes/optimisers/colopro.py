@@ -11,63 +11,11 @@ from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.logging import get_logger
 from sempipes.operators.operators import OptimisableMixin
-from sempipes.operators.sem_choose_llm import SemChooseLLM
 from sempipes.optimisers.greedy_tree_search import TreeSearch
-from sempipes.optimisers.search_policy import Outcome, SearchNode, SearchPolicy
+from sempipes.optimisers.search_policy import Outcome, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
 
 logger = get_logger()
-
-
-def _update_sem_choices(pipeline, previous_results):
-    estimator_op_names = []
-    choice_op_names = []
-
-    all_choices = choice_graph(pipeline)
-    for display_name in all_choices["choice_display_names"].values():
-        if display_name.startswith("__sempipes__"):
-            estimator_name = display_name.split("__")[2]
-            estimator_op_name = f"sempipes__choices__{estimator_name}__estimator"
-            choice_op_name = f"sempipes__choices__{estimator_name}__choices"
-            if estimator_op_name not in estimator_op_names:
-                estimator_op_names.append(estimator_op_name)
-                choice_op_names.append(choice_op_name)
-
-    for estimator_op_name, choice_op_name in zip(estimator_op_names, choice_op_names):
-        apply_op = find_node_by_name(pipeline, estimator_op_name)
-        choice_storage_op = find_node_by_name(pipeline, choice_op_name)
-
-        estimator = apply_op._skrub_impl.estimator
-        choices = choice_storage_op.skb.eval()
-
-        SemChooseLLM().set_params_on_estimator(estimator, choices, previous_results=previous_results)
-
-
-def optimise_sem_choices(
-    dag_sink: DataOp,
-    budget: int,
-    scoring: str = "accuracy",
-    cv: int = 3,
-    candidates_to_evaluate_per_trial: int = 10,
-) -> list[Outcome]:
-    results = []
-
-    logger.info("COLOPRO> Running initial search for sem_choose")
-    initial_search = dag_sink.skb.make_randomized_search(
-        fitted=True, cv=cv, scoring=scoring, n_iter=candidates_to_evaluate_per_trial
-    )
-
-    results.append(initial_search.results_)
-
-    for trial in range(1, budget):
-        logger.info(f"COLOPRO> Running search {trial} for sem_choose")
-        _update_sem_choices(dag_sink, results)
-        search = dag_sink.skb.make_randomized_search(
-            fitted=True, cv=cv, scoring=scoring, n_iter=candidates_to_evaluate_per_trial
-        )
-        results.append(search.results_)
-
-    return results
 
 
 def _evolve_operator(pipeline, operator_name, env):
@@ -86,7 +34,6 @@ def _needs_hpo(dag_sink):
 
 def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many-locals, too-many-statements, too-many-arguments
     dag_sink: DataOp,
-    operator_name: str,
     num_trials: int,
     search: SearchPolicy = TreeSearch(),
     scoring: str = "accuracy",
@@ -100,13 +47,13 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
     """
+    env_for_inspection = dag_sink.skb.get_data()
+    # collect all operator names from the environment, the variable name is "sempipes_prefitted_state__{name}"
+    all_operator_names = [
+        name.split("__")[1] for name in env_for_inspection.keys() if name.startswith("sempipes_prefitted_state__")
+    ]
 
-    env_for_evolution = dag_sink.skb.get_data()
-    env_for_scoring = dag_sink.skb.get_data()
-
-    if additional_env_variables is not None:
-        env_for_evolution.update(additional_env_variables)
-        env_for_scoring.update(additional_env_variables)
+    all_operator_names = sorted(list(set(all_operator_names)))
 
     needs_hpo = _needs_hpo(dag_sink)
 
@@ -114,41 +61,53 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     pipeline_summary = summarise_pipeline(dag_sink, pipeline_definition)
     pipeline_summary.target_metric = scoring
 
-    search_node_queue: list[SearchNode] = []
-
     for trial in range(num_trials):
         logger.info(f"COLOPRO> Processing trial {trial}")
 
+        env_for_evolution = dag_sink.skb.get_data()
+        env_for_scoring = dag_sink.skb.get_data()
+
+        if additional_env_variables is not None:
+            env_for_evolution.update(additional_env_variables)
+            env_for_scoring.update(additional_env_variables)
+
         if trial == 0:
-            logger.info(f"COLOPRO> Initialising optimisation of {operator_name} via OPRO")
-            search_node = search.create_root_node(dag_sink, operator_name)
-            operator_state = search_node.predefined_state
+            logger.info("COLOPRO> Initialising optimisation via OPRO")
+            search_node = search.create_root_node(dag_sink, all_operator_names)
+            operator_state = None
+            fixed_operators = all_operator_names
             operator_memory_update = OptimisableMixin.EMPTY_MEMORY_UPDATE
         else:
-            if len(search_node_queue) == 0:
-                next_search_node = search.create_next_search_node()
-                if next_search_node is None:
-                    logger.warning("COLOPRO> Search policy returned None, no more nodes to generate")
-                    break
-                logger.info("COLOPRO> Generating new search node")
-                search_node_queue.append(next_search_node)
+            # Pick the operator to evolve from all_operator_names in round-robin fashion
+            operator_to_evolve = all_operator_names[trial % len(all_operator_names)]
+            fixed_operators = [name for name in all_operator_names if name != operator_to_evolve]
 
-            search_node = search_node_queue.pop(0)
-            search_node.trial = trial
-            logger.info(f'COLOPRO> Evolving operator "{operator_name}" via OPRO')
+            search_node = search.create_next_search_node(trial, operator_to_evolve, all_operator_names)
+            logger.info("COLOPRO> Generating new search node")
+
+            logger.info(f'COLOPRO> Evolving operator "{operator_to_evolve}" via OPRO')
             evolution_start_time = time.time()
             pipeline = dag_sink.skb.clone()
 
-            env_for_evolution[f"sempipes_pipeline_summary__{operator_name}"] = pipeline_summary
-            env_for_evolution[f"sempipes_memory__{operator_name}"] = search_node.memory
-            env_for_evolution[f"sempipes_inspirations__{operator_name}"] = search_node.inspirations
+            env_for_evolution[f"sempipes_pipeline_summary__{operator_to_evolve}"] = pipeline_summary
+            env_for_evolution[f"sempipes_memory__{operator_to_evolve}"] = search_node.memories.get(operator_to_evolve)
+            env_for_evolution[f"sempipes_inspirations__{operator_to_evolve}"] = search_node.inspirations.get(
+                operator_to_evolve
+            )
 
-            operator_state, operator_memory_update = _evolve_operator(pipeline, operator_name, env_for_evolution)
+            for operator_name in fixed_operators:
+                env_for_evolution[f"sempipes_prefitted_state__{operator_name}"] = search_node.fixed_states.get(
+                    operator_name
+                )
+
+            operator_state, operator_memory_update = _evolve_operator(pipeline, operator_to_evolve, env_for_evolution)
             evolution_end_time = time.time()
             logger.info(f"COLOPRO> Evolution took {evolution_end_time - evolution_start_time:.2f} seconds")
 
-        env_for_scoring[f"sempipes_pipeline_summary__{operator_name}"] = pipeline_summary
-        env_for_scoring[f"sempipes_prefitted_state__{operator_name}"] = operator_state
+            env_for_scoring[f"sempipes_prefitted_state__{operator_to_evolve}"] = operator_state
+
+        for operator_name in fixed_operators:
+            env_for_scoring[f"sempipes_prefitted_state__{operator_name}"] = search_node.fixed_states.get(operator_name)
 
         evaluation_start_time = time.time()
         if needs_hpo:
@@ -180,10 +139,9 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     trajectory = Trajectory(
         sempipes_config=get_config(),
         optimizer_args={
-            "operator_name": operator_name,
+            # "operator_name": operator_name,
             "num_trials": num_trials,
             "scoring": serialize_scoring(scoring),
-            # "scoring": scoring if not isinstance(scoring, Callable) else f"<function: {scoring.__name__}>" if hasattr(scoring, "__name__") else f"<callable: {type(scoring).__name__}>",
             "cv": str(cv),
             "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,
         },

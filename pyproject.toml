@@ -98,6 +98,3 @@ line-ending = "auto"
 "**/{docs}/*" = ["ALL"]
 "**__init__.py" = ["ALL"]
 "experiments/single_cell_analysis/aide_qr.py" = ["ALL"]
-
-[tool.mypy]
-exclude = '^experiments/'

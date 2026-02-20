@@ -127,7 +127,9 @@ class IterativeCodeGenEstimator(BaseEstimator, TransformerMixin, ContextAwareMix
                 messages += self._build_error_feedback_message(code, e)
 
         if self.generated_code_ is None:
-            logger.error(f"No code generated after {get_config().max_retries_for_code_gen} retries. Falling back to empty state.")
+            logger.error(
+                f"No code generated after {get_config().max_retries_for_code_gen} retries. Falling back to empty state."
+            )
             self.generated_code_ = self.empty_state()["generated_code"]
 
     def state_after_fit(self) -> dict[str, Any]:

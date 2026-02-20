@@ -70,7 +70,6 @@ class TestPipeline(ABC):
         search_policy = setup.search.clone_empty()
         outcomes = optimise_colopro(
             pipeline,
-            TestPipeline.OPERATOR_NAME,
             num_trials=setup.num_trials,
             scoring=self.scoring,
             search=search_policy,

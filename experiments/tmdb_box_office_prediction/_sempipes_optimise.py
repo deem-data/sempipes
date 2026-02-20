@@ -13,7 +13,6 @@ predictions = sempipes_pipeline("experiments/tmdb_box_office_prediction/validati
 
 outcomes = optimise_colopro(
     predictions,
-    "additional_movie_features",
     num_trials=5,
     scoring="neg_root_mean_squared_log_error",
     cv=5,

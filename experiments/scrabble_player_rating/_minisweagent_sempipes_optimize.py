@@ -87,7 +87,6 @@ if __name__ == "__main__":
 
     outcomes = optimise_colopro(
         pipeline,
-        "player_features",
         num_trials=24,
         search=EvolutionarySearch(population_size=6),
         scoring="neg_root_mean_squared_error",
