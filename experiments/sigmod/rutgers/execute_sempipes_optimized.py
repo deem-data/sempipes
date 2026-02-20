@@ -828,7 +828,6 @@ def run_X2_optimized(mode):
     # Use the pre-fitted state for sem_extract_features in all evaluations
     outcomes = optimise_colopro(
         pipeline_to_optimise,
-        operator_name,
         scoring=recall_scorer_with_labels,
         cv=5,
         num_trials=24,

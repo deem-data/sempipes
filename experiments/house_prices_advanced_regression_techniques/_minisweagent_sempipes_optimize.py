@@ -50,7 +50,6 @@ if __name__ == "__main__":
 
     outcomes = optimise_colopro(
         pipeline,
-        operator_name="house_features",
         search=EvolutionarySearch(population_size=6),
         num_trials=24,
         scoring="neg_root_mean_squared_error",

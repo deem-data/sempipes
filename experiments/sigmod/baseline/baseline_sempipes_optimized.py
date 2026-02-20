@@ -448,7 +448,6 @@ for repeat_idx in range(num_repeats):
     print(f"Starting colopro optimization (repeat {repeat_idx + 1})...")
     outcomes = optimise_colopro(
         pipeline_to_optimise,
-        operator_name,
         scoring=recall_scorer_with_labels,
         cv=5,
         num_trials=24,

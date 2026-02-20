@@ -84,7 +84,6 @@ for seed in range(0, 5):
 
     outcomes = optimise_colopro(
         pipeline,
-        operator_name="additional_features",
         num_trials=24,
         scoring="roc_auc_ovo",
         search=TreeSearch(),

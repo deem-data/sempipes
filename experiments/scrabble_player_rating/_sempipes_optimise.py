@@ -18,7 +18,6 @@ pipeline = sempipes_pipeline("experiments/scrabble_player_rating/validation.csv"
 
 outcomes = optimise_colopro(
     pipeline,
-    "player_features",
     num_trials=24,
     scoring="neg_root_mean_squared_error",
     cv=5,

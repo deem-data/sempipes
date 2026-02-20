@@ -139,7 +139,6 @@ def main_sempipes_optimizable_X2(data_path_small2, data_path_hidden2, mode, base
 
     outcomes = optimise_colopro(
         pipeline_to_optimise,
-        operator_name,
         scoring=recall_scorer_with_labels,
         cv=5,
         num_trials=24,

@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 
 from sempipes.config import LLM, Config
-from sempipes.optimisers.search_policy import Outcome, SearchNode
+from sempipes.optimisers.search_policy import OperatorMemories, OperatorStates, Outcome, SearchNode
 from sempipes.optimisers.trajectory import Trajectory, load_trajectory_from_json, save_trajectory_as_json
 
 
@@ -16,18 +16,24 @@ def test_trajectory_save_and_load():
         batch_size_for_batch_processing=10,
     )
 
+    fixed_states = OperatorStates()
+    fixed_states.set("test_operator", {"generated_code": []})
+
     search_node = SearchNode(
         trial=0,
         parent_trial=None,
-        memory=[],
-        predefined_state={"generated_code": []},
+        memories=OperatorMemories(),
+        fixed_states=fixed_states,
         parent_score=None,
-        inspirations=[],
+        inspirations=OperatorMemories(),
     )
+
+    states = OperatorStates()
+    states.set("test_operator", {"generated_code": ["test_code"]})
 
     outcome = Outcome(
         search_node=search_node,
-        state={"generated_code": ["test_code"]},
+        states=states,
         score=0.95,
         memory_update="test update",
     )
@@ -51,7 +57,7 @@ def test_trajectory_save_and_load():
         assert loaded_trajectory.optimizer_args["operator_name"] == "test_operator"
         assert len(loaded_trajectory.outcomes) == 1
         assert loaded_trajectory.outcomes[0].score == 0.95
-        assert loaded_trajectory.outcomes[0].state["generated_code"] == ["test_code"]
+        assert loaded_trajectory.outcomes[0].states.get("test_operator")["generated_code"] == ["test_code"]
 
 
 def test_trajectory_load_old_format():
@@ -63,18 +69,24 @@ def test_trajectory_load_old_format():
         batch_size_for_batch_processing=10,
     )
 
+    fixed_states = OperatorStates()
+    fixed_states.set("test_operator", {"generated_code": []})
+
     search_node = SearchNode(
         trial=0,
         parent_trial=None,
-        memory=[],
-        predefined_state={"generated_code": []},
+        memories=OperatorMemories(),
+        fixed_states=fixed_states,
         parent_score=None,
-        inspirations=[],
+        inspirations=OperatorMemories(),
     )
+
+    states = OperatorStates()
+    states.set("test_operator", {"generated_code": ["test_code"]})
 
     outcome = Outcome(
         search_node=search_node,
-        state={"generated_code": ["test_code"]},
+        states=states,
         score=0.95,
         memory_update="test update",
     )
@@ -101,7 +113,7 @@ def test_trajectory_load_old_format():
         assert loaded_trajectory.optimizer_args["operator_name"] == "test_operator"
         assert len(loaded_trajectory.outcomes) == 1
         assert loaded_trajectory.outcomes[0].score == 0.95
-        assert loaded_trajectory.outcomes[0].state["generated_code"] == ["test_code"]
+        assert loaded_trajectory.outcomes[0].states.get("test_operator")["generated_code"] == ["test_code"]
 
 
 def test_trajectory_both_formats():
@@ -113,18 +125,24 @@ def test_trajectory_both_formats():
         batch_size_for_batch_processing=10,
     )
 
+    fixed_states = OperatorStates()
+    fixed_states.set("test_operator", {"generated_code": []})
+
     search_node = SearchNode(
         trial=0,
         parent_trial=None,
-        memory=[],
-        predefined_state={"generated_code": []},
+        memories=OperatorMemories(),
+        fixed_states=fixed_states,
         parent_score=None,
-        inspirations=[],
+        inspirations=OperatorMemories(),
     )
+
+    states = OperatorStates()
+    states.set("test_operator", {"generated_code": ["test_code"]})
 
     outcome = Outcome(
         search_node=search_node,
-        state={"generated_code": ["test_code"]},
+        states=states,
         score=0.95,
         memory_update="test update",
     )
@@ -157,4 +175,4 @@ def test_trajectory_both_formats():
         assert loaded_new.optimizer_args == loaded_old.optimizer_args
         assert len(loaded_new.outcomes) == len(loaded_old.outcomes)
         assert loaded_new.outcomes[0].score == loaded_old.outcomes[0].score
-        assert loaded_new.outcomes[0].state == loaded_old.outcomes[0].state
+        assert loaded_new.outcomes[0].states.get("test_operator") == loaded_old.outcomes[0].states.get("test_operator")

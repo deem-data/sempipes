@@ -71,7 +71,6 @@ def score_annotations(estimator, X, y=None, **kwargs):
 
 outcomes = optimise_colopro(
     dag_sink=annotation_pipeline(),
-    operator_name="extract_features",
     num_trials=24,
     scoring=score_annotations,
     search=EvolutionarySearch(population_size=6),

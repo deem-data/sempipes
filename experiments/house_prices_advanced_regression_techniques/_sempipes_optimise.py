@@ -22,7 +22,6 @@ validation_data = pd.read_csv("experiments/house_prices_advanced_regression_tech
 
 outcomes = optimise_colopro(
     pipeline,
-    "house_features",
     search=MonteCarloTreeSearch(c=0.5),
     num_trials=24,
     scoring="neg_root_mean_squared_error",

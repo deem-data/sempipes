@@ -35,8 +35,8 @@ def test_demo__optimise_semantic_operator_notebook():
     _run_notebook("demo__optimise_semantic_operator.ipynb")
 
 
-def test_demo__optimise_sem_choose_notebook():
-    _run_notebook("demo__optimise_sem_choose.ipynb")
+def test_demo__optimise_multiple_semantic_operators_notebook():
+    _run_notebook("demo__optimise_multiple_semantic_operators.ipynb")
 
 
 def test_demo__sem_agg_join_features_notebook():
