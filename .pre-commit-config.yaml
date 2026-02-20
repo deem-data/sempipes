@@ -33,7 +33,8 @@ repos:
     rev: v1.17.1
     hooks:
       - id: mypy
-        args: ["--config-file", "mypy.ini"]
+        args: ["--config-file", "mypy.ini", "sempipes"]
+        pass_filenames: false
         exclude: ^experiments/
         additional_dependencies:
           - skrub==0.6.1
