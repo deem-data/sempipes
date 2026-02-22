@@ -1,6 +1,6 @@
 experiments/hibug/celeba/*.*
 experiments/hibug/img_align_celeba/*.*
-*.txt
+/*.txt
 .sempipes_trajectories/
 .env
 dist/

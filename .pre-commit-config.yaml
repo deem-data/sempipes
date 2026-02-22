@@ -12,7 +12,7 @@ repos:
     rev: v3.3.8
     hooks:
       - id: pylint
-        args: [sempipes]
+        args: [sempipes, examples]
         exclude: ^(experiments/sigmod/|experiments/missing_values/)
         additional_dependencies:
           - skrub==0.6.1
@@ -33,7 +33,7 @@ repos:
     rev: v1.17.1
     hooks:
       - id: mypy
-        args: ["--config-file", "mypy.ini", "sempipes"]
+        args: ["--config-file", "mypy.ini", "sempipes", "examples"]
         pass_filenames: false
         exclude: ^experiments/
         additional_dependencies:
