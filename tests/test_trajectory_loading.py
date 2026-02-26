@@ -35,7 +35,7 @@ def test_trajectory_save_and_load():
         search_node=search_node,
         states=states,
         score=0.95,
-        memory_update="test update",
+        memory_updates={"test_operator": "test update"},
     )
 
     trajectory = Trajectory(
@@ -88,7 +88,7 @@ def test_trajectory_load_old_format():
         search_node=search_node,
         states=states,
         score=0.95,
-        memory_update="test update",
+        memory_updates={"test_operator": "test update"},
     )
 
     trajectory = Trajectory(
@@ -144,7 +144,7 @@ def test_trajectory_both_formats():
         search_node=search_node,
         states=states,
         score=0.95,
-        memory_update="test update",
+        memory_updates={"test_operator": "test update"},
     )
 
     trajectory = Trajectory(

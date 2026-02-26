@@ -42,11 +42,11 @@ class MonteCarloTreeSearch(SearchPolicy):
     def record_outcome(
         self,
         search_node: SearchNode,
-        operator_state: dict[str, Any] | None,
+        operator_states: dict[str, Any] | None,
         score: float,
-        operator_memory_update: str,
+        operator_memory_updates: dict[str, str],
     ):
-        super().record_outcome(search_node, operator_state, score, operator_memory_update)
+        super().record_outcome(search_node, operator_states, score, operator_memory_updates)
 
         self.min_score = min(self.min_score, score)
         self.max_score = max(self.max_score, score)
@@ -96,10 +96,11 @@ class MonteCarloTreeSearch(SearchPolicy):
         assert N_i > 0
 
         uct_value = (w_i / n_i) + self.c * np.sqrt(np.log(N_i) / n_i)
-        logger.info(
-            f"UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} -> "
-            f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {uct_value}"
-        )
+        # TODO Enable again through config
+        # logger.info(
+        #     f"UCT of node {search_node.trial}: w_i: {w_i}, n_i: {n_i}, N_i: {N_i} -> "
+        #     f"{(w_i / n_i)} + {self.c * np.sqrt(np.log(N_i) / n_i)} = {uct_value}"
+        # )
 
         return uct_value
 
@@ -135,14 +136,3 @@ class MonteCarloTreeSearch(SearchPolicy):
         logger.info(f"MCT_SEARCH> Trying to improve node with score {outcome_to_evolve.score}")
 
         return self._expand_tree(trial, operator_to_evolve, all_operator_names, outcome_to_evolve)
-
-        # updated_memory = copy.deepcopy(corresponding_outcome.search_node.memory)
-        # updated_memory.append({"update": corresponding_outcome.memory_update, "score": corresponding_outcome.score})
-        # next_node = SearchNode(
-        #     trial=trial,
-        #     parent_trial=node_to_evolve.trial,
-        #     memory=updated_memory,
-        #     predefined_state=None,
-        #     parent_score=corresponding_outcome.score,
-        # )
-        # return next_node

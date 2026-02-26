@@ -21,7 +21,6 @@ def rmsle(y, y_predicted):
 
 
 def sempipes_pipeline():
-
     with open("examples/data/house_prices_description.txt", "r", encoding="utf-8") as f:
         data_description = f.read()
 

@@ -122,8 +122,10 @@ class IterativeCodeGenEstimator(BaseEstimator, TransformerMixin, ContextAwareMix
                 self.generated_code_ = code
                 break
             except Exception as e:  # pylint: disable=broad-except
-                logger.info(f"An error occurred in attempt {attempt}:", e)
-                logger.debug(f"{e}", exc_info=True)
+                # TODO Enable again through config
+                logger.info(f"Incorrect code generated in attempt {attempt}...")
+                # logger.info(f"An error occurred in attempt {attempt}:", e)
+                # logger.debug(f"{e}", exc_info=True)
                 messages += self._build_error_feedback_message(code, e)
 
         if self.generated_code_ is None:

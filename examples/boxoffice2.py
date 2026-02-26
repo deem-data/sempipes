@@ -14,7 +14,6 @@ warnings.filterwarnings("ignore")
 
 
 def sempipes_pipeline():
-
     movie_stats = skrub.var("data").skb.mark_as_X()
     movie_stats = movie_stats.skb.set_description("""
         In this competition, you're presented with metadata on several thousand past films from The Movie Database to try and predict their overall worldwide box office revenue. Data points provided include cast, crew, plot keywords, budget, posters, release dates, languages, production companies, and countries. It is your job to predict the international box office revenue for each movie. For each id in the test set, you must predict the value of the revenue variable. Submissions are evaluated on Root-Mean-Squared-Logarithmic-Error (RMSLE) between the predicted value and the actual revenue. Logs are taken to not overweight blockbuster revenue movies.
@@ -102,7 +101,6 @@ def sempipes_pipeline():
 
 
 if __name__ == "__main__":
-
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -110,7 +108,7 @@ if __name__ == "__main__":
         )
     )
 
-    data = pd.read_csv("examples/data/boxoffice.csv")    
+    data = pd.read_csv("examples/data/boxoffice.csv")
     train, test = train_test_split(data, test_size=0.75, random_state=42)
 
     pipeline = sempipes_pipeline()
