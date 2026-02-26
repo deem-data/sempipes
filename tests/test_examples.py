@@ -21,6 +21,7 @@ def test_example(example):
         cwd=str(EXAMPLES_DIR.parent),
         capture_output=True,
         text=True,
+        check=False,
     )
     assert result.returncode == 0, (
         f"{module_name} failed (exit {result.returncode})\n"

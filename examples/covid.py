@@ -114,7 +114,6 @@ SIVEP-Gripe, Brazil’s national surveillance system for severe acute respirator
 """
 
 
-
 def sempipes_pipeline():
     data = skrub.var("data").skb.set_description(DATA_DESCRIPTION)
 
@@ -139,7 +138,6 @@ def sempipes_pipeline():
 
 
 if __name__ == "__main__":
-
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -171,4 +169,3 @@ if __name__ == "__main__":
     augmented_minority_score = roc_auc_score(test_minority_labels, predictions[:, 1])
 
     print(f"ROC AUC score for minority group: {augmented_minority_score}")
-

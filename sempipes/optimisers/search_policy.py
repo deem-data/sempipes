@@ -10,7 +10,6 @@ from skrub import DataOp
 from skrub._data_ops._evaluation import find_node_by_name
 
 from sempipes.logging import get_logger
-from sempipes.operators.operators import OptimisableMixin
 
 logger = get_logger()
 
@@ -76,7 +75,7 @@ class Outcome:
     search_node: SearchNode
     states: OperatorStates
     score: float
-    memory_update: str
+    memory_updates: dict[str, str]
 
 
 class SearchPolicy(ABC):
@@ -103,21 +102,20 @@ class SearchPolicy(ABC):
     def record_outcome(
         self,
         search_node: SearchNode,
-        operator_state: dict[str, Any] | None,
+        operator_states: dict[str, dict[str, Any]] | None,
         score: float,
-        operator_memory_update: str,
+        operator_memory_updates: dict[str, str],
     ):
         states = copy.deepcopy(search_node.fixed_states)
-        if operator_state is not None:
-            operator_to_evolve = search_node.operator_to_evolve
-            assert operator_to_evolve is not None
-            states.set(operator_to_evolve, operator_state)  # type: ignore[arg-type]
+        if operator_states is not None:
+            for operator_to_evolve in operator_states:
+                states.set(operator_to_evolve, operator_states[operator_to_evolve])
 
         outcome = Outcome(
             states=states,
             score=score,
             search_node=search_node,
-            memory_update=operator_memory_update,
+            memory_updates=operator_memory_updates,
         )
         self.outcomes.append(outcome)
 
@@ -137,14 +135,14 @@ class SearchPolicy(ABC):
             assert outcome_to_evolve.states.exists_for(operator_name)  # type: ignore[attr-defined]
             fixed_operator_states.set(operator_name, outcome_to_evolve.states.get(operator_name))  # type: ignore[attr-defined]
 
-        if outcome_to_evolve.memory_update is None:  # type: ignore[attr-defined]
-            memory_update = OptimisableMixin.EMPTY_MEMORY_UPDATE
-        else:
-            memory_update = outcome_to_evolve.memory_update  # type: ignore[attr-defined]
-
         logger.info(f"COLOPRO> Trying to improve node with score {outcome_to_evolve.score}")
         updated_memories = copy.deepcopy(outcome_to_evolve.search_node.memories)
-        updated_memories.append(operator_to_evolve, {"update": memory_update, "score": outcome_to_evolve.score})
+
+        for evolved_operator in outcome_to_evolve.memory_updates:
+            updated_memories.append(
+                evolved_operator,
+                {"update": outcome_to_evolve.memory_updates[evolved_operator], "score": outcome_to_evolve.score},
+            )
 
         next_node = SearchNode(
             trial=trial,

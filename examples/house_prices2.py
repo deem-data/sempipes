@@ -119,6 +119,7 @@ def sempipes_pipeline():
     X = X.skb.apply_func(clean_column_names)
     return X.skb.apply(RegressorEnsemble(), y=y)
 
+
 def main():
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(

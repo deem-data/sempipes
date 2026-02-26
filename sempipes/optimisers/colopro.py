@@ -10,7 +10,7 @@ from skrub._data_ops._evaluation import choice_graph, find_node_by_name
 from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.logging import get_logger
-from sempipes.operators.operators import OptimisableMixin
+from sempipes.optimisers.dag_inspection import collect_dependent_operators, extract_operator_names
 from sempipes.optimisers.greedy_tree_search import TreeSearch
 from sempipes.optimisers.search_policy import Outcome, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
@@ -47,13 +47,9 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
     """
-    env_for_inspection = dag_sink.skb.get_data()
-    # collect all operator names from the environment, the variable name is "sempipes_prefitted_state__{name}"
-    all_operator_names = [
-        name.split("__")[1] for name in env_for_inspection.keys() if name.startswith("sempipes_prefitted_state__")
-    ]
 
-    all_operator_names = sorted(list(set(all_operator_names)))
+    all_operator_names = extract_operator_names(dag_sink)
+    operator_dependencies = collect_dependent_operators(dag_sink)
 
     needs_hpo = _needs_hpo(dag_sink)
 
@@ -64,54 +60,84 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     for trial in range(num_trials):
         logger.info(f"COLOPRO> Processing trial {trial}")
 
-        env_for_evolution = dag_sink.skb.get_data()
+        states_of_operators_to_evolve: dict[str, dict[str, Any]] = {}
+        memory_updates_of_operators_to_evolve: dict[str, str] = {}
         env_for_scoring = dag_sink.skb.get_data()
 
         if additional_env_variables is not None:
-            env_for_evolution.update(additional_env_variables)
             env_for_scoring.update(additional_env_variables)
 
         if trial == 0:
             logger.info("COLOPRO> Initialising optimisation via OPRO")
             search_node = search.create_root_node(dag_sink, all_operator_names)
-            operator_state = None
-            fixed_operators = all_operator_names
-            operator_memory_update = OptimisableMixin.EMPTY_MEMORY_UPDATE
         else:
             # Pick the operator to evolve from all_operator_names in round-robin fashion
-            operator_to_evolve = all_operator_names[trial % len(all_operator_names)]
-            fixed_operators = [name for name in all_operator_names if name != operator_to_evolve]
+            chosen_operator = all_operator_names[trial % len(all_operator_names)]
 
-            search_node = search.create_next_search_node(trial, operator_to_evolve, all_operator_names)
+            search_node = search.create_next_search_node(trial, chosen_operator, all_operator_names)
             logger.info("COLOPRO> Generating new search node")
 
-            logger.info(f'COLOPRO> Evolving operator "{operator_to_evolve}" via OPRO')
             evolution_start_time = time.time()
-            pipeline = dag_sink.skb.clone()
 
-            env_for_evolution[f"sempipes_pipeline_summary__{operator_to_evolve}"] = pipeline_summary
-            env_for_evolution[f"sempipes_memory__{operator_to_evolve}"] = search_node.memories.get(operator_to_evolve)
-            env_for_evolution[f"sempipes_inspirations__{operator_to_evolve}"] = search_node.inspirations.get(
-                operator_to_evolve
-            )
+            operators_to_evolve = [chosen_operator] + operator_dependencies[chosen_operator]
 
-            for operator_name in fixed_operators:
-                env_for_evolution[f"sempipes_prefitted_state__{operator_name}"] = search_node.fixed_states.get(
-                    operator_name
+            if len(operators_to_evolve) > 1:
+                logger.info(f'COLOPRO> Found dependend operators, will evolve "{operators_to_evolve}"')
+
+            for operator_to_evolve in operators_to_evolve:
+                logger.info(f'COLOPRO> OP_EVOLUTION> Evolving operator "{operator_to_evolve}" via OPRO')
+
+                logger.info(
+                    f"COLOPRO> OP_EVOLUTION> {operator_to_evolve} with states_of_operators_to_evolve: {states_of_operators_to_evolve.keys()}, search_node.fixed_states: {search_node.fixed_states.operators()}"
                 )
 
-            operator_state, operator_memory_update = _evolve_operator(pipeline, operator_to_evolve, env_for_evolution)
+                pipeline = dag_sink.skb.clone()
+                env_for_evolution = dag_sink.skb.get_data()
+                if additional_env_variables is not None:
+                    env_for_evolution.update(additional_env_variables)
+
+                env_for_evolution[f"sempipes_pipeline_summary__{operator_to_evolve}"] = pipeline_summary
+                env_for_evolution[f"sempipes_memory__{operator_to_evolve}"] = search_node.memories.get(
+                    operator_to_evolve
+                )
+                env_for_evolution[f"sempipes_inspirations__{operator_to_evolve}"] = search_node.inspirations.get(
+                    operator_to_evolve
+                )
+
+                fixed_operators = [name for name in all_operator_names if name != operator_to_evolve]
+                for fixed_operator in fixed_operators:
+                    logger.info(
+                        f"COLOPRO> OP_EVOLUTION> --{fixed_operator}-- with states_of_operators_to_evolve: {states_of_operators_to_evolve.keys()}, search_node.fixed_states: {search_node.fixed_states.operators()}"
+                    )
+                    fixed_state = states_of_operators_to_evolve.get(fixed_operator) or search_node.fixed_states.get(
+                        fixed_operator
+                    )
+                    env_for_evolution[f"sempipes_prefitted_state__{fixed_operator}"] = fixed_state
+
+                operator_state, operator_memory_update = _evolve_operator(
+                    pipeline, operator_to_evolve, env_for_evolution
+                )
+
+                logger.info(f"COLOPRO> OP_EVOLUTION> {operator_to_evolve} evolved...")
+                states_of_operators_to_evolve[operator_to_evolve] = operator_state
+                memory_updates_of_operators_to_evolve[operator_to_evolve] = operator_memory_update
+
             evolution_end_time = time.time()
             logger.info(f"COLOPRO> Evolution took {evolution_end_time - evolution_start_time:.2f} seconds")
 
-            env_for_scoring[f"sempipes_prefitted_state__{operator_to_evolve}"] = operator_state
+        scoring_start_time = time.time()
+        for fixed_operator in all_operator_names:
+            if fixed_operator in states_of_operators_to_evolve:
+                env_for_scoring[f"sempipes_prefitted_state__{fixed_operator}"] = states_of_operators_to_evolve[
+                    fixed_operator
+                ]
+            else:
+                env_for_scoring[f"sempipes_prefitted_state__{fixed_operator}"] = search_node.fixed_states.get(
+                    fixed_operator
+                )
 
-        for operator_name in fixed_operators:
-            env_for_scoring[f"sempipes_prefitted_state__{operator_name}"] = search_node.fixed_states.get(operator_name)
-
-        evaluation_start_time = time.time()
         if needs_hpo:
-            logger.info(f"COLOPRO> Evaluating pipeline via {cv}-fold cross-validation and random search HPO")
+            logger.info(f"COLOPRO> Scoring pipeline via {cv}-fold cross-validation and random search HPO")
             hpo = dag_sink.skb.make_randomized_search(
                 fitted=False,
                 cv=cv,
@@ -124,22 +150,21 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             row_with_max_score = hpo.results_.loc[index_of_row_with_max_score]
             score = row_with_max_score["mean_test_score"]
         else:
-            logger.info(f"COLOPRO> Evaluating pipeline via {cv}-fold cross-validation")
+            logger.info(f"COLOPRO> Scoring pipeline via {cv}-fold cross-validation")
             pipeline = dag_sink.skb.make_learner(fitted=False)
             cv_results = skrub.cross_validate(
                 pipeline, env_for_scoring, cv=cv, scoring=scoring, n_jobs=n_jobs_for_evaluation
             )
             score = float(np.mean(cv_results["test_score"]))
-        evaluation_end_time = time.time()
-        logger.info(f"COLOPRO> Pipeline evaluation took {evaluation_end_time - evaluation_start_time:.2f} seconds")
+        scoring_end_time = time.time()
+        logger.info(f"COLOPRO> Pipeline scoring took {scoring_end_time - scoring_start_time:.2f} seconds")
 
         logger.info(f"COLOPRO> Score changed from {search_node.parent_score} to {score}")
-        search.record_outcome(search_node, operator_state, score, operator_memory_update)  # type: ignore[arg-type]
+        search.record_outcome(search_node, states_of_operators_to_evolve, score, memory_updates_of_operators_to_evolve)
 
     trajectory = Trajectory(
         sempipes_config=get_config(),
         optimizer_args={
-            # "operator_name": operator_name,
             "num_trials": num_trials,
             "scoring": serialize_scoring(scoring),
             "cv": str(cv),

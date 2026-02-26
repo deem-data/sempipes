@@ -37,6 +37,7 @@ class TreeSearch(SearchPolicy):
 
         draft_node = self._expand_tree(trial, operator_to_evolve, all_operator_names, root_outcome)
 
+        # TODO: Must be done for all operators
         inspirations = OperatorMemories()
         for outcome in self.outcomes:
             if outcome != root_outcome and outcome.score > root_outcome.score:

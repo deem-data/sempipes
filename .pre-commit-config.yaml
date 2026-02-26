@@ -15,7 +15,7 @@ repos:
         args: [sempipes, examples]
         exclude: ^(experiments/sigmod/|experiments/missing_values/)
         additional_dependencies:
-          - skrub==0.6.1
+          - skrub==0.6.2
           - plotly==6.3.0
           - networkx==3.5
           - litellm==1.76.1
@@ -29,6 +29,7 @@ repos:
           - interpret==0.2.7
           - sentence-transformers==5.1.2
           - sdv==1.29.1
+          - pytest==8.4.2
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:
@@ -37,7 +38,7 @@ repos:
         pass_filenames: false
         exclude: ^experiments/
         additional_dependencies:
-          - skrub==0.6.1
+          - skrub==0.6.2
           - plotly==6.3.0
           - networkx==3.5
           - litellm==1.76.1

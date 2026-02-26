@@ -1,8 +1,9 @@
+import numpy as np
 import pandas as pd
 import skrub
-import numpy as np
 
 import sempipes
+
 
 def annotation_pipeline():
     samples_to_annotate = skrub.var("samples_to_annotate")
@@ -32,8 +33,8 @@ def annotation_pipeline():
 
     return annotated
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     sempipes.update_config(
         llm_for_code_generation=sempipes.LLM(
             name="gemini/gemini-2.5-flash",
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     env = pipeline.skb.get_data()
     env["samples_to_annotate"] = to_annotate
     annotated_images = pipeline.skb.eval(env)
-      
+
     annotated_images = annotated_images.merge(attributes, on="idx", how="left", suffixes=("", "_prediction"))
 
     print("Accuracy for beard: ", np.mean(annotated_images["beard"] == annotated_images["beard_prediction"]))

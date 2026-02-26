@@ -106,8 +106,7 @@ def create_pipeline():
 
 def main():
     sempipes.update_config(
-        llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash",
-        parameters={"temperature": 0.0})
+        llm_for_code_generation=sempipes.LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0})
     )
 
     data = as_dataframe("examples/data/empathy.json")
