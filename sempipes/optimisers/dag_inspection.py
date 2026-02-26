@@ -5,7 +5,6 @@ _OPERATOR_NAME_PREFIX = "sempipes_prefitted_state__"
 def extract_operator_names(pipeline):
     env_for_inspection = pipeline.skb.get_data()
     all_operator_names = [
-        # TODO refactor this into a shared constant
         name.split("__")[1] for name in env_for_inspection.keys() if name.startswith(_OPERATOR_NAME_PREFIX)
     ]
     all_operator_names = sorted(list(set(all_operator_names)))
