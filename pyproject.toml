@@ -31,6 +31,7 @@ soundfile = "^0.13.0"
 torchaudio = "^2.9.0"  # Must match torch version
 unidecode = "^1.4.0"
 scikit-learn = "^1.7.0"
+mabwiser = "2.7.4"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.1"
