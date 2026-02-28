@@ -120,12 +120,18 @@ class IterativeCodeGenEstimator(BaseEstimator, TransformerMixin, ContextAwareMix
             try:
                 self._try_to_execute(code, *exec_args, **exec_kwargs)
                 self.generated_code_ = code
+
+                if get_config().verbose_code_synthesis:
+                    logger.info(f"Synthesized new operator code\n{code}")
+
                 break
             except Exception as e:  # pylint: disable=broad-except
-                # TODO Enable again through config
-                logger.info(f"Incorrect code generated in attempt {attempt}...")
-                # logger.info(f"An error occurred in attempt {attempt}:", e)
-                # logger.debug(f"{e}", exc_info=True)
+                if get_config().verbose_code_synthesis:
+                    logger.info(f"An error occurred in attempt {attempt}.")
+                    logger.info(f"{e}", exc_info=True)
+                else:
+                    logger.info(f"Incorrect code generated in attempt {attempt}...")
+
                 messages += self._build_error_feedback_message(code, e)
 
         if self.generated_code_ is None:

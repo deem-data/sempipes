@@ -114,10 +114,10 @@ class MonteCarloTreeSearch(SearchPolicy):
             return current_node
 
         if current_node.trial == _ROOT_TRIAL and len(children) < self.root_children:
-            logger.info(f"MCT_SEARCH> Expanding root node {current_node.trial} with {len(children)} children")
+            logger.info(f"MCT_SEARCH> Expanding root node {current_node.trial} with {len(children)} child(ren)")
             return current_node
         if len(children) < self.max_non_root_children:
-            logger.info(f"MCT_SEARCH> Expanding non-root node {current_node.trial} with {len(children)} children")
+            logger.info(f"MCT_SEARCH> Expanding non-root node {current_node.trial} with {len(children)} child(ren)")
             return current_node
 
         uct_values = [self._uct(child) for child in children]
@@ -132,7 +132,4 @@ class MonteCarloTreeSearch(SearchPolicy):
             filter(lambda outcome: outcome.search_node.trial == node_to_evolve.trial, self.outcomes), None
         )
         assert outcome_to_evolve is not None
-
-        logger.info(f"MCT_SEARCH> Trying to improve node with score {outcome_to_evolve.score}")
-
         return self._expand_tree(trial, operator_to_evolve, all_operator_names, outcome_to_evolve)

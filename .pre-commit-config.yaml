@@ -30,6 +30,7 @@ repos:
           - sentence-transformers==5.1.2
           - sdv==1.29.1
           - pytest==8.4.2
+          - mabwiser==2.7.4
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:

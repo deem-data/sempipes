@@ -10,8 +10,8 @@ from skrub._data_ops._evaluation import choice_graph, find_node_by_name
 from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.logging import get_logger
-from sempipes.optimisers.dag_inspection import collect_dependent_operators, extract_operator_names
 from sempipes.optimisers.greedy_tree_search import TreeSearch
+from sempipes.optimisers.operator_selection import UCBOperatorSelectionPolicy
 from sempipes.optimisers.search_policy import Outcome, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
 
@@ -48,8 +48,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
     """
 
-    all_operator_names = extract_operator_names(dag_sink)
-    operator_dependencies = collect_dependent_operators(dag_sink)
+    operator_selection_policy = UCBOperatorSelectionPolicy(dag_sink, search)
 
     needs_hpo = _needs_hpo(dag_sink)
 
@@ -59,7 +58,6 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
 
     for trial in range(num_trials):
         logger.info(f"COLOPRO> Processing trial {trial}")
-
         states_of_operators_to_evolve: dict[str, dict[str, Any]] = {}
         memory_updates_of_operators_to_evolve: dict[str, str] = {}
         env_for_scoring = dag_sink.skb.get_data()
@@ -69,27 +67,20 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
 
         if trial == 0:
             logger.info("COLOPRO> Initialising optimisation via OPRO")
-            search_node = search.create_root_node(dag_sink, all_operator_names)
+            search_node = search.create_root_node(dag_sink, operator_selection_policy.all_operator_names)
         else:
-            # Pick the operator to evolve from all_operator_names in round-robin fashion
-            chosen_operator = all_operator_names[trial % len(all_operator_names)]
+            operators_to_evolve = operator_selection_policy.select_operators_to_evolve(trial)
+            chosen_operator = operators_to_evolve[0]
 
-            search_node = search.create_next_search_node(trial, chosen_operator, all_operator_names)
-            logger.info("COLOPRO> Generating new search node")
+            search_node = search.create_next_search_node(
+                trial, chosen_operator, operator_selection_policy.all_operator_names
+            )
+            logger.info("COLOPRO> Asking search policy to generate next search node")
 
             evolution_start_time = time.time()
 
-            operators_to_evolve = [chosen_operator] + operator_dependencies[chosen_operator]
-
-            if len(operators_to_evolve) > 1:
-                logger.info(f'COLOPRO> Found dependend operators, will evolve "{operators_to_evolve}"')
-
             for operator_to_evolve in operators_to_evolve:
                 logger.info(f'COLOPRO> OP_EVOLUTION> Evolving operator "{operator_to_evolve}" via OPRO')
-
-                logger.info(
-                    f"COLOPRO> OP_EVOLUTION> {operator_to_evolve} with states_of_operators_to_evolve: {states_of_operators_to_evolve.keys()}, search_node.fixed_states: {search_node.fixed_states.operators()}"
-                )
 
                 pipeline = dag_sink.skb.clone()
                 env_for_evolution = dag_sink.skb.get_data()
@@ -104,11 +95,10 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
                     operator_to_evolve
                 )
 
-                fixed_operators = [name for name in all_operator_names if name != operator_to_evolve]
+                fixed_operators = [
+                    name for name in operator_selection_policy.all_operator_names if name != operator_to_evolve
+                ]
                 for fixed_operator in fixed_operators:
-                    logger.info(
-                        f"COLOPRO> OP_EVOLUTION> --{fixed_operator}-- with states_of_operators_to_evolve: {states_of_operators_to_evolve.keys()}, search_node.fixed_states: {search_node.fixed_states.operators()}"
-                    )
                     fixed_state = states_of_operators_to_evolve.get(fixed_operator) or search_node.fixed_states.get(
                         fixed_operator
                     )
@@ -126,7 +116,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             logger.info(f"COLOPRO> Evolution took {evolution_end_time - evolution_start_time:.2f} seconds")
 
         scoring_start_time = time.time()
-        for fixed_operator in all_operator_names:
+        for fixed_operator in operator_selection_policy.all_operator_names:
             if fixed_operator in states_of_operators_to_evolve:
                 env_for_scoring[f"sempipes_prefitted_state__{fixed_operator}"] = states_of_operators_to_evolve[
                     fixed_operator
@@ -166,6 +156,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
         sempipes_config=get_config(),
         optimizer_args={
             "num_trials": num_trials,
+            "operator_selection_policy": operator_selection_policy.as_dict(),
             "scoring": serialize_scoring(scoring),
             "cv": str(cv),
             "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,

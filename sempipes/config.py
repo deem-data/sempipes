@@ -23,6 +23,7 @@ class Config:
     llm_for_batch_processing: LLM = LLM(name="gemini/gemini-2.5-flash", parameters={"temperature": 0.0})
     batch_size_for_batch_processing: int = 20
     max_retries_for_code_gen: int = 5
+    verbose_code_synthesis: bool = False
 
 
 # Holds the current config; ContextVar makes it safe for threads/async tasks
@@ -56,6 +57,7 @@ def update_config(**kwargs) -> None:
             "batch_size_for_batch_processing", current_config.batch_size_for_batch_processing
         ),
         max_retries_for_code_gen=kwargs.get("max_retries_for_code_gen", current_config.max_retries_for_code_gen),
+        verbose_code_synthesis=kwargs.get("verbose_code_synthesis", current_config.verbose_code_synthesis),
     )
 
     _set_config(updated_config)

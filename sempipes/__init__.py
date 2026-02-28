@@ -1,4 +1,10 @@
 from dotenv import load_dotenv
+
+load_dotenv()
+
+# pylint: disable=wrong-import-position,wrong-import-order
+import sempipes.logging as _logging  # noqa: E402 — suppress litellm/httpx noise early
+
 from skrub import DataOp
 from skrub._data_ops._skrub_namespace import SkrubNamespace
 from sempipes.operators.sem_augment import sem_augment
@@ -12,9 +18,7 @@ from sempipes.operators.sem_gen_features_caafe import sem_gen_features
 from sempipes.operators.sem_clean import sem_clean
 from sempipes.operators import sem_fillna
 from sempipes.config import get_config, LLM, update_config
-
-# Load environment variables from a .env file if present
-load_dotenv()
+# pylint: enable=wrong-import-position,wrong-import-order
 
 # Monkey-patch skrub DataOp to include our semantic operators
 DataOp.sem_fillna = sem_fillna
