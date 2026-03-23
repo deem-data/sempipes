@@ -11,7 +11,7 @@ from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.logging import get_logger
 from sempipes.optimisers.greedy_tree_search import TreeSearch
-from sempipes.optimisers.operator_selection import UCBOperatorSelectionPolicy
+from sempipes.optimisers.operator_selection import FixedOpPolicy, OperatorSelectionPolicy, UCBOperatorSelectionPolicy
 from sempipes.optimisers.search_policy import Outcome, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
 
@@ -43,12 +43,17 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     run_name: str | None = None,
     additional_env_variables: dict[str, Any] | None = None,
     n_jobs_for_evaluation: int = -1,
+    only_optimize_operator: str | None = None,
 ) -> list[Outcome]:
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
     """
 
-    operator_selection_policy = UCBOperatorSelectionPolicy(dag_sink, search)
+    operator_selection_policy: OperatorSelectionPolicy
+    if only_optimize_operator is None:
+        operator_selection_policy = UCBOperatorSelectionPolicy(dag_sink, search)
+    else:
+        operator_selection_policy = FixedOpPolicy(dag_sink, search, only_optimize_operator)
 
     needs_hpo = _needs_hpo(dag_sink)
 
