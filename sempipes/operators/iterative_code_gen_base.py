@@ -130,7 +130,8 @@ class IterativeCodeGenEstimator(BaseEstimator, TransformerMixin, ContextAwareMix
                     logger.info(f"An error occurred in attempt {attempt}.")
                     logger.info(f"{e}", exc_info=True)
                 else:
-                    logger.info(f"Incorrect code generated in attempt {attempt}...")
+                    sanitized = str(e).replace(",", " ").replace("\n", " ")
+                    logger.info(f"SYNTHESIS_ERROR,{attempt},{type(e).__name__},{sanitized}")
 
                 messages += self._build_error_feedback_message(code, e)
 

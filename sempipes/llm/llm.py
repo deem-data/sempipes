@@ -12,6 +12,15 @@ logger = get_logger()
 _MAX_RETRIES = 5
 
 
+def _log_token_usage(response) -> None:
+    usage = getattr(response, "usage", None)
+    if usage is None:
+        return
+    input_tokens = getattr(usage, "prompt_tokens", 0) or 0
+    output_tokens = getattr(usage, "completion_tokens", 0) or 0
+    logger.info(f"TOKEN_USAGE,{input_tokens},{output_tokens}")
+
+
 def get_cleaning_message(prompt: str) -> list[dict]:
     return get_generic_message(
         "You are a helpful assistant, assisting data scientists with data cleaning and preparation, for instance, completing and imputing their data.",
@@ -45,6 +54,7 @@ def _generate_code_from_messages(messages: list[dict]) -> str:
         messages=messages,
         **code_gen_llm.parameters,
     )
+    _log_token_usage(response)
 
     # TODO add proper error handling
     # TODO add warnings if truncation occured
@@ -142,6 +152,7 @@ def batch_generate_results(
 
         for response in responses:
             try:
+                _log_token_usage(response)
                 content = response.choices[0].message["content"]
                 outputs.append(content)
             except Exception as e:
@@ -184,6 +195,7 @@ def batch_generate_results_retries(
                 )
                 for response in responses:
                     try:
+                        _log_token_usage(response)
                         content = response.choices[0].message["content"]
                         batch_outputs.append(content)
                     except Exception as e:  # pylint: disable=broad-except
