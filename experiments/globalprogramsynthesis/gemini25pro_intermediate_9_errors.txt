@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 341, in checked_call
+    evaluate(data_op, mode="preview", environment=None)
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 447, in evaluate
+    return _Evaluator(mode=mode, environment=environment, callbacks=callbacks).run(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 283, in run
+    return super().run(data_op)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 177, in run
+    step()
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 159, in step
+    new_top = top.generator.send(last_result)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 317, in handle_data_op
+    result = yield from self._eval_data_op(data_op)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 331, in _eval_data_op
+    return (yield from super().handle_data_op(data_op))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 211, in handle_data_op
+    return self.compute_result(data_op, evaluated_attributes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 361, in compute_result
+    return data_op._skrub_impl.compute(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 1494, in compute
+    return method(*e.args, **e.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/frame.py", line 5261, in assign
+    data[k] = com.apply_if_callable(v, data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/common.py", line 384, in apply_if_callable
+    return maybe_callable(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/sempipes/experiments/globalprogramsynthesis/gemini25pro_intermediate_9.py", line 25, in <lambda>
+    score_log=lambda df_: df_['score'].log1p(),
+                          ^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/generic.py", line 6321, in __getattr__
+    return object.__getattribute__(self, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Series' object has no attribute 'log1p'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/schelter-ldap/sempipes/experiments/globalprogramsynthesis/gemini25pro_intermediate_9.py", line 19, in <module>
+    .assign(
+     ^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 381, in check_call_return_value
+    data_op = f(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 346, in checked_call
+    raise RuntimeError(
+RuntimeError: Evaluation of '.assign()' failed.
+You can see the full traceback above. The error message was:
+AttributeError: 'Series' object has no attribute 'log1p'
