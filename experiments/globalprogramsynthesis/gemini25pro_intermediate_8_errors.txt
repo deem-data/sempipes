@@ -1,0 +1,73 @@
+Traceback (most recent call last):
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'extra'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 341, in checked_call
+    evaluate(data_op, mode="preview", environment=None)
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 447, in evaluate
+    return _Evaluator(mode=mode, environment=environment, callbacks=callbacks).run(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 283, in run
+    return super().run(data_op)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 177, in run
+    step()
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 159, in step
+    new_top = top.generator.send(last_result)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 317, in handle_data_op
+    result = yield from self._eval_data_op(data_op)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 331, in _eval_data_op
+    return (yield from super().handle_data_op(data_op))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 211, in handle_data_op
+    return self.compute_result(data_op, evaluated_attributes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_evaluation.py", line 361, in compute_result
+    return data_op._skrub_impl.compute(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 1494, in compute
+    return method(*e.args, **e.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/frame.py", line 5261, in assign
+    data[k] = com.apply_if_callable(v, data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/common.py", line 384, in apply_if_callable
+    return maybe_callable(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/sempipes/experiments/globalprogramsynthesis/gemini25pro_intermediate_8.py", line 27, in <lambda>
+    score_per_extra=lambda df: df['score'] / (df['extra'] + 1e-6),
+                                              ~~^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/frame.py", line 4113, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'extra'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/schelter-ldap/sempipes/experiments/globalprogramsynthesis/gemini25pro_intermediate_8.py", line 19, in <module>
+    ).assign(
+      ^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 381, in check_call_return_value
+    data_op = f(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 346, in checked_call
+    raise RuntimeError(
+RuntimeError: Evaluation of '.assign()' failed.
+You can see the full traceback above. The error message was:
+KeyError: 'extra'

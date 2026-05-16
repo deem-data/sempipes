@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/schelter-ldap/sempipes/experiments/globalprogramsynthesis/gemini25pro_intermediate_3.py", line 17, in <module>
+    event_date=pd.to_datetime(cleaned_data['event_date'])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/pandas/core/tools/datetimes.py", line 1082, in to_datetime
+    elif is_list_like(arg):
+         ^^^^^^^^^^^^^^^^^
+  File "pandas/_libs/lib.pyx", line 1257, in pandas._libs.lib.is_list_like
+  File "pandas/_libs/lib.pyx", line 1275, in pandas._libs.lib.c_is_list_like
+  File "/home/schelter-ldap/miniconda3/envs/py312/lib/python3.12/site-packages/skrub/_data_ops/_data_ops.py", line 594, in __bool__
+    raise TypeError(
+TypeError: This object is a DataOp that will be evaluated later, when your learner runs. So it is not possible to eagerly use its Boolean value now.
