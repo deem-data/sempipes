@@ -1,3 +1,4 @@
+import math
 from abc import ABC, abstractmethod
 from graphlib import TopologicalSorter
 
@@ -97,7 +98,7 @@ class UCBOperatorSelectionPolicy(OperatorSelectionPolicy):
         super().__init__(dag_sink, search)
 
         arms = self.all_operator_names
-        self.bandit = MAB(arms, LearningPolicy.UCB1())
+        self.bandit = MAB(arms, LearningPolicy.UCB1(alpha=0.2)) # alpha=0.5
 
     def _reward(self, trial: int) -> tuple[str, float]:
         assert trial > 0
@@ -138,6 +139,156 @@ class UCBOperatorSelectionPolicy(OperatorSelectionPolicy):
             logger.info(f"OP-SELECTION> Selected {chosen_operator} without dependents")
 
         return operators_to_evolve
+
+
+class AdaEvolveGlobalNormOperatorSelectionPolicy(OperatorSelectionPolicy):
+    """AdaEvolve Level-2 selector.
+
+    Eq. 4: global-normalized reward r_t^(k)
+    Eq. 5: decayed reward/visit updates R_t^(k), V_t^(k)
+    Eq. 6: UCB selection over decayed mean reward + exploration bonus
+    """
+
+    def __init__(
+        self,
+        dag_sink: DataOp,
+        search: SearchPolicy,
+        rho: float = 0.7,
+        ucb_c: float = 1.0,
+        eps: float = 1e-8,
+    ):
+        super().__init__(dag_sink, search)
+        self.rho = rho
+        self.ucb_c = ucb_c
+        self.eps = eps
+        self.decayed_rewards = {operator: 0.0 for operator in self.all_operator_names}
+        self.decayed_visits = {operator: 0.0 for operator in self.all_operator_names}
+        self.raw_visits = {operator: 0 for operator in self.all_operator_names}
+
+    def _find_outcome(self, trial: int):
+        return next((outcome for outcome in self.search.outcomes if outcome.search_node.trial == trial), None)
+
+    def _update_stats_from_previous_trial(self, trial: int):
+        if trial <= 1:
+            return
+
+        previous_outcome = self._find_outcome(trial - 1)
+        if previous_outcome is None or previous_outcome.search_node.operator_to_evolve is None:
+            return
+
+        operator = previous_outcome.search_node.operator_to_evolve
+        parent_score = previous_outcome.search_node.parent_score
+        if parent_score is None:
+            reward = 0.0
+        else:
+            # Eq. 4-style global normalization with stability guards.
+            improvement = previous_outcome.score - parent_score
+            best_score_so_far = max(
+                outcome.score for outcome in self.search.outcomes if outcome.search_node.trial <= previous_outcome.search_node.trial
+            )
+            reward = improvement / max(abs(best_score_so_far), self.eps)
+
+        # Eq. 5-style decayed reward and decayed visit updates.
+        self.decayed_rewards[operator] = self.rho * self.decayed_rewards[operator] + reward
+        self.decayed_visits[operator] = self.rho * self.decayed_visits[operator] + 1.0
+        self.raw_visits[operator] += 1
+
+    def _select_operator(self) -> str:
+        unvisited = [operator for operator in self.all_operator_names if self.raw_visits[operator] == 0]
+        if unvisited:
+            return unvisited[0]
+
+        total_visits = sum(self.raw_visits.values())
+        total_visits_for_log = max(total_visits, 1)
+        best_operator = self.all_operator_names[0]
+        best_ucb_value = float("-inf")
+        for operator in self.all_operator_names:
+            exploitation = self.decayed_rewards[operator] / max(self.decayed_visits[operator], self.eps)
+            exploration = self.ucb_c * math.sqrt(math.log(total_visits_for_log) / max(self.raw_visits[operator], 1))
+            ucb_value = exploitation + exploration
+            logger.debug(
+                "OP-SELECTION> AdaEvolve candidate=%s exploitation=%.6f exploration=%.6f ucb=%.6f visits=%d",
+                operator,
+                exploitation,
+                exploration,
+                ucb_value,
+                self.raw_visits[operator],
+            )
+            if ucb_value > best_ucb_value:
+                best_ucb_value = ucb_value
+                best_operator = operator
+
+        return best_operator
+
+    def select_operators_to_evolve(self, trial: int) -> list[str]:
+        assert trial > 0
+        self._update_stats_from_previous_trial(trial)
+        chosen_operator = self._select_operator()
+        logger.debug(
+            "OP-SELECTION> AdaEvolve selected=%s trial=%d decayed_reward=%.6f decayed_visits=%.6f raw_visits=%d",
+            chosen_operator,
+            trial,
+            self.decayed_rewards[chosen_operator],
+            self.decayed_visits[chosen_operator],
+            self.raw_visits[chosen_operator],
+        )
+
+        if _potentially_breaks_consumers(chosen_operator, self.dag_sink):
+            operators_to_evolve = [chosen_operator] + self.operator_dependencies[chosen_operator]
+            logger.info(
+                f"OP-SELECTION> AdaEvolve global-norm selected {chosen_operator} with dependents: "
+                f"{self.operator_dependencies[chosen_operator]}"
+            )
+        else:
+            operators_to_evolve = [chosen_operator]
+            logger.info(f"OP-SELECTION> AdaEvolve global-norm selected {chosen_operator} without dependents")
+
+        return operators_to_evolve
+
+    def as_dict(self) -> dict:
+        base = super().as_dict()
+        base.update(
+            {
+                "policy": "adaevolve_global_norm",
+                "rho": self.rho,
+                "ucb_c": self.ucb_c,
+                "eps": self.eps,
+                "decayed_rewards": self.decayed_rewards,
+                "decayed_visits": self.decayed_visits,
+                "raw_visits": self.raw_visits,
+            }
+        )
+        return base
+
+
+# Backward-compatible alias for earlier in-flight naming.
+UCBGlobalNormOperatorSelectionPolicy = AdaEvolveGlobalNormOperatorSelectionPolicy
+
+
+class RoundRobinOperatorSelectionPolicy(OperatorSelectionPolicy):
+    def select_operators_to_evolve(self, trial: int) -> list[str]:
+        assert trial > 0
+        num_operators = len(self.all_operator_names)
+        idx = (trial - 1) % num_operators
+        chosen_operator = self.all_operator_names[idx]
+        logger.info(f"OP-SELECTION> Round-robin: selected {chosen_operator} (trial {trial}, index {idx})")
+
+        if _potentially_breaks_consumers(chosen_operator, self.dag_sink):
+            operators_to_evolve = [chosen_operator] + self.operator_dependencies[chosen_operator]
+            logger.info(
+                f"OP-SELECTION> Selected {chosen_operator} with dependents: {self.operator_dependencies[chosen_operator]}"
+            )
+        else:
+            operators_to_evolve = [chosen_operator]
+            logger.info(f"OP-SELECTION> Selected {chosen_operator} without dependents")
+
+        return operators_to_evolve
+
+class AllOperatorsPolicy(OperatorSelectionPolicy):
+    def select_operators_to_evolve(self, trial: int) -> list[str]:
+        assert trial > 0
+        logger.info(f"OP-SELECTION> All-operators: evolving all {len(self.all_operator_names)} operators")
+        return list(self.all_operator_names)
 
 
 class FixedOpPolicy(OperatorSelectionPolicy):

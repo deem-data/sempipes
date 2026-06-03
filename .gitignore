@@ -42,6 +42,8 @@ target/
 comparisons/single_cell_analysis/data/*.h5ad
 lightning_logs/
 
+experiments/beaver/redacted_train/
+experiments/beaver/redacted_test/
 experiments/sigmod/hidden_data/*
 .sigmod-env/
 experiments/sigmod/results/*

@@ -11,7 +11,14 @@ from sempipes import get_config
 from sempipes.inspection.pipeline_summary import summarise_pipeline
 from sempipes.logging import get_logger
 from sempipes.optimisers.greedy_tree_search import TreeSearch
-from sempipes.optimisers.operator_selection import FixedOpPolicy, OperatorSelectionPolicy, UCBOperatorSelectionPolicy
+from sempipes.optimisers.operator_selection import (
+    AdaEvolveGlobalNormOperatorSelectionPolicy,
+    AllOperatorsPolicy,
+    FixedOpPolicy,
+    OperatorSelectionPolicy,
+    RoundRobinOperatorSelectionPolicy,
+    UCBOperatorSelectionPolicy,
+)
 from sempipes.optimisers.search_policy import Outcome, SearchPolicy
 from sempipes.optimisers.trajectory import Trajectory, save_trajectory_as_json, serialize_scoring
 
@@ -44,14 +51,30 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
     additional_env_variables: dict[str, Any] | None = None,
     n_jobs_for_evaluation: int = -1,
     only_optimize_operator: str | None = None,
+    optimize_all_operators: bool = False,
+    operator_selection_strategy: str = "ucb",
 ) -> list[Outcome]:
     """
     Optimises a single semantic operator in a pipeline with "operator-local" OPRO.
     """
 
     operator_selection_policy: OperatorSelectionPolicy
-    if only_optimize_operator is None:
-        operator_selection_policy = UCBOperatorSelectionPolicy(dag_sink, search)
+    logger.info(f"COLOPRO> Operator selection strategy: {operator_selection_strategy}")
+    if optimize_all_operators:
+        operator_selection_policy = AllOperatorsPolicy(dag_sink, search)
+    elif only_optimize_operator is None:
+        if operator_selection_strategy == "ucb":
+            operator_selection_policy = UCBOperatorSelectionPolicy(dag_sink, search)
+        elif operator_selection_strategy == "adaevolve_global_norm":
+            operator_selection_policy = AdaEvolveGlobalNormOperatorSelectionPolicy(dag_sink, search)
+        elif operator_selection_strategy == "round_robin":
+            operator_selection_policy = RoundRobinOperatorSelectionPolicy(dag_sink, search)
+        else:
+            raise ValueError(
+                "Unknown operator_selection_strategy "
+                f"'{operator_selection_strategy}'. Expected one of: "
+                "'ucb', 'adaevolve_global_norm', 'round_robin'."
+            )
     else:
         operator_selection_policy = FixedOpPolicy(dag_sink, search, only_optimize_operator)
 
@@ -117,6 +140,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
                 states_of_operators_to_evolve[operator_to_evolve] = operator_state
                 memory_updates_of_operators_to_evolve[operator_to_evolve] = operator_memory_update
 
+            search_node.operators_evolved = operators_to_evolve
             evolution_end_time = time.time()
             logger.info(f"COLOPRO> Evolution took {evolution_end_time - evolution_start_time:.2f} seconds")
 
@@ -165,6 +189,7 @@ def optimise_colopro(  # pylint: disable=too-many-positional-arguments, too-many
             "scoring": serialize_scoring(scoring),
             "cv": str(cv),
             "num_hpo_iterations_per_trial": num_hpo_iterations_per_trial,
+            "operator_selection_strategy": operator_selection_strategy,
         },
         outcomes=search.get_outcomes(),
     )

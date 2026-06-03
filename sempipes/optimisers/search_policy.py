@@ -63,6 +63,7 @@ class SearchNode:
     trial: int
     parent_trial: int | None = None
     operator_to_evolve: str | None = None
+    operators_evolved: list[str] = field(default_factory=list)
     memories: OperatorMemories = field(default_factory=OperatorMemories)
     fixed_states: OperatorStates = field(default_factory=OperatorStates)
     parent_score: float | None = None
