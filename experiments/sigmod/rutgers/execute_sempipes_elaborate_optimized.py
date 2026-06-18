@@ -9,7 +9,7 @@ from skrub._data_ops._evaluation import find_node_by_name
 
 import sempipes
 from experiments.sigmod.evaluation import calculate_metrics, get_evaluation_dataset_with_predicted_label
-from experiments.sigmod.rutgers.execute_sempipes import block_with_attr, save_output_X1_from_file
+from experiments.sigmod.rutgers.execute_sempipes_elaborate import block_with_attr, save_output_X1_from_file
 from sempipes.optimisers import EvolutionarySearch, optimise_colopro
 
 x1_clean_pattern_1 = r"quality|new|good|best|kids|product[s]*|(?<=\s)buy\s|computer[s]*|\s[-]|(?<=i[357])-|[|;:/,‰+©\(\)\\][psn]*|(?<=usb)[\s](?=[m23][.\s])|(?<=[a-z])[\s]+gb|(?<=gen)[\s_](?=[134\s][0]*)"
@@ -840,7 +840,7 @@ def run_X2_optimized(mode):
     )
 
     best_outcome = max(outcomes, key=lambda x: (x.score, -x.search_node.trial))
-    print(f"Best outcome score after optimization on train CV: {best_outcome.score}, state: {best_outcome.state}")
+    print(f"Best outcome score after optimization on train CV: {best_outcome.score}, state: {best_outcome.states}")
 
     # Use optimized state for final prediction
     # Create environment with both the optimized state for sem_gen_features and the fixed state for sem_extract_features
@@ -852,12 +852,12 @@ def run_X2_optimized(mode):
     learner_optimized = pipeline_to_optimise.skb.make_learner(fitted=False, keep_subsampling=False)
     learner_optimized.fit(
         _create_env_with_fixed_extract(
-            train_X, train_labels, operator_name, operator_name2, best_outcome.state, fixed_extract_state
+            train_X, train_labels, operator_name, operator_name2, best_outcome.states, fixed_extract_state
         )
     )
     optimized_results = learner_optimized.predict(
         _create_env_with_fixed_extract(
-            test_data, test_labels, operator_name, operator_name2, best_outcome.state, fixed_extract_state
+            test_data, test_labels, operator_name, operator_name2, best_outcome.states, fixed_extract_state
         )
     )
 
